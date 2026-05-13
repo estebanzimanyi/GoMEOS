@@ -11,8 +11,11 @@ import (
 var _ = unsafe.Pointer(nil)
 var _ = timeutil.Timedelta{}
 
-// TODO proj_get_context: unsupported return type PJ_CONTEXT *
-// func ProjGetContext(...) { /* not yet handled by codegen */ }
+// ProjGetContext wraps MEOS C function proj_get_context.
+func ProjGetContext() *PJContext {
+	res := C.proj_get_context()
+	return &PJContext{_inner: res}
+}
 
 
 // PointRound wraps MEOS C function point_round.
@@ -28,8 +31,12 @@ func STBOXSet(hasx bool, hasz bool, geodetic bool, srid int32, xmin float64, xma
 }
 
 
-// TODO gbox_set_stbox: unsupported param const GBOX *
-// func GboxSetSTBOX(...) { /* not yet handled by codegen */ }
+// GboxSetSTBOX wraps MEOS C function gbox_set_stbox.
+func GboxSetSTBOX(box *GBox, srid int32) *STBox {
+	var _out_result C.STBox
+	C.gbox_set_stbox(box._inner, C.int32_t(srid), &_out_result)
+	return &STBox{_inner: &_out_result}
+}
 
 
 // GeoSetSTBOX wraps MEOS C function geo_set_stbox.
@@ -45,12 +52,16 @@ func SpatialsetSetSTBOX(set *Set, box *STBox) {
 }
 
 
-// TODO stbox_set_box3d: unsupported param BOX3D *
-// func STBOXSetBox3d(...) { /* not yet handled by codegen */ }
+// STBOXSetBox3d wraps MEOS C function stbox_set_box3d.
+func STBOXSetBox3d(box *STBox, box3d *Box3D) {
+	C.stbox_set_box3d(box._inner, box3d._inner)
+}
 
 
-// TODO stbox_set_gbox: unsupported param GBOX *
-// func STBOXSetGbox(...) { /* not yet handled by codegen */ }
+// STBOXSetGbox wraps MEOS C function stbox_set_gbox.
+func STBOXSetGbox(box *STBox, gbox *GBox) {
+	C.stbox_set_gbox(box._inner, gbox._inner)
+}
 
 
 // TstzsetSetSTBOX wraps MEOS C function tstzset_set_stbox.
@@ -78,9 +89,10 @@ func STBOXExpand(box1 *STBox, box2 *STBox) {
 
 
 // InterSTBOXSTBOX wraps MEOS C function inter_stbox_stbox.
-func InterSTBOXSTBOX(box1 *STBox, box2 *STBox, result *STBox) bool {
-	res := C.inter_stbox_stbox(box1._inner, box2._inner, result._inner)
-	return bool(res)
+func InterSTBOXSTBOX(box1 *STBox, box2 *STBox) (bool, *STBox) {
+	var _out_result C.STBox
+	res := C.inter_stbox_stbox(box1._inner, box2._inner, &_out_result)
+	return bool(res), &STBox{_inner: &_out_result}
 }
 
 
@@ -321,12 +333,20 @@ func TpointseqLinearTrajectory(seq TSequence, unary_union bool) *Geom {
 }
 
 
-// TODO tgeoseq_stboxes: unsupported param int *
-// func TgeoseqStboxes(...) { /* not yet handled by codegen */ }
+// TgeoseqStboxes wraps MEOS C function tgeoseq_stboxes.
+func TgeoseqStboxes(seq TSequence) (*STBox, int) {
+	var _out_count C.int
+	res := C.tgeoseq_stboxes(seq.Inner(), &_out_count)
+	return &STBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tgeoseq_split_n_stboxes: unsupported param int *
-// func TgeoseqSplitNStboxes(...) { /* not yet handled by codegen */ }
+// TgeoseqSplitNStboxes wraps MEOS C function tgeoseq_split_n_stboxes.
+func TgeoseqSplitNStboxes(seq TSequence, max_count int) (*STBox, int) {
+	var _out_count C.int
+	res := C.tgeoseq_split_n_stboxes(seq.Inner(), C.int(max_count), &_out_count)
+	return &STBox{_inner: res}, int(_out_count)
+}
 
 
 // TpointseqsetAzimuth wraps MEOS C function tpointseqset_azimuth.
@@ -357,12 +377,20 @@ func TpointseqsetLength(ss TSequenceSet) float64 {
 }
 
 
-// TODO tgeoseqset_stboxes: unsupported param int *
-// func TgeoseqsetStboxes(...) { /* not yet handled by codegen */ }
+// TgeoseqsetStboxes wraps MEOS C function tgeoseqset_stboxes.
+func TgeoseqsetStboxes(ss TSequenceSet) (*STBox, int) {
+	var _out_count C.int
+	res := C.tgeoseqset_stboxes(ss.Inner(), &_out_count)
+	return &STBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tgeoseqset_split_n_stboxes: unsupported param int *
-// func TgeoseqsetSplitNStboxes(...) { /* not yet handled by codegen */ }
+// TgeoseqsetSplitNStboxes wraps MEOS C function tgeoseqset_split_n_stboxes.
+func TgeoseqsetSplitNStboxes(ss TSequenceSet, max_count int) (*STBox, int) {
+	var _out_count C.int
+	res := C.tgeoseqset_split_n_stboxes(ss.Inner(), C.int(max_count), &_out_count)
+	return &STBox{_inner: res}, int(_out_count)
+}
 
 
 // TpointGetCoord wraps MEOS C function tpoint_get_coord.
@@ -413,8 +441,18 @@ func TspatialinstSetSRID(inst TInstant, srid int32) {
 }
 
 
-// TODO tpointseq_make_simple: unsupported return type TSequence **
-// func TpointseqMakeSimple(...) { /* not yet handled by codegen */ }
+// TpointseqMakeSimple wraps MEOS C function tpointseq_make_simple.
+func TpointseqMakeSimple(seq TSequence) []TSequence {
+	var _out_count C.int
+	res := C.tpointseq_make_simple(seq.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.TSequence)(unsafe.Pointer(res)), _n)
+	_out := make([]TSequence, _n)
+	for _i, _e := range _slice {
+		_out[_i] = TSequence{_inner: _e}
+	}
+	return _out
+}
 
 
 // TspatialseqSetSRID wraps MEOS C function tspatialseq_set_srid.
@@ -423,8 +461,18 @@ func TspatialseqSetSRID(seq TSequence, srid int32) {
 }
 
 
-// TODO tpointseqset_make_simple: unsupported return type TSequence **
-// func TpointseqsetMakeSimple(...) { /* not yet handled by codegen */ }
+// TpointseqsetMakeSimple wraps MEOS C function tpointseqset_make_simple.
+func TpointseqsetMakeSimple(ss TSequenceSet) []TSequence {
+	var _out_count C.int
+	res := C.tpointseqset_make_simple(ss.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.TSequence)(unsafe.Pointer(res)), _n)
+	_out := make([]TSequence, _n)
+	for _i, _e := range _slice {
+		_out[_i] = TSequence{_inner: _e}
+	}
+	return _out
+}
 
 
 // TspatialseqsetSetSRID wraps MEOS C function tspatialseqset_set_srid.

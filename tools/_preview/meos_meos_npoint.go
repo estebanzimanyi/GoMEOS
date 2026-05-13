@@ -18,8 +18,12 @@ func NpointAsEWKT(np *Npoint, maxdd int) string {
 }
 
 
-// TODO npoint_as_hexwkb: unsupported param size_t *
-// func NpointAsHexwkb(...) { /* not yet handled by codegen */ }
+// NpointAsHexwkb wraps MEOS C function npoint_as_hexwkb.
+func NpointAsHexwkb(np *Npoint, variant uint8) (string, uint) {
+	var _out_size_out C.size_t
+	res := C.npoint_as_hexwkb(np._inner, C.uint8_t(variant), &_out_size_out)
+	return C.GoString(res), uint(_out_size_out)
+}
 
 
 // NpointAsText wraps MEOS C function npoint_as_text.
@@ -29,8 +33,18 @@ func NpointAsText(np *Npoint, maxdd int) string {
 }
 
 
-// TODO npoint_as_wkb: unsupported return type uint8_t *
-// func NpointAsWKB(...) { /* not yet handled by codegen */ }
+// NpointAsWKB wraps MEOS C function npoint_as_wkb.
+func NpointAsWKB(np *Npoint, variant uint8) []uint8 {
+	var _out_size_out C.size_t
+	res := C.npoint_as_wkb(np._inner, C.uint8_t(variant), &_out_size_out)
+	_n := int(_out_size_out)
+	_slice := unsafe.Slice((*C.uint8_t)(unsafe.Pointer(res)), _n)
+	_out := make([]uint8, _n)
+	for _i, _e := range _slice {
+		_out[_i] = uint8(_e)
+	}
+	return _out
+}
 
 
 // NpointFromHexwkb wraps MEOS C function npoint_from_hexwkb.
@@ -42,8 +56,11 @@ func NpointFromHexwkb(hexwkb string) *Npoint {
 }
 
 
-// TODO npoint_from_wkb: unsupported param const uint8_t *
-// func NpointFromWKB(...) { /* not yet handled by codegen */ }
+// NpointFromWKB wraps MEOS C function npoint_from_wkb.
+func NpointFromWKB(wkb []byte) *Npoint {
+	res := C.npoint_from_wkb((*C.uint8_t)(unsafe.Pointer(&wkb[0])), C.size_t(len(wkb)))
+	return &Npoint{_inner: res}
+}
 
 
 // NpointIn wraps MEOS C function npoint_in.
@@ -381,8 +398,13 @@ func NpointsetOut(s *Set, maxdd int) string {
 }
 
 
-// TODO npointset_make: unsupported param Npoint **
-// func NpointsetMake(...) { /* not yet handled by codegen */ }
+// NpointsetMake wraps MEOS C function npointset_make.
+func NpointsetMake(values []*Npoint) *Set {
+	_c_values := make([]*C.Npoint, len(values))
+	for _i, _v := range values { _c_values[_i] = _v._inner }
+	res := C.npointset_make((**C.Npoint)(unsafe.Pointer(&_c_values[0])), C.int(len(values)))
+	return &Set{_inner: res}
+}
 
 
 // NpointToSet wraps MEOS C function npoint_to_set.
@@ -413,8 +435,12 @@ func NpointsetStartValue(s *Set) *Npoint {
 }
 
 
-// TODO npointset_value_n: unsupported param Npoint **
-// func NpointsetValueN(...) { /* not yet handled by codegen */ }
+// NpointsetValueN wraps MEOS C function npointset_value_n.
+func NpointsetValueN(s *Set, n int) (bool, *Npoint) {
+	var _out_result *C.Npoint
+	res := C.npointset_value_n(s._inner, C.int(n), &_out_result)
+	return bool(res), &Npoint{_inner: _out_result}
+}
 
 
 // TODO npointset_values: unsupported return type Npoint **
@@ -535,8 +561,18 @@ func TnpointLength(temp Temporal) float64 {
 }
 
 
-// TODO tnpoint_positions: unsupported return type Nsegment **
-// func TnpointPositions(...) { /* not yet handled by codegen */ }
+// TnpointPositions wraps MEOS C function tnpoint_positions.
+func TnpointPositions(temp Temporal) []*Nsegment {
+	var _out_count C.int
+	res := C.tnpoint_positions(temp.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.Nsegment)(unsafe.Pointer(res)), _n)
+	_out := make([]*Nsegment, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Nsegment{_inner: _e}
+	}
+	return _out
+}
 
 
 // TnpointRoute wraps MEOS C function tnpoint_route.

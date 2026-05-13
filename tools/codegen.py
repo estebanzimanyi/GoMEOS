@@ -76,7 +76,12 @@ TYPE_MAP: dict[str, TypeMapping] = {
     "DateADT":           TypeMapping("int32",    "C.DateADT({})",                     "int32({})"),
     "Timestamp":         TypeMapping("int64",    "C.Timestamp({})",                   "int64({})"),
     "TimestampTz":       TypeMapping("int64",    "C.TimestampTz({})",                 "int64({})"),
+    "TimeADT":           TypeMapping("int64",    "C.TimeADT({})",                     "int64({})"),
     "TimeOffset":        TypeMapping("int64",    "C.TimeOffset({})",                  "int64({})"),
+    # Opaque ``void *`` arguments (e.g. ``rtree_insert``'s box) and
+    # ``const void *`` query buffers map straight to ``unsafe.Pointer``.
+    "void *":            TypeMapping("unsafe.Pointer", "unsafe.Pointer({})",          "unsafe.Pointer({})"),
+    "const void *":      TypeMapping("unsafe.Pointer", "unsafe.Pointer({})",          "unsafe.Pointer({})"),
     "interpType":        TypeMapping("Interpolation", "C.interpType({})",             "Interpolation({})"),
     "meosType":          TypeMapping("MeosType", "C.meosType({})",                    "MeosType({})"),
     "meosOper":          TypeMapping("MeosOper", "C.meosOper({})",                    "MeosOper({})"),
@@ -116,6 +121,12 @@ WRAPPER_TYPES: dict[str, tuple[str, str]] = {
     "Nsegment":          ("*Nsegment",         "&Nsegment{_inner: $res}"),
     "SkipList":          ("*SkipList",         "&SkipList{_inner: $res}"),
     "RTree":             ("*RTree",            "&RTree{_inner: $res}"),
+    "Match":             ("*Match",            "&Match{_inner: $res}"),
+    "BOX3D":             ("*Box3D",            "&Box3D{_inner: $res}"),
+    "GBOX":              ("*GBox",             "&GBox{_inner: $res}"),
+    "AFFINE":            ("*AFFINE",           "&AFFINE{_inner: $res}"),
+    "PJ_CONTEXT":        ("*PJContext",        "&PJContext{_inner: $res}"),
+    "gsl_rng":           ("*GslRng",           "&GslRng{_inner: $res}"),
 }
 
 
@@ -200,6 +211,62 @@ def _go_param_name(c_name: str) -> str:
     return c_name
 
 
+# Parameter classification ---------------------------------------------
+
+# Param-name heuristics for the MEOS C convention: these names, paired with
+# the right pointer level, signal an out-parameter or a length-of-array
+# companion to the preceding pointer-of-pointers input.
+_OUT_NAMES = {"result", "value"}
+_LENGTH_NAMES = {"count", "size", "ngeoms", "wkb_size"}
+_SIZE_OUT_NAMES = {"size_out", "size", "len"}
+
+
+def _classify_param(p: dict, params: list[dict], i: int) -> str:
+    """Return one of ``INPUT`` / ``OUTPUT_SCALAR`` / ``OUTPUT_COUNT`` /
+    ``OUTPUT_SIZE`` / ``ARRAY_INPUT`` / ``ARRAY_LENGTH``.
+
+    The classification follows the MEOS C convention: parameters named
+    ``count`` / ``size`` paired with a preceding double-pointer or array
+    pointer are array lengths; pointer parameters named ``result`` /
+    ``value`` are out-parameters; ``int *count`` / ``size_t *size_out`` at
+    the tail are count outputs."""
+    name = p["name"]
+    ctype = p["cType"]
+    base, stars = _strip_qualifiers(ctype)
+    is_const = "const " in ctype
+
+    # Integer-typed length companion at a length-name and preceded by an
+    # array pointer.  Accepts the full int family because MEOS spells
+    # ``count`` variously as ``int``, ``uint32_t``, ``int64`` etc.
+    _INT_BASES = {"int", "size_t", "int32", "int32_t", "int64", "uint32", "uint32_t", "uint64"}
+    if stars == 0 and name in _LENGTH_NAMES and base in _INT_BASES and i > 0:
+        prev = params[i - 1]
+        prev_base, prev_stars = _strip_qualifiers(prev["cType"])
+        prev_is_const = "const " in prev["cType"]
+        # ``T **`` non-const + ``count`` -> array input
+        if prev_stars == 2:
+            return "ARRAY_LENGTH"
+        # ``const T *`` + ``count`` for scalar slices (intset_make etc.)
+        if prev_stars == 1 and prev_is_const and prev_base in {
+            "int", "int64", "double", "DateADT", "TimestampTz", "uint8_t",
+        }:
+            return "ARRAY_LENGTH"
+        # ``const uint8_t *wkb`` + ``size`` byte buffer
+        if prev_stars == 1 and prev_is_const and prev_base == "uint8_t":
+            return "ARRAY_LENGTH"
+
+    # Trailing ``int *count`` or ``size_t *size_out`` at the tail or with a
+    # name signal -> count output.
+    if stars == 1 and base in {"int", "size_t"} and name in _LENGTH_NAMES | _SIZE_OUT_NAMES:
+        return "OUTPUT_COUNT"
+
+    # ``T *result`` / ``T *value`` with scalar base -> scalar out.
+    if stars >= 1 and name in _OUT_NAMES:
+        return "OUTPUT_SCALAR"
+
+    return "INPUT"
+
+
 # Emission --------------------------------------------------------------
 
 @dataclass
@@ -209,23 +276,210 @@ class EmittedFunc:
     skipped: bool      # true if emitted as a TODO stub
 
 
+def _array_return_info(return_c: str):
+    """Return ``(base_type, ptr_level)`` for ``T **`` / ``T *`` returns that
+    pair with an OUTPUT_COUNT param, or ``None`` if the return is not an
+    array shape."""
+    base, stars = _strip_qualifiers(return_c)
+    if stars in (1, 2):
+        return base, stars
+    return None
+
+
+def _go_slice_elem(base: str, stars: int) -> tuple[str, str] | None:
+    """For an array return ``base`` + ``stars``, return ``(elem_go_type,
+    elem_ctor_template)`` where the template uses ``$x`` for the C element.
+
+    The element type for a ``T **`` return is the wrapped pointer (``*Foo``);
+    for a ``T *`` return of scalar elements it is the Go primitive."""
+    if stars == 2 and base in WRAPPER_TYPES:
+        go_type, ctor = WRAPPER_TYPES[base]
+        return go_type, ctor.replace("$res", "$x")
+    if stars == 2 and base == "char":
+        # ``char **`` -> []string; each element is a C string.
+        return "string", "C.GoString($x)"
+    if stars == 1:
+        scalar = TYPE_MAP.get(base)
+        if scalar is not None:
+            # Normalise the ``{}`` placeholder used inside TYPE_MAP to the
+            # ``$x`` placeholder the emitter substitutes per element.
+            ctor = (scalar.from_c or "$x").replace("{}", "$x")
+            return scalar.go_type, ctor
+        if base == "uint8_t":
+            # ``uint8_t *`` byte buffer return -> []byte handled separately.
+            return None
+    return None
+
+
 def emit_function(entry: dict) -> EmittedFunc:
     c_name = entry["name"]
     go_name = _go_name(c_name)
     return_c = entry["returnType"]["c"]
+    params = entry["params"]
 
-    # Resolve return type.
-    ret_go, _, ret_from_c = _go_type_for(return_c)
-    if ret_go is None and return_c != "void":
-        return EmittedFunc(go_name, _todo_stub(c_name, "unsupported return type " + return_c), True)
+    # Pre-classify every parameter so the input loop can skip ones that
+    # become outputs or array-length companions.
+    classes = [_classify_param(p, params, i) for i, p in enumerate(params)]
 
-    # Resolve each parameter.
+    # Identify a paired array return.  Two shapes:
+    #  (a) explicit OUTPUT_COUNT param -> slice length comes from C
+    #  (b) an ARRAY_LENGTH input -> slice length matches the input slice
+    has_out_count = "OUTPUT_COUNT" in classes
+    has_in_length = "ARRAY_LENGTH" in classes
+    is_array_return = False
+    array_length_source: str | None = None  # ``c_count`` or ``len(input_slice)``
+    array_elem_go = array_elem_ctor = None
+    if (has_out_count or has_in_length) and return_c not in ("void",):
+        info = _array_return_info(return_c)
+        if info is not None:
+            base, stars = info
+            elem = _go_slice_elem(base, stars)
+            if elem is not None:
+                is_array_return = True
+                array_elem_go, array_elem_ctor = elem
+            elif stars == 1 and base == "uint8_t":
+                # WKB-style ``uint8_t *`` paired with ``size_t *size_out``.
+                is_array_return = True
+                array_elem_go = "byte"
+                array_elem_ctor = "byte($x)"
+        if is_array_return and not has_out_count:
+            # Length is taken from the input slice ``len(...)``; find the
+            # first ARRAY_LENGTH index and read the preceding param name.
+            length_idx = next(i for i, c in enumerate(classes) if c == "ARRAY_LENGTH")
+            array_length_source = f"len({_go_param_name(params[length_idx - 1]['name'])})"
+
+    # Resolve the return type when not an array shape.
+    if is_array_return:
+        ret_go = f"[]{array_elem_go}"
+        ret_from_c = None
+    else:
+        ret_go, _, ret_from_c = _go_type_for(return_c)
+        if ret_go is None and return_c != "void":
+            return EmittedFunc(go_name, _todo_stub(c_name, "unsupported return type " + return_c), True)
+
+    # Walk parameters, building Go-side signature args and C-side call args.
     go_args = []
     inner_args = []
     deferred = []
-    for p in entry["params"]:
+    extra_returns: list[tuple[str, str, str]] = []  # (go_type, var_name, c_to_go expr)
+    array_length_for: list[int] = []  # indices of ARRAY_LENGTH params (skipped from sig)
+    array_count_local: str | None = None  # the OUTPUT_COUNT local for array returns
+
+    for i, p in enumerate(params):
         pname = _go_param_name(p["name"])
         ptype = p["cType"]
+        cls = classes[i]
+
+        if cls == "ARRAY_LENGTH":
+            # Length is derived from the preceding slice's len(); locate it.
+            prev_name = _go_param_name(params[i - 1]["name"])
+            base, _ = _strip_qualifiers(ptype)
+            inner_args.append(f"C.{base}(len({prev_name}))")
+            array_length_for.append(i - 1)
+            continue
+
+        if cls == "OUTPUT_COUNT":
+            base, _ = _strip_qualifiers(ptype)
+            local = f"_out_{pname}"
+            deferred.append(f"var {local} C.{base}")
+            inner_args.append(f"&{local}")
+            # If this count is paired with an array return, it is not
+            # surfaced as a separate Go return -- it controls the slice
+            # length.
+            if is_array_return:
+                array_count_local = local
+            else:
+                extra_returns.append(
+                    ("int" if base == "int" else "uint", local,
+                     f"int({local})" if base == "int" else f"uint({local})"))
+            continue
+
+        if cls == "OUTPUT_SCALAR":
+            base, stars = _strip_qualifiers(ptype)
+            # Wrapped opaque output (e.g. ``GSERIALIZED ** result``).
+            if stars == 2 and base in WRAPPER_TYPES:
+                go_type, ctor = WRAPPER_TYPES[base]
+                local = f"_out_{pname}"
+                deferred.append(f"var {local} *C.{base}")
+                inner_args.append(f"&{local}")
+                extra_returns.append((go_type, local, ctor.replace("$res", local)))
+                continue
+            # text** -> string
+            if stars == 2 and base == "text":
+                local = f"_out_{pname}"
+                deferred.append(f"var {local} *C.text")
+                inner_args.append(f"&{local}")
+                extra_returns.append(("string", local, f"text2cstring({local})"))
+                continue
+            # Scalar slice output (``TimestampTz **time_bins`` and friends)
+            # is left as TODO: the parallel output array needs post-call
+            # unsafe.Slice + element conversion alongside the primary array
+            # return, and that wiring is not yet plumbed through the
+            # body-assembly pass.  Affects the ``*_split`` and
+            # ``tpoint_as_mvtgeom`` families.
+            # Wrapped opaque single-pointer output (``Span *result`` etc.):
+            # MEOS writes into a caller-allocated struct; allocate one and
+            # surface the pointer back as the typed wrapper.
+            if stars == 1 and base in WRAPPER_TYPES:
+                go_type, ctor = WRAPPER_TYPES[base]
+                local = f"_out_{pname}"
+                deferred.append(f"var {local} C.{base}")
+                inner_args.append(f"&{local}")
+                extra_returns.append((go_type, local, ctor.replace("$res", f"&{local}")))
+                continue
+            # Scalar output (`double * result`, `bool * value`, etc.)
+            if stars == 1 and base in TYPE_MAP:
+                go_type = TYPE_MAP[base].go_type
+                local = f"_out_{pname}"
+                deferred.append(f"var {local} C.{base}")
+                inner_args.append(f"&{local}")
+                from_c = TYPE_MAP[base].from_c or "$x"
+                extra_returns.append((go_type, local, from_c.replace("$x", local)))
+                continue
+            return EmittedFunc(go_name, _todo_stub(c_name, "unhandled OUTPUT_SCALAR shape " + ptype), True)
+
+        # INPUT path -------------------------------------------------------
+        base, stars = _strip_qualifiers(ptype)
+
+        # Counted-array input: ``T ** xs`` paired with the next ``int
+        # count`` (already marked ARRAY_LENGTH).  Lowered to a Go slice of
+        # the wrapped element.
+        if stars == 2 and base in WRAPPER_TYPES and i + 1 < len(params) and classes[i + 1] == "ARRAY_LENGTH":
+            elem_go, _ = WRAPPER_TYPES[base]
+            slice_go = f"[]{elem_go}"
+            local = f"_c_{pname}"
+            deferred.append(f"{local} := make([]*C.{base}, len({pname}))")
+            deferred.append(f"for _i, _v := range {pname} {{ {local}[_i] = _v._inner }}")
+            ptr_expr = f"(**C.{base})(unsafe.Pointer(&{local}[0]))" if base != "uint8_t" else f"&{local}[0]"
+            go_args.append(f"{pname} {slice_go}")
+            inner_args.append(ptr_expr)
+            continue
+
+        # text** array input + count -> []string (textset_make and family).
+        if stars == 2 and base == "text" and i + 1 < len(params) and classes[i + 1] == "ARRAY_LENGTH":
+            local = f"_c_{pname}"
+            deferred.append(f"{local} := make([]*C.text, len({pname}))")
+            deferred.append(f"for _i, _v := range {pname} {{ {local}[_i] = cstring2text(_v) }}")
+            go_args.append(f"{pname} []string")
+            inner_args.append(f"(**C.text)(unsafe.Pointer(&{local}[0]))")
+            continue
+
+        # Scalar slice input: ``const int *values`` etc. paired with count.
+        if stars == 1 and "const" in ptype and base in {"int", "int64", "double", "DateADT", "TimestampTz"} and i + 1 < len(params) and classes[i + 1] == "ARRAY_LENGTH":
+            slice_go = f"[]{TYPE_MAP[base].go_type}"
+            local = f"_c_{pname}"
+            deferred.append(f"{local} := make([]C.{base}, len({pname}))")
+            deferred.append(f"for _i, _v := range {pname} {{ {local}[_i] = C.{base}(_v) }}")
+            go_args.append(f"{pname} {slice_go}")
+            inner_args.append(f"&{local}[0]")
+            continue
+
+        # Byte-buffer input: ``const uint8_t *wkb`` + ``size_t size``.
+        if stars == 1 and "const" in ptype and base == "uint8_t" and i + 1 < len(params) and classes[i + 1] == "ARRAY_LENGTH":
+            go_args.append(f"{pname} []byte")
+            inner_args.append(f"(*C.uint8_t)(unsafe.Pointer(&{pname}[0]))")
+            continue
+
         go_t, c_cast, _ = _go_type_for(ptype)
         if go_t is None:
             return EmittedFunc(go_name, _todo_stub(c_name, "unsupported param " + ptype), True)
@@ -234,8 +488,6 @@ def emit_function(entry: dict) -> EmittedFunc:
             inner_args.append(pname)
         else:
             cast_expr = c_cast.replace("$x", pname)
-            # Strings need a single C.CString allocation reused across the
-            # call and the deferred free; bind to a local to avoid leaking.
             if go_t == "string":
                 local = f"_c_{pname}"
                 deferred.append(f"{local} := {cast_expr}")
@@ -244,19 +496,65 @@ def emit_function(entry: dict) -> EmittedFunc:
             else:
                 inner_args.append(cast_expr)
 
+    # Assemble Go signature ----------------------------------------------
     sig_args = ", ".join(go_args)
-    ret_sig = "" if return_c == "void" else f" {ret_go}"
+    all_returns: list[str] = []
+    if is_array_return:
+        all_returns.append(ret_go)
+    elif return_c != "void":
+        all_returns.append(ret_go)
+    for go_type, _, _ in extra_returns:
+        all_returns.append(go_type)
+
+    if len(all_returns) == 0:
+        ret_sig = ""
+    elif len(all_returns) == 1:
+        ret_sig = f" {all_returns[0]}"
+    else:
+        ret_sig = f" ({', '.join(all_returns)})"
+
+    # Assemble Go body ----------------------------------------------------
+    body_lines = []
+    body_lines.extend("\t" + d for d in deferred)
     call = f"C.{c_name}({', '.join(inner_args)})"
 
-    body_lines = []
-    # ``deferred`` emits as-is so the ordering of declarations (local bind
-    # then defer) is preserved.
-    body_lines.extend("\t" + d for d in deferred)
-    if return_c == "void":
-        body_lines.append(f"\t{call}")
+    if is_array_return:
+        # Slice length: either the OUTPUT_COUNT C local, or ``len(input)``
+        # when the C function takes a count input and returns an array of
+        # the same length.
+        count_expr = f"int({array_count_local})" if array_count_local else array_length_source
+        body_lines.append(f"\tres := {call}")
+        body_lines.append(f"\t_n := {count_expr}")
+        if array_elem_go == "byte":
+            # WKB byte buffer; cast (*C.uint8_t -> []byte via unsafe.Slice).
+            body_lines.append("\t_slice := unsafe.Slice((*byte)(unsafe.Pointer(res)), _n)")
+            body_lines.append("\t_out := make([]byte, _n)")
+            body_lines.append("\tcopy(_out, _slice)")
+            body_lines.append("\treturn _out")
+        else:
+            base, stars = _array_return_info(return_c)
+            elem_c = f"*C.{base}" if stars == 2 else f"C.{base}"
+            body_lines.append(f"\t_slice := unsafe.Slice((*{elem_c})(unsafe.Pointer(res)), _n)")
+            body_lines.append(f"\t_out := make({ret_go}, _n)")
+            body_lines.append("\tfor _i, _e := range _slice {")
+            body_lines.append(f"\t\t_out[_i] = {array_elem_ctor.replace('$x', '_e')}")
+            body_lines.append("\t}")
+            body_lines.append("\treturn _out")
+    elif return_c == "void":
+        if extra_returns:
+            body_lines.append(f"\t{call}")
+            tail = ", ".join(c2g for _, _, c2g in extra_returns)
+            body_lines.append(f"\treturn {tail}")
+        else:
+            body_lines.append(f"\t{call}")
     else:
         body_lines.append(f"\tres := {call}")
-        body_lines.append(f"\treturn {ret_from_c.replace('$x', 'res')}")
+        return_expr = ret_from_c.replace("$x", "res")
+        if extra_returns:
+            tail = ", ".join(c2g for _, _, c2g in extra_returns)
+            body_lines.append(f"\treturn {return_expr}, {tail}")
+        else:
+            body_lines.append(f"\treturn {return_expr}")
 
     code = (
         f"// {go_name} wraps MEOS C function {c_name}.\n"

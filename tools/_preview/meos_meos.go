@@ -50,12 +50,20 @@ func IntervalOut(interv timeutil.Timedelta) string {
 }
 
 
-// TODO time_in: unsupported return type TimeADT
-// func TimeIn(...) { /* not yet handled by codegen */ }
+// TimeIn wraps MEOS C function time_in.
+func TimeIn(str string, typmod int32) int64 {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	res := C.time_in(_c_str, C.int32(typmod))
+	return int64(res)
+}
 
 
-// TODO time_out: unsupported param TimeADT
-// func TimeOut(...) { /* not yet handled by codegen */ }
+// TimeOut wraps MEOS C function time_out.
+func TimeOut(t int64) string {
+	res := C.time_out(C.TimeADT(t))
+	return C.GoString(res)
+}
 
 
 // TimestampIn wraps MEOS C function timestamp_in.
@@ -145,12 +153,24 @@ func RtreeFree(rtree *RTree) {
 }
 
 
-// TODO rtree_insert: unsupported param void *
-// func RtreeInsert(...) { /* not yet handled by codegen */ }
+// RtreeInsert wraps MEOS C function rtree_insert.
+func RtreeInsert(rtree *RTree, box unsafe.Pointer, id int64) {
+	C.rtree_insert(rtree._inner, unsafe.Pointer(box), C.int64(id))
+}
 
 
-// TODO rtree_search: unsupported return type int *
-// func RtreeSearch(...) { /* not yet handled by codegen */ }
+// RtreeSearch wraps MEOS C function rtree_search.
+func RtreeSearch(rtree *RTree, query unsafe.Pointer) []int {
+	var _out_count C.int
+	res := C.rtree_search(rtree._inner, unsafe.Pointer(query), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((*C.int)(unsafe.Pointer(res)), _n)
+	_out := make([]int, _n)
+	for _i, _e := range _slice {
+		_out[_i] = int(_e)
+	}
+	return _out
+}
 
 
 // MeosError wraps MEOS C function meos_error.
@@ -215,8 +235,13 @@ func MeosFinalizeWays() {
 }
 
 
-// TODO meos_set_datestyle: unsupported param void *
-// func MeosSetDatestyle(...) { /* not yet handled by codegen */ }
+// MeosSetDatestyle wraps MEOS C function meos_set_datestyle.
+func MeosSetDatestyle(newval string, extra unsafe.Pointer) bool {
+	_c_newval := C.CString(newval)
+	defer C.free(unsafe.Pointer(_c_newval))
+	res := C.meos_set_datestyle(_c_newval, unsafe.Pointer(extra))
+	return bool(res)
+}
 
 
 // MeosSetIntervalstyle wraps MEOS C function meos_set_intervalstyle.
@@ -803,12 +828,26 @@ func IntspansetOut(ss *SpanSet) string {
 }
 
 
-// TODO set_as_hexwkb: unsupported param size_t *
-// func SetAsHexwkb(...) { /* not yet handled by codegen */ }
+// SetAsHexwkb wraps MEOS C function set_as_hexwkb.
+func SetAsHexwkb(s *Set, variant uint8) (string, uint) {
+	var _out_size_out C.size_t
+	res := C.set_as_hexwkb(s._inner, C.uint8_t(variant), &_out_size_out)
+	return C.GoString(res), uint(_out_size_out)
+}
 
 
-// TODO set_as_wkb: unsupported return type uint8_t *
-// func SetAsWKB(...) { /* not yet handled by codegen */ }
+// SetAsWKB wraps MEOS C function set_as_wkb.
+func SetAsWKB(s *Set, variant uint8) []uint8 {
+	var _out_size_out C.size_t
+	res := C.set_as_wkb(s._inner, C.uint8_t(variant), &_out_size_out)
+	_n := int(_out_size_out)
+	_slice := unsafe.Slice((*C.uint8_t)(unsafe.Pointer(res)), _n)
+	_out := make([]uint8, _n)
+	for _i, _e := range _slice {
+		_out[_i] = uint8(_e)
+	}
+	return _out
+}
 
 
 // SetFromHexwkb wraps MEOS C function set_from_hexwkb.
@@ -820,16 +859,33 @@ func SetFromHexwkb(hexwkb string) *Set {
 }
 
 
-// TODO set_from_wkb: unsupported param const uint8_t *
-// func SetFromWKB(...) { /* not yet handled by codegen */ }
+// SetFromWKB wraps MEOS C function set_from_wkb.
+func SetFromWKB(wkb []byte) *Set {
+	res := C.set_from_wkb((*C.uint8_t)(unsafe.Pointer(&wkb[0])), C.size_t(len(wkb)))
+	return &Set{_inner: res}
+}
 
 
-// TODO span_as_hexwkb: unsupported param size_t *
-// func SpanAsHexwkb(...) { /* not yet handled by codegen */ }
+// SpanAsHexwkb wraps MEOS C function span_as_hexwkb.
+func SpanAsHexwkb(s *Span, variant uint8) (string, uint) {
+	var _out_size_out C.size_t
+	res := C.span_as_hexwkb(s._inner, C.uint8_t(variant), &_out_size_out)
+	return C.GoString(res), uint(_out_size_out)
+}
 
 
-// TODO span_as_wkb: unsupported return type uint8_t *
-// func SpanAsWKB(...) { /* not yet handled by codegen */ }
+// SpanAsWKB wraps MEOS C function span_as_wkb.
+func SpanAsWKB(s *Span, variant uint8) []uint8 {
+	var _out_size_out C.size_t
+	res := C.span_as_wkb(s._inner, C.uint8_t(variant), &_out_size_out)
+	_n := int(_out_size_out)
+	_slice := unsafe.Slice((*C.uint8_t)(unsafe.Pointer(res)), _n)
+	_out := make([]uint8, _n)
+	for _i, _e := range _slice {
+		_out[_i] = uint8(_e)
+	}
+	return _out
+}
 
 
 // SpanFromHexwkb wraps MEOS C function span_from_hexwkb.
@@ -841,16 +897,33 @@ func SpanFromHexwkb(hexwkb string) *Span {
 }
 
 
-// TODO span_from_wkb: unsupported param const uint8_t *
-// func SpanFromWKB(...) { /* not yet handled by codegen */ }
+// SpanFromWKB wraps MEOS C function span_from_wkb.
+func SpanFromWKB(wkb []byte) *Span {
+	res := C.span_from_wkb((*C.uint8_t)(unsafe.Pointer(&wkb[0])), C.size_t(len(wkb)))
+	return &Span{_inner: res}
+}
 
 
-// TODO spanset_as_hexwkb: unsupported param size_t *
-// func SpansetAsHexwkb(...) { /* not yet handled by codegen */ }
+// SpansetAsHexwkb wraps MEOS C function spanset_as_hexwkb.
+func SpansetAsHexwkb(ss *SpanSet, variant uint8) (string, uint) {
+	var _out_size_out C.size_t
+	res := C.spanset_as_hexwkb(ss._inner, C.uint8_t(variant), &_out_size_out)
+	return C.GoString(res), uint(_out_size_out)
+}
 
 
-// TODO spanset_as_wkb: unsupported return type uint8_t *
-// func SpansetAsWKB(...) { /* not yet handled by codegen */ }
+// SpansetAsWKB wraps MEOS C function spanset_as_wkb.
+func SpansetAsWKB(ss *SpanSet, variant uint8) []uint8 {
+	var _out_size_out C.size_t
+	res := C.spanset_as_wkb(ss._inner, C.uint8_t(variant), &_out_size_out)
+	_n := int(_out_size_out)
+	_slice := unsafe.Slice((*C.uint8_t)(unsafe.Pointer(res)), _n)
+	_out := make([]uint8, _n)
+	for _i, _e := range _slice {
+		_out[_i] = uint8(_e)
+	}
+	return _out
+}
 
 
 // SpansetFromHexwkb wraps MEOS C function spanset_from_hexwkb.
@@ -862,8 +935,11 @@ func SpansetFromHexwkb(hexwkb string) *SpanSet {
 }
 
 
-// TODO spanset_from_wkb: unsupported param const uint8_t *
-// func SpansetFromWKB(...) { /* not yet handled by codegen */ }
+// SpansetFromWKB wraps MEOS C function spanset_from_wkb.
+func SpansetFromWKB(wkb []byte) *SpanSet {
+	res := C.spanset_from_wkb((*C.uint8_t)(unsafe.Pointer(&wkb[0])), C.size_t(len(wkb)))
+	return &SpanSet{_inner: res}
+}
 
 
 // TextsetIn wraps MEOS C function textset_in.
@@ -930,8 +1006,13 @@ func TstzspansetOut(ss *SpanSet) string {
 }
 
 
-// TODO bigintset_make: unsupported param const int64 *
-// func BigintsetMake(...) { /* not yet handled by codegen */ }
+// BigintsetMake wraps MEOS C function bigintset_make.
+func BigintsetMake(values []int64) *Set {
+	_c_values := make([]C.int64, len(values))
+	for _i, _v := range values { _c_values[_i] = C.int64(_v) }
+	res := C.bigintset_make(&_c_values[0], C.int(len(values)))
+	return &Set{_inner: res}
+}
 
 
 // BigintspanMake wraps MEOS C function bigintspan_make.
@@ -941,8 +1022,13 @@ func BigintspanMake(lower int64, upper int64, lower_inc bool, upper_inc bool) *S
 }
 
 
-// TODO dateset_make: unsupported param const DateADT *
-// func DatesetMake(...) { /* not yet handled by codegen */ }
+// DatesetMake wraps MEOS C function dateset_make.
+func DatesetMake(values []int32) *Set {
+	_c_values := make([]C.DateADT, len(values))
+	for _i, _v := range values { _c_values[_i] = C.DateADT(_v) }
+	res := C.dateset_make(&_c_values[0], C.int(len(values)))
+	return &Set{_inner: res}
+}
 
 
 // DatespanMake wraps MEOS C function datespan_make.
@@ -952,8 +1038,13 @@ func DatespanMake(lower int32, upper int32, lower_inc bool, upper_inc bool) *Spa
 }
 
 
-// TODO floatset_make: unsupported param const double *
-// func FloatsetMake(...) { /* not yet handled by codegen */ }
+// FloatsetMake wraps MEOS C function floatset_make.
+func FloatsetMake(values []float64) *Set {
+	_c_values := make([]C.double, len(values))
+	for _i, _v := range values { _c_values[_i] = C.double(_v) }
+	res := C.floatset_make(&_c_values[0], C.int(len(values)))
+	return &Set{_inner: res}
+}
 
 
 // FloatspanMake wraps MEOS C function floatspan_make.
@@ -963,8 +1054,13 @@ func FloatspanMake(lower float64, upper float64, lower_inc bool, upper_inc bool)
 }
 
 
-// TODO intset_make: unsupported param const int *
-// func IntsetMake(...) { /* not yet handled by codegen */ }
+// IntsetMake wraps MEOS C function intset_make.
+func IntsetMake(values []int) *Set {
+	_c_values := make([]C.int, len(values))
+	for _i, _v := range values { _c_values[_i] = C.int(_v) }
+	res := C.intset_make(&_c_values[0], C.int(len(values)))
+	return &Set{_inner: res}
+}
 
 
 // IntspanMake wraps MEOS C function intspan_make.
@@ -1002,12 +1098,22 @@ func SpansetMake(spans *Span, count int) *SpanSet {
 }
 
 
-// TODO textset_make: unsupported param text **
-// func TextsetMake(...) { /* not yet handled by codegen */ }
+// TextsetMake wraps MEOS C function textset_make.
+func TextsetMake(values []string) *Set {
+	_c_values := make([]*C.text, len(values))
+	for _i, _v := range values { _c_values[_i] = cstring2text(_v) }
+	res := C.textset_make((**C.text)(unsafe.Pointer(&_c_values[0])), C.int(len(values)))
+	return &Set{_inner: res}
+}
 
 
-// TODO tstzset_make: unsupported param const TimestampTz *
-// func TstzsetMake(...) { /* not yet handled by codegen */ }
+// TstzsetMake wraps MEOS C function tstzset_make.
+func TstzsetMake(values []int64) *Set {
+	_c_values := make([]C.TimestampTz, len(values))
+	for _i, _v := range values { _c_values[_i] = C.TimestampTz(_v) }
+	res := C.tstzset_make(&_c_values[0], C.int(len(values)))
+	return &Set{_inner: res}
+}
 
 
 // TstzspanMake wraps MEOS C function tstzspan_make.
@@ -1250,8 +1356,12 @@ func BigintsetStartValue(s *Set) int64 {
 }
 
 
-// TODO bigintset_value_n: unsupported param int64 *
-// func BigintsetValueN(...) { /* not yet handled by codegen */ }
+// BigintsetValueN wraps MEOS C function bigintset_value_n.
+func BigintsetValueN(s *Set, n int) (bool, int64) {
+	var _out_result C.int64
+	res := C.bigintset_value_n(s._inner, C.int(n), &_out_result)
+	return bool(res), int64({})
+}
 
 
 // TODO bigintset_values: unsupported return type int64 *
@@ -1314,8 +1424,12 @@ func DatesetStartValue(s *Set) int32 {
 }
 
 
-// TODO dateset_value_n: unsupported param DateADT *
-// func DatesetValueN(...) { /* not yet handled by codegen */ }
+// DatesetValueN wraps MEOS C function dateset_value_n.
+func DatesetValueN(s *Set, n int) (bool, int32) {
+	var _out_result C.DateADT
+	res := C.dateset_value_n(s._inner, C.int(n), &_out_result)
+	return bool(res), int32({})
+}
 
 
 // TODO dateset_values: unsupported return type DateADT *
@@ -1343,8 +1457,12 @@ func DatespanUpper(s *Span) int32 {
 }
 
 
-// TODO datespanset_date_n: unsupported param DateADT *
-// func DatespansetDateN(...) { /* not yet handled by codegen */ }
+// DatespansetDateN wraps MEOS C function datespanset_date_n.
+func DatespansetDateN(ss *SpanSet, n int) (bool, int32) {
+	var _out_result C.DateADT
+	res := C.datespanset_date_n(ss._inner, C.int(n), &_out_result)
+	return bool(res), int32({})
+}
 
 
 // DatespansetDates wraps MEOS C function datespanset_dates.
@@ -1396,8 +1514,12 @@ func FloatsetStartValue(s *Set) float64 {
 }
 
 
-// TODO floatset_value_n: unsupported param double *
-// func FloatsetValueN(...) { /* not yet handled by codegen */ }
+// FloatsetValueN wraps MEOS C function floatset_value_n.
+func FloatsetValueN(s *Set, n int) (bool, float64) {
+	var _out_result C.double
+	res := C.floatset_value_n(s._inner, C.int(n), &_out_result)
+	return bool(res), float64({})
+}
 
 
 // TODO floatset_values: unsupported return type double *
@@ -1460,8 +1582,12 @@ func IntsetStartValue(s *Set) int {
 }
 
 
-// TODO intset_value_n: unsupported param int *
-// func IntsetValueN(...) { /* not yet handled by codegen */ }
+// IntsetValueN wraps MEOS C function intset_value_n.
+func IntsetValueN(s *Set, n int) (bool, int) {
+	var _out_result C.int
+	res := C.intset_value_n(s._inner, C.int(n), &_out_result)
+	return bool(res), int({})
+}
 
 
 // TODO intset_values: unsupported return type int *
@@ -1640,8 +1766,12 @@ func TextsetStartValue(s *Set) string {
 }
 
 
-// TODO textset_value_n: unsupported param text **
-// func TextsetValueN(...) { /* not yet handled by codegen */ }
+// TextsetValueN wraps MEOS C function textset_value_n.
+func TextsetValueN(s *Set, n int) (bool, string) {
+	var _out_result *C.text
+	res := C.textset_value_n(s._inner, C.int(n), &_out_result)
+	return bool(res), text2cstring(_out_result)
+}
 
 
 // TODO textset_values: unsupported return type text **
@@ -1662,8 +1792,12 @@ func TstzsetStartValue(s *Set) int64 {
 }
 
 
-// TODO tstzset_value_n: unsupported param TimestampTz *
-// func TstzsetValueN(...) { /* not yet handled by codegen */ }
+// TstzsetValueN wraps MEOS C function tstzset_value_n.
+func TstzsetValueN(s *Set, n int) (bool, int64) {
+	var _out_result C.TimestampTz
+	res := C.tstzset_value_n(s._inner, C.int(n), &_out_result)
+	return bool(res), int64({})
+}
 
 
 // TODO tstzset_values: unsupported return type TimestampTz *
@@ -1733,8 +1867,12 @@ func TstzspansetTimestamps(ss *SpanSet) *Set {
 }
 
 
-// TODO tstzspanset_timestamptz_n: unsupported param TimestampTz *
-// func TstzspansetTimestamptzN(...) { /* not yet handled by codegen */ }
+// TstzspansetTimestamptzN wraps MEOS C function tstzspanset_timestamptz_n.
+func TstzspansetTimestamptzN(ss *SpanSet, n int) (bool, int64) {
+	var _out_result C.TimestampTz
+	res := C.tstzspanset_timestamptz_n(ss._inner, C.int(n), &_out_result)
+	return bool(res), int64({})
+}
 
 
 // TstzspansetUpper wraps MEOS C function tstzspanset_upper.
@@ -2182,12 +2320,20 @@ func SetSpans(s *Set) *Span {
 }
 
 
-// TODO set_split_each_n_spans: unsupported param int *
-// func SetSplitEachNSpans(...) { /* not yet handled by codegen */ }
+// SetSplitEachNSpans wraps MEOS C function set_split_each_n_spans.
+func SetSplitEachNSpans(s *Set, elems_per_span int) (*Span, int) {
+	var _out_count C.int
+	res := C.set_split_each_n_spans(s._inner, C.int(elems_per_span), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO set_split_n_spans: unsupported param int *
-// func SetSplitNSpans(...) { /* not yet handled by codegen */ }
+// SetSplitNSpans wraps MEOS C function set_split_n_spans.
+func SetSplitNSpans(s *Set, span_count int) (*Span, int) {
+	var _out_count C.int
+	res := C.set_split_n_spans(s._inner, C.int(span_count), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
 // SpansetSpans wraps MEOS C function spanset_spans.
@@ -2197,12 +2343,20 @@ func SpansetSpans(ss *SpanSet) *Span {
 }
 
 
-// TODO spanset_split_each_n_spans: unsupported param int *
-// func SpansetSplitEachNSpans(...) { /* not yet handled by codegen */ }
+// SpansetSplitEachNSpans wraps MEOS C function spanset_split_each_n_spans.
+func SpansetSplitEachNSpans(ss *SpanSet, elems_per_span int) (*Span, int) {
+	var _out_count C.int
+	res := C.spanset_split_each_n_spans(ss._inner, C.int(elems_per_span), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO spanset_split_n_spans: unsupported param int *
-// func SpansetSplitNSpans(...) { /* not yet handled by codegen */ }
+// SpansetSplitNSpans wraps MEOS C function spanset_split_n_spans.
+func SpansetSplitNSpans(ss *SpanSet, span_count int) (*Span, int) {
+	var _out_count C.int
+	res := C.spanset_split_n_spans(ss._inner, C.int(span_count), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
 // AdjacentSpanBigint wraps MEOS C function adjacent_span_bigint.
@@ -4794,12 +4948,20 @@ func BigintGetBin(value int64, vsize int64, vorigin int64) int64 {
 }
 
 
-// TODO bigintspan_bins: unsupported param int *
-// func BigintspanBins(...) { /* not yet handled by codegen */ }
+// BigintspanBins wraps MEOS C function bigintspan_bins.
+func BigintspanBins(s *Span, vsize int64, vorigin int64) (*Span, int) {
+	var _out_count C.int
+	res := C.bigintspan_bins(s._inner, C.int64(vsize), C.int64(vorigin), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO bigintspanset_bins: unsupported param int *
-// func BigintspansetBins(...) { /* not yet handled by codegen */ }
+// BigintspansetBins wraps MEOS C function bigintspanset_bins.
+func BigintspansetBins(ss *SpanSet, vsize int64, vorigin int64) (*Span, int) {
+	var _out_count C.int
+	res := C.bigintspanset_bins(ss._inner, C.int64(vsize), C.int64(vorigin), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
 // DateGetBin wraps MEOS C function date_get_bin.
@@ -4809,12 +4971,20 @@ func DateGetBin(d int32, duration timeutil.Timedelta, torigin int32) int32 {
 }
 
 
-// TODO datespan_bins: unsupported param int *
-// func DatespanBins(...) { /* not yet handled by codegen */ }
+// DatespanBins wraps MEOS C function datespan_bins.
+func DatespanBins(s *Span, duration timeutil.Timedelta, torigin int32) (*Span, int) {
+	var _out_count C.int
+	res := C.datespan_bins(s._inner, duration.Inner(), C.DateADT(torigin), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO datespanset_bins: unsupported param int *
-// func DatespansetBins(...) { /* not yet handled by codegen */ }
+// DatespansetBins wraps MEOS C function datespanset_bins.
+func DatespansetBins(ss *SpanSet, duration timeutil.Timedelta, torigin int32) (*Span, int) {
+	var _out_count C.int
+	res := C.datespanset_bins(ss._inner, duration.Inner(), C.DateADT(torigin), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
 // FloatGetBin wraps MEOS C function float_get_bin.
@@ -4824,12 +4994,20 @@ func FloatGetBin(value float64, vsize float64, vorigin float64) float64 {
 }
 
 
-// TODO floatspan_bins: unsupported param int *
-// func FloatspanBins(...) { /* not yet handled by codegen */ }
+// FloatspanBins wraps MEOS C function floatspan_bins.
+func FloatspanBins(s *Span, vsize float64, vorigin float64) (*Span, int) {
+	var _out_count C.int
+	res := C.floatspan_bins(s._inner, C.double(vsize), C.double(vorigin), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO floatspanset_bins: unsupported param int *
-// func FloatspansetBins(...) { /* not yet handled by codegen */ }
+// FloatspansetBins wraps MEOS C function floatspanset_bins.
+func FloatspansetBins(ss *SpanSet, vsize float64, vorigin float64) (*Span, int) {
+	var _out_count C.int
+	res := C.floatspanset_bins(ss._inner, C.double(vsize), C.double(vorigin), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
 // IntGetBin wraps MEOS C function int_get_bin.
@@ -4839,12 +5017,20 @@ func IntGetBin(value int, vsize int, vorigin int) int {
 }
 
 
-// TODO intspan_bins: unsupported param int *
-// func IntspanBins(...) { /* not yet handled by codegen */ }
+// IntspanBins wraps MEOS C function intspan_bins.
+func IntspanBins(s *Span, vsize int, vorigin int) (*Span, int) {
+	var _out_count C.int
+	res := C.intspan_bins(s._inner, C.int(vsize), C.int(vorigin), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO intspanset_bins: unsupported param int *
-// func IntspansetBins(...) { /* not yet handled by codegen */ }
+// IntspansetBins wraps MEOS C function intspanset_bins.
+func IntspansetBins(ss *SpanSet, vsize int, vorigin int) (*Span, int) {
+	var _out_count C.int
+	res := C.intspanset_bins(ss._inner, C.int(vsize), C.int(vorigin), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
 // TimestamptzGetBin wraps MEOS C function timestamptz_get_bin.
@@ -4854,20 +5040,42 @@ func TimestamptzGetBin(t int64, duration timeutil.Timedelta, torigin int64) int6
 }
 
 
-// TODO tstzspan_bins: unsupported param int *
-// func TstzspanBins(...) { /* not yet handled by codegen */ }
+// TstzspanBins wraps MEOS C function tstzspan_bins.
+func TstzspanBins(s *Span, duration timeutil.Timedelta, origin int64) (*Span, int) {
+	var _out_count C.int
+	res := C.tstzspan_bins(s._inner, duration.Inner(), C.TimestampTz(origin), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO tstzspanset_bins: unsupported param int *
-// func TstzspansetBins(...) { /* not yet handled by codegen */ }
+// TstzspansetBins wraps MEOS C function tstzspanset_bins.
+func TstzspansetBins(ss *SpanSet, duration timeutil.Timedelta, torigin int64) (*Span, int) {
+	var _out_count C.int
+	res := C.tstzspanset_bins(ss._inner, duration.Inner(), C.TimestampTz(torigin), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO tbox_as_hexwkb: unsupported param size_t *
-// func TBOXAsHexwkb(...) { /* not yet handled by codegen */ }
+// TBOXAsHexwkb wraps MEOS C function tbox_as_hexwkb.
+func TBOXAsHexwkb(box *TBox, variant uint8) (string, uint) {
+	var _out_size C.size_t
+	res := C.tbox_as_hexwkb(box._inner, C.uint8_t(variant), &_out_size)
+	return C.GoString(res), uint(_out_size)
+}
 
 
-// TODO tbox_as_wkb: unsupported return type uint8_t *
-// func TBOXAsWKB(...) { /* not yet handled by codegen */ }
+// TBOXAsWKB wraps MEOS C function tbox_as_wkb.
+func TBOXAsWKB(box *TBox, variant uint8) []uint8 {
+	var _out_size_out C.size_t
+	res := C.tbox_as_wkb(box._inner, C.uint8_t(variant), &_out_size_out)
+	_n := int(_out_size_out)
+	_slice := unsafe.Slice((*C.uint8_t)(unsafe.Pointer(res)), _n)
+	_out := make([]uint8, _n)
+	for _i, _e := range _slice {
+		_out[_i] = uint8(_e)
+	}
+	return _out
+}
 
 
 // TBOXFromHexwkb wraps MEOS C function tbox_from_hexwkb.
@@ -4879,8 +5087,11 @@ func TBOXFromHexwkb(hexwkb string) *TBox {
 }
 
 
-// TODO tbox_from_wkb: unsupported param const uint8_t *
-// func TBOXFromWKB(...) { /* not yet handled by codegen */ }
+// TBOXFromWKB wraps MEOS C function tbox_from_wkb.
+func TBOXFromWKB(wkb []byte) *TBox {
+	res := C.tbox_from_wkb((*C.uint8_t)(unsafe.Pointer(&wkb[0])), C.size_t(len(wkb)))
+	return &TBox{_inner: res}
+}
 
 
 // TBOXIn wraps MEOS C function tbox_in.
@@ -5046,52 +5257,100 @@ func TBOXHasx(box *TBox) bool {
 }
 
 
-// TODO tbox_tmax: unsupported param TimestampTz *
-// func TBOXTmax(...) { /* not yet handled by codegen */ }
+// TBOXTmax wraps MEOS C function tbox_tmax.
+func TBOXTmax(box *TBox) (bool, int64) {
+	var _out_result C.TimestampTz
+	res := C.tbox_tmax(box._inner, &_out_result)
+	return bool(res), int64({})
+}
 
 
-// TODO tbox_tmax_inc: unsupported param bool *
-// func TBOXTmaxInc(...) { /* not yet handled by codegen */ }
+// TBOXTmaxInc wraps MEOS C function tbox_tmax_inc.
+func TBOXTmaxInc(box *TBox) (bool, bool) {
+	var _out_result C.bool
+	res := C.tbox_tmax_inc(box._inner, &_out_result)
+	return bool(res), bool({})
+}
 
 
-// TODO tbox_tmin: unsupported param TimestampTz *
-// func TBOXTmin(...) { /* not yet handled by codegen */ }
+// TBOXTmin wraps MEOS C function tbox_tmin.
+func TBOXTmin(box *TBox) (bool, int64) {
+	var _out_result C.TimestampTz
+	res := C.tbox_tmin(box._inner, &_out_result)
+	return bool(res), int64({})
+}
 
 
-// TODO tbox_tmin_inc: unsupported param bool *
-// func TBOXTminInc(...) { /* not yet handled by codegen */ }
+// TBOXTminInc wraps MEOS C function tbox_tmin_inc.
+func TBOXTminInc(box *TBox) (bool, bool) {
+	var _out_result C.bool
+	res := C.tbox_tmin_inc(box._inner, &_out_result)
+	return bool(res), bool({})
+}
 
 
-// TODO tbox_xmax: unsupported param double *
-// func TBOXXmax(...) { /* not yet handled by codegen */ }
+// TBOXXmax wraps MEOS C function tbox_xmax.
+func TBOXXmax(box *TBox) (bool, float64) {
+	var _out_result C.double
+	res := C.tbox_xmax(box._inner, &_out_result)
+	return bool(res), float64({})
+}
 
 
-// TODO tbox_xmax_inc: unsupported param bool *
-// func TBOXXmaxInc(...) { /* not yet handled by codegen */ }
+// TBOXXmaxInc wraps MEOS C function tbox_xmax_inc.
+func TBOXXmaxInc(box *TBox) (bool, bool) {
+	var _out_result C.bool
+	res := C.tbox_xmax_inc(box._inner, &_out_result)
+	return bool(res), bool({})
+}
 
 
-// TODO tbox_xmin: unsupported param double *
-// func TBOXXmin(...) { /* not yet handled by codegen */ }
+// TBOXXmin wraps MEOS C function tbox_xmin.
+func TBOXXmin(box *TBox) (bool, float64) {
+	var _out_result C.double
+	res := C.tbox_xmin(box._inner, &_out_result)
+	return bool(res), float64({})
+}
 
 
-// TODO tbox_xmin_inc: unsupported param bool *
-// func TBOXXminInc(...) { /* not yet handled by codegen */ }
+// TBOXXminInc wraps MEOS C function tbox_xmin_inc.
+func TBOXXminInc(box *TBox) (bool, bool) {
+	var _out_result C.bool
+	res := C.tbox_xmin_inc(box._inner, &_out_result)
+	return bool(res), bool({})
+}
 
 
-// TODO tboxfloat_xmax: unsupported param double *
-// func TboxfloatXmax(...) { /* not yet handled by codegen */ }
+// TboxfloatXmax wraps MEOS C function tboxfloat_xmax.
+func TboxfloatXmax(box *TBox) (bool, float64) {
+	var _out_result C.double
+	res := C.tboxfloat_xmax(box._inner, &_out_result)
+	return bool(res), float64({})
+}
 
 
-// TODO tboxfloat_xmin: unsupported param double *
-// func TboxfloatXmin(...) { /* not yet handled by codegen */ }
+// TboxfloatXmin wraps MEOS C function tboxfloat_xmin.
+func TboxfloatXmin(box *TBox) (bool, float64) {
+	var _out_result C.double
+	res := C.tboxfloat_xmin(box._inner, &_out_result)
+	return bool(res), float64({})
+}
 
 
-// TODO tboxint_xmax: unsupported param int *
-// func TboxintXmax(...) { /* not yet handled by codegen */ }
+// TboxintXmax wraps MEOS C function tboxint_xmax.
+func TboxintXmax(box *TBox) (bool, int) {
+	var _out_result C.int
+	res := C.tboxint_xmax(box._inner, &_out_result)
+	return bool(res), int({})
+}
 
 
-// TODO tboxint_xmin: unsupported param int *
-// func TboxintXmin(...) { /* not yet handled by codegen */ }
+// TboxintXmin wraps MEOS C function tboxint_xmin.
+func TboxintXmin(box *TBox) (bool, int) {
+	var _out_result C.int
+	res := C.tboxint_xmin(box._inner, &_out_result)
+	return bool(res), int({})
+}
 
 
 // TBOXExpandTime wraps MEOS C function tbox_expand_time.
@@ -5322,8 +5581,12 @@ func TboolOut(temp Temporal) string {
 }
 
 
-// TODO temporal_as_hexwkb: unsupported param size_t *
-// func TemporalAsHexwkb(...) { /* not yet handled by codegen */ }
+// TemporalAsHexwkb wraps MEOS C function temporal_as_hexwkb.
+func TemporalAsHexwkb(temp Temporal, variant uint8) (string, uint) {
+	var _out_size_out C.size_t
+	res := C.temporal_as_hexwkb(temp.Inner(), C.uint8_t(variant), &_out_size_out)
+	return C.GoString(res), uint(_out_size_out)
+}
 
 
 // TemporalAsMFJSON wraps MEOS C function temporal_as_mfjson.
@@ -5335,8 +5598,18 @@ func TemporalAsMFJSON(temp Temporal, with_bbox bool, flags int, precision int, s
 }
 
 
-// TODO temporal_as_wkb: unsupported return type uint8_t *
-// func TemporalAsWKB(...) { /* not yet handled by codegen */ }
+// TemporalAsWKB wraps MEOS C function temporal_as_wkb.
+func TemporalAsWKB(temp Temporal, variant uint8) []uint8 {
+	var _out_size_out C.size_t
+	res := C.temporal_as_wkb(temp.Inner(), C.uint8_t(variant), &_out_size_out)
+	_n := int(_out_size_out)
+	_slice := unsafe.Slice((*C.uint8_t)(unsafe.Pointer(res)), _n)
+	_out := make([]uint8, _n)
+	for _i, _e := range _slice {
+		_out[_i] = uint8(_e)
+	}
+	return _out
+}
 
 
 // TemporalFromHexwkb wraps MEOS C function temporal_from_hexwkb.
@@ -5348,8 +5621,11 @@ func TemporalFromHexwkb(hexwkb string) Temporal {
 }
 
 
-// TODO temporal_from_wkb: unsupported param const uint8_t *
-// func TemporalFromWKB(...) { /* not yet handled by codegen */ }
+// TemporalFromWKB wraps MEOS C function temporal_from_wkb.
+func TemporalFromWKB(wkb []byte) Temporal {
+	res := C.temporal_from_wkb((*C.uint8_t)(unsafe.Pointer(&wkb[0])), C.size_t(len(wkb)))
+	return CreateTemporal(res)
+}
 
 
 // TfloatFromMFJSON wraps MEOS C function tfloat_from_mfjson.
@@ -5539,16 +5815,31 @@ func TintseqsetFromBaseTstzspanset(i int, ss *SpanSet) TSequenceSet {
 }
 
 
-// TODO tsequence_make: unsupported param TInstant **
-// func TsequenceMake(...) { /* not yet handled by codegen */ }
+// TsequenceMake wraps MEOS C function tsequence_make.
+func TsequenceMake(instants []TInstant, lower_inc bool, upper_inc bool, interp Interpolation, normalize bool) TSequence {
+	_c_instants := make([]*C.TInstant, len(instants))
+	for _i, _v := range instants { _c_instants[_i] = _v._inner }
+	res := C.tsequence_make((**C.TInstant)(unsafe.Pointer(&_c_instants[0])), C.int(len(instants)), C.bool(lower_inc), C.bool(upper_inc), C.interpType(interp), C.bool(normalize))
+	return TSequence{_inner: res}
+}
 
 
-// TODO tsequenceset_make: unsupported param TSequence **
-// func TsequencesetMake(...) { /* not yet handled by codegen */ }
+// TsequencesetMake wraps MEOS C function tsequenceset_make.
+func TsequencesetMake(sequences []TSequence, normalize bool) TSequenceSet {
+	_c_sequences := make([]*C.TSequence, len(sequences))
+	for _i, _v := range sequences { _c_sequences[_i] = _v._inner }
+	res := C.tsequenceset_make((**C.TSequence)(unsafe.Pointer(&_c_sequences[0])), C.int(len(sequences)), C.bool(normalize))
+	return TSequenceSet{_inner: res}
+}
 
 
-// TODO tsequenceset_make_gaps: unsupported param TInstant **
-// func TsequencesetMakeGaps(...) { /* not yet handled by codegen */ }
+// TsequencesetMakeGaps wraps MEOS C function tsequenceset_make_gaps.
+func TsequencesetMakeGaps(instants []TInstant, interp Interpolation, maxt timeutil.Timedelta, maxdist float64) TSequenceSet {
+	_c_instants := make([]*C.TInstant, len(instants))
+	for _i, _v := range instants { _c_instants[_i] = _v._inner }
+	res := C.tsequenceset_make_gaps((**C.TInstant)(unsafe.Pointer(&_c_instants[0])), C.int(len(instants)), C.interpType(interp), maxt.Inner(), C.double(maxdist))
+	return TSequenceSet{_inner: res}
+}
 
 
 // TtextFromBaseTemp wraps MEOS C function ttext_from_base_temp.
@@ -5652,16 +5943,34 @@ func TboolStartValue(temp Temporal) bool {
 }
 
 
-// TODO tbool_value_at_timestamptz: unsupported param bool *
-// func TboolValueAtTimestamptz(...) { /* not yet handled by codegen */ }
+// TboolValueAtTimestamptz wraps MEOS C function tbool_value_at_timestamptz.
+func TboolValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, bool) {
+	var _out_value C.bool
+	res := C.tbool_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_value)
+	return bool(res), bool({})
+}
 
 
-// TODO tbool_value_n: unsupported param bool *
-// func TboolValueN(...) { /* not yet handled by codegen */ }
+// TboolValueN wraps MEOS C function tbool_value_n.
+func TboolValueN(temp Temporal, n int) (bool, bool) {
+	var _out_result C.bool
+	res := C.tbool_value_n(temp.Inner(), C.int(n), &_out_result)
+	return bool(res), bool({})
+}
 
 
-// TODO tbool_values: unsupported return type bool *
-// func TboolValues(...) { /* not yet handled by codegen */ }
+// TboolValues wraps MEOS C function tbool_values.
+func TboolValues(temp Temporal) []bool {
+	var _out_count C.int
+	res := C.tbool_values(temp.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((*C.bool)(unsafe.Pointer(res)), _n)
+	_out := make([]bool, _n)
+	for _i, _e := range _slice {
+		_out[_i] = bool(_e)
+	}
+	return _out
+}
 
 
 // TemporalDuration wraps MEOS C function temporal_duration.
@@ -5706,8 +6015,18 @@ func TemporalInstantN(temp Temporal, n int) TInstant {
 }
 
 
-// TODO temporal_instants: unsupported return type TInstant **
-// func TemporalInstants(...) { /* not yet handled by codegen */ }
+// TemporalInstants wraps MEOS C function temporal_instants.
+func TemporalInstants(temp Temporal) []TInstant {
+	var _out_count C.int
+	res := C.temporal_instants(temp.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.TInstant)(unsafe.Pointer(res)), _n)
+	_out := make([]TInstant, _n)
+	for _i, _e := range _slice {
+		_out[_i] = TInstant{_inner: _e}
+	}
+	return _out
+}
 
 
 // TemporalInterp wraps MEOS C function temporal_interp.
@@ -5766,8 +6085,18 @@ func TemporalSegmDuration(temp Temporal, duration timeutil.Timedelta, atleast bo
 }
 
 
-// TODO temporal_segments: unsupported return type TSequence **
-// func TemporalSegments(...) { /* not yet handled by codegen */ }
+// TemporalSegments wraps MEOS C function temporal_segments.
+func TemporalSegments(temp Temporal) []TSequence {
+	var _out_count C.int
+	res := C.temporal_segments(temp.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.TSequence)(unsafe.Pointer(res)), _n)
+	_out := make([]TSequence, _n)
+	for _i, _e := range _slice {
+		_out[_i] = TSequence{_inner: _e}
+	}
+	return _out
+}
 
 
 // TemporalSequenceN wraps MEOS C function temporal_sequence_n.
@@ -5777,8 +6106,18 @@ func TemporalSequenceN(temp Temporal, i int) TSequence {
 }
 
 
-// TODO temporal_sequences: unsupported return type TSequence **
-// func TemporalSequences(...) { /* not yet handled by codegen */ }
+// TemporalSequences wraps MEOS C function temporal_sequences.
+func TemporalSequences(temp Temporal) []TSequence {
+	var _out_count C.int
+	res := C.temporal_sequences(temp.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.TSequence)(unsafe.Pointer(res)), _n)
+	_out := make([]TSequence, _n)
+	for _i, _e := range _slice {
+		_out[_i] = TSequence{_inner: _e}
+	}
+	return _out
+}
 
 
 // TemporalStartInstant wraps MEOS C function temporal_start_instant.
@@ -5823,12 +6162,26 @@ func TemporalTime(temp Temporal) *SpanSet {
 }
 
 
-// TODO temporal_timestamps: unsupported return type TimestampTz *
-// func TemporalTimestamps(...) { /* not yet handled by codegen */ }
+// TemporalTimestamps wraps MEOS C function temporal_timestamps.
+func TemporalTimestamps(temp Temporal) []int64 {
+	var _out_count C.int
+	res := C.temporal_timestamps(temp.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((*C.TimestampTz)(unsafe.Pointer(res)), _n)
+	_out := make([]int64, _n)
+	for _i, _e := range _slice {
+		_out[_i] = int64(_e)
+	}
+	return _out
+}
 
 
-// TODO temporal_timestamptz_n: unsupported param TimestampTz *
-// func TemporalTimestamptzN(...) { /* not yet handled by codegen */ }
+// TemporalTimestamptzN wraps MEOS C function temporal_timestamptz_n.
+func TemporalTimestamptzN(temp Temporal, n int) (bool, int64) {
+	var _out_result C.TimestampTz
+	res := C.temporal_timestamptz_n(temp.Inner(), C.int(n), &_out_result)
+	return bool(res), int64({})
+}
 
 
 // TemporalUpperInc wraps MEOS C function temporal_upper_inc.
@@ -5873,16 +6226,34 @@ func TfloatStartValue(temp Temporal) float64 {
 }
 
 
-// TODO tfloat_value_at_timestamptz: unsupported param double *
-// func TfloatValueAtTimestamptz(...) { /* not yet handled by codegen */ }
+// TfloatValueAtTimestamptz wraps MEOS C function tfloat_value_at_timestamptz.
+func TfloatValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, float64) {
+	var _out_value C.double
+	res := C.tfloat_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_value)
+	return bool(res), float64({})
+}
 
 
-// TODO tfloat_value_n: unsupported param double *
-// func TfloatValueN(...) { /* not yet handled by codegen */ }
+// TfloatValueN wraps MEOS C function tfloat_value_n.
+func TfloatValueN(temp Temporal, n int) (bool, float64) {
+	var _out_result C.double
+	res := C.tfloat_value_n(temp.Inner(), C.int(n), &_out_result)
+	return bool(res), float64({})
+}
 
 
-// TODO tfloat_values: unsupported return type double *
-// func TfloatValues(...) { /* not yet handled by codegen */ }
+// TfloatValues wraps MEOS C function tfloat_values.
+func TfloatValues(temp Temporal) []float64 {
+	var _out_count C.int
+	res := C.tfloat_values(temp.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((*C.double)(unsafe.Pointer(res)), _n)
+	_out := make([]float64, _n)
+	for _i, _e := range _slice {
+		_out[_i] = float64(_e)
+	}
+	return _out
+}
 
 
 // TintEndValue wraps MEOS C function tint_end_value.
@@ -5913,16 +6284,34 @@ func TintStartValue(temp Temporal) int {
 }
 
 
-// TODO tint_value_at_timestamptz: unsupported param int *
-// func TintValueAtTimestamptz(...) { /* not yet handled by codegen */ }
+// TintValueAtTimestamptz wraps MEOS C function tint_value_at_timestamptz.
+func TintValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, int) {
+	var _out_value C.int
+	res := C.tint_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_value)
+	return bool(res), int({})
+}
 
 
-// TODO tint_value_n: unsupported param int *
-// func TintValueN(...) { /* not yet handled by codegen */ }
+// TintValueN wraps MEOS C function tint_value_n.
+func TintValueN(temp Temporal, n int) (bool, int) {
+	var _out_result C.int
+	res := C.tint_value_n(temp.Inner(), C.int(n), &_out_result)
+	return bool(res), int({})
+}
 
 
-// TODO tint_values: unsupported return type int *
-// func TintValues(...) { /* not yet handled by codegen */ }
+// TintValues wraps MEOS C function tint_values.
+func TintValues(temp Temporal) []int {
+	var _out_count C.int
+	res := C.tint_values(temp.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((*C.int)(unsafe.Pointer(res)), _n)
+	_out := make([]int, _n)
+	for _i, _e := range _slice {
+		_out[_i] = int(_e)
+	}
+	return _out
+}
 
 
 // TnumberAvgValue wraps MEOS C function tnumber_avg_value.
@@ -5981,12 +6370,20 @@ func TtextStartValue(temp Temporal) string {
 }
 
 
-// TODO ttext_value_at_timestamptz: unsupported param text **
-// func TtextValueAtTimestamptz(...) { /* not yet handled by codegen */ }
+// TtextValueAtTimestamptz wraps MEOS C function ttext_value_at_timestamptz.
+func TtextValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, string) {
+	var _out_value *C.text
+	res := C.ttext_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_value)
+	return bool(res), text2cstring(_out_value)
+}
 
 
-// TODO ttext_value_n: unsupported param text **
-// func TtextValueN(...) { /* not yet handled by codegen */ }
+// TtextValueN wraps MEOS C function ttext_value_n.
+func TtextValueN(temp Temporal, n int) (bool, string) {
+	var _out_result *C.text
+	res := C.ttext_value_n(temp.Inner(), C.int(n), &_out_result)
+	return bool(res), text2cstring(_out_result)
+}
 
 
 // TODO ttext_values: unsupported return type text **
@@ -6000,8 +6397,19 @@ func FloatDegrees(value float64, normalize bool) float64 {
 }
 
 
-// TODO temparr_round: unsupported return type Temporal **
-// func TemparrRound(...) { /* not yet handled by codegen */ }
+// TemparrRound wraps MEOS C function temparr_round.
+func TemparrRound(temp []Temporal, maxdd int) []Temporal {
+	_c_temp := make([]*C.Temporal, len(temp))
+	for _i, _v := range temp { _c_temp[_i] = _v._inner }
+	res := C.temparr_round((**C.Temporal)(unsafe.Pointer(&_c_temp[0])), C.int(len(temp)), C.int(maxdd))
+	_n := len(temp)
+	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
+	_out := make([]Temporal, _n)
+	for _i, _e := range _slice {
+		_out[_i] = CreateTemporal(_e)
+	}
+	return _out
+}
 
 
 // TemporalRound wraps MEOS C function temporal_round.
@@ -6186,8 +6594,13 @@ func TemporalMerge(temp1 Temporal, temp2 Temporal) Temporal {
 }
 
 
-// TODO temporal_merge_array: unsupported param Temporal **
-// func TemporalMergeArray(...) { /* not yet handled by codegen */ }
+// TemporalMergeArray wraps MEOS C function temporal_merge_array.
+func TemporalMergeArray(temparr []Temporal) Temporal {
+	_c_temparr := make([]*C.Temporal, len(temparr))
+	for _i, _v := range temparr { _c_temparr[_i] = _v._inner }
+	res := C.temporal_merge_array((**C.Temporal)(unsafe.Pointer(&_c_temparr[0])), C.int(len(temparr)))
+	return CreateTemporal(res)
+}
 
 
 // TemporalUpdate wraps MEOS C function temporal_update.
@@ -7498,28 +7911,52 @@ func TneTtextText(temp Temporal, txt string) Temporal {
 }
 
 
-// TODO temporal_spans: unsupported param int *
-// func TemporalSpans(...) { /* not yet handled by codegen */ }
+// TemporalSpans wraps MEOS C function temporal_spans.
+func TemporalSpans(temp Temporal) (*Span, int) {
+	var _out_count C.int
+	res := C.temporal_spans(temp.Inner(), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO temporal_split_each_n_spans: unsupported param int *
-// func TemporalSplitEachNSpans(...) { /* not yet handled by codegen */ }
+// TemporalSplitEachNSpans wraps MEOS C function temporal_split_each_n_spans.
+func TemporalSplitEachNSpans(temp Temporal, elem_count int) (*Span, int) {
+	var _out_count C.int
+	res := C.temporal_split_each_n_spans(temp.Inner(), C.int(elem_count), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO temporal_split_n_spans: unsupported param int *
-// func TemporalSplitNSpans(...) { /* not yet handled by codegen */ }
+// TemporalSplitNSpans wraps MEOS C function temporal_split_n_spans.
+func TemporalSplitNSpans(temp Temporal, span_count int) (*Span, int) {
+	var _out_count C.int
+	res := C.temporal_split_n_spans(temp.Inner(), C.int(span_count), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO tnumber_split_each_n_tboxes: unsupported param int *
-// func TnumberSplitEachNTboxes(...) { /* not yet handled by codegen */ }
+// TnumberSplitEachNTboxes wraps MEOS C function tnumber_split_each_n_tboxes.
+func TnumberSplitEachNTboxes(temp Temporal, elem_count int) (*TBox, int) {
+	var _out_count C.int
+	res := C.tnumber_split_each_n_tboxes(temp.Inner(), C.int(elem_count), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tnumber_split_n_tboxes: unsupported param int *
-// func TnumberSplitNTboxes(...) { /* not yet handled by codegen */ }
+// TnumberSplitNTboxes wraps MEOS C function tnumber_split_n_tboxes.
+func TnumberSplitNTboxes(temp Temporal, box_count int) (*TBox, int) {
+	var _out_count C.int
+	res := C.tnumber_split_n_tboxes(temp.Inner(), C.int(box_count), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tnumber_tboxes: unsupported param int *
-// func TnumberTboxes(...) { /* not yet handled by codegen */ }
+// TnumberTboxes wraps MEOS C function tnumber_tboxes.
+func TnumberTboxes(temp Temporal) (*TBox, int) {
+	var _out_count C.int
+	res := C.tnumber_tboxes(temp.Inner(), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
 // AdjacentNumspanTnumber wraps MEOS C function adjacent_numspan_tnumber.
@@ -8730,8 +9167,12 @@ func TemporalDyntimewarpDistance(temp1 Temporal, temp2 Temporal) float64 {
 }
 
 
-// TODO temporal_dyntimewarp_path: unsupported return type Match *
-// func TemporalDyntimewarpPath(...) { /* not yet handled by codegen */ }
+// TemporalDyntimewarpPath wraps MEOS C function temporal_dyntimewarp_path.
+func TemporalDyntimewarpPath(temp1 Temporal, temp2 Temporal) (*Match, int) {
+	var _out_count C.int
+	res := C.temporal_dyntimewarp_path(temp1.Inner(), temp2.Inner(), &_out_count)
+	return &Match{_inner: res}, int(_out_count)
+}
 
 
 // TemporalFrechetDistance wraps MEOS C function temporal_frechet_distance.
@@ -8741,8 +9182,12 @@ func TemporalFrechetDistance(temp1 Temporal, temp2 Temporal) float64 {
 }
 
 
-// TODO temporal_frechet_path: unsupported return type Match *
-// func TemporalFrechetPath(...) { /* not yet handled by codegen */ }
+// TemporalFrechetPath wraps MEOS C function temporal_frechet_path.
+func TemporalFrechetPath(temp1 Temporal, temp2 Temporal) (*Match, int) {
+	var _out_count C.int
+	res := C.temporal_frechet_path(temp1.Inner(), temp2.Inner(), &_out_count)
+	return &Match{_inner: res}, int(_out_count)
+}
 
 
 // TemporalHausdorffDistance wraps MEOS C function temporal_hausdorff_distance.
@@ -8752,82 +9197,142 @@ func TemporalHausdorffDistance(temp1 Temporal, temp2 Temporal) float64 {
 }
 
 
-// TODO temporal_time_bins: unsupported param int *
-// func TemporalTimeBins(...) { /* not yet handled by codegen */ }
+// TemporalTimeBins wraps MEOS C function temporal_time_bins.
+func TemporalTimeBins(temp Temporal, duration timeutil.Timedelta, origin int64) (*Span, int) {
+	var _out_count C.int
+	res := C.temporal_time_bins(temp.Inner(), duration.Inner(), C.TimestampTz(origin), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO temporal_time_split: unsupported return type Temporal **
+// TODO temporal_time_split: unsupported param TimestampTz **
 // func TemporalTimeSplit(...) { /* not yet handled by codegen */ }
 
 
-// TODO tfloat_time_boxes: unsupported param int *
-// func TfloatTimeBoxes(...) { /* not yet handled by codegen */ }
+// TfloatTimeBoxes wraps MEOS C function tfloat_time_boxes.
+func TfloatTimeBoxes(temp Temporal, duration timeutil.Timedelta, torigin int64) (*TBox, int) {
+	var _out_count C.int
+	res := C.tfloat_time_boxes(temp.Inner(), duration.Inner(), C.TimestampTz(torigin), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tfloat_value_bins: unsupported param int *
-// func TfloatValueBins(...) { /* not yet handled by codegen */ }
+// TfloatValueBins wraps MEOS C function tfloat_value_bins.
+func TfloatValueBins(temp Temporal, vsize float64, vorigin float64) (*Span, int) {
+	var _out_count C.int
+	res := C.tfloat_value_bins(temp.Inner(), C.double(vsize), C.double(vorigin), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO tfloat_value_boxes: unsupported param int *
-// func TfloatValueBoxes(...) { /* not yet handled by codegen */ }
+// TfloatValueBoxes wraps MEOS C function tfloat_value_boxes.
+func TfloatValueBoxes(temp Temporal, vsize float64, vorigin float64) (*TBox, int) {
+	var _out_count C.int
+	res := C.tfloat_value_boxes(temp.Inner(), C.double(vsize), C.double(vorigin), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tfloat_value_split: unsupported return type Temporal **
+// TODO tfloat_value_split: unsupported param double **
 // func TfloatValueSplit(...) { /* not yet handled by codegen */ }
 
 
-// TODO tfloat_value_time_boxes: unsupported param int *
-// func TfloatValueTimeBoxes(...) { /* not yet handled by codegen */ }
+// TfloatValueTimeBoxes wraps MEOS C function tfloat_value_time_boxes.
+func TfloatValueTimeBoxes(temp Temporal, vsize float64, duration timeutil.Timedelta, vorigin float64, torigin int64) (*TBox, int) {
+	var _out_count C.int
+	res := C.tfloat_value_time_boxes(temp.Inner(), C.double(vsize), duration.Inner(), C.double(vorigin), C.TimestampTz(torigin), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tfloat_value_time_split: unsupported return type Temporal **
+// TODO tfloat_value_time_split: unsupported param double **
 // func TfloatValueTimeSplit(...) { /* not yet handled by codegen */ }
 
 
-// TODO tfloatbox_time_tiles: unsupported param int *
-// func TfloatboxTimeTiles(...) { /* not yet handled by codegen */ }
+// TfloatboxTimeTiles wraps MEOS C function tfloatbox_time_tiles.
+func TfloatboxTimeTiles(box *TBox, duration timeutil.Timedelta, torigin int64) (*TBox, int) {
+	var _out_count C.int
+	res := C.tfloatbox_time_tiles(box._inner, duration.Inner(), C.TimestampTz(torigin), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tfloatbox_value_tiles: unsupported param int *
-// func TfloatboxValueTiles(...) { /* not yet handled by codegen */ }
+// TfloatboxValueTiles wraps MEOS C function tfloatbox_value_tiles.
+func TfloatboxValueTiles(box *TBox, vsize float64, vorigin float64) (*TBox, int) {
+	var _out_count C.int
+	res := C.tfloatbox_value_tiles(box._inner, C.double(vsize), C.double(vorigin), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tfloatbox_value_time_tiles: unsupported param int *
-// func TfloatboxValueTimeTiles(...) { /* not yet handled by codegen */ }
+// TfloatboxValueTimeTiles wraps MEOS C function tfloatbox_value_time_tiles.
+func TfloatboxValueTimeTiles(box *TBox, vsize float64, duration timeutil.Timedelta, vorigin float64, torigin int64) (*TBox, int) {
+	var _out_count C.int
+	res := C.tfloatbox_value_time_tiles(box._inner, C.double(vsize), duration.Inner(), C.double(vorigin), C.TimestampTz(torigin), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tint_time_boxes: unsupported param int *
-// func TintTimeBoxes(...) { /* not yet handled by codegen */ }
+// TintTimeBoxes wraps MEOS C function tint_time_boxes.
+func TintTimeBoxes(temp Temporal, duration timeutil.Timedelta, torigin int64) (*TBox, int) {
+	var _out_count C.int
+	res := C.tint_time_boxes(temp.Inner(), duration.Inner(), C.TimestampTz(torigin), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tint_value_bins: unsupported param int *
-// func TintValueBins(...) { /* not yet handled by codegen */ }
+// TintValueBins wraps MEOS C function tint_value_bins.
+func TintValueBins(temp Temporal, vsize int, vorigin int) (*Span, int) {
+	var _out_count C.int
+	res := C.tint_value_bins(temp.Inner(), C.int(vsize), C.int(vorigin), &_out_count)
+	return &Span{_inner: res}, int(_out_count)
+}
 
 
-// TODO tint_value_boxes: unsupported param int *
-// func TintValueBoxes(...) { /* not yet handled by codegen */ }
+// TintValueBoxes wraps MEOS C function tint_value_boxes.
+func TintValueBoxes(temp Temporal, vsize int, vorigin int) (*TBox, int) {
+	var _out_count C.int
+	res := C.tint_value_boxes(temp.Inner(), C.int(vsize), C.int(vorigin), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tint_value_split: unsupported return type Temporal **
+// TODO tint_value_split: unsupported param int **
 // func TintValueSplit(...) { /* not yet handled by codegen */ }
 
 
-// TODO tint_value_time_boxes: unsupported param int *
-// func TintValueTimeBoxes(...) { /* not yet handled by codegen */ }
+// TintValueTimeBoxes wraps MEOS C function tint_value_time_boxes.
+func TintValueTimeBoxes(temp Temporal, vsize int, duration timeutil.Timedelta, vorigin int, torigin int64) (*TBox, int) {
+	var _out_count C.int
+	res := C.tint_value_time_boxes(temp.Inner(), C.int(vsize), duration.Inner(), C.int(vorigin), C.TimestampTz(torigin), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tint_value_time_split: unsupported return type Temporal **
+// TODO tint_value_time_split: unsupported param int **
 // func TintValueTimeSplit(...) { /* not yet handled by codegen */ }
 
 
-// TODO tintbox_time_tiles: unsupported param int *
-// func TintboxTimeTiles(...) { /* not yet handled by codegen */ }
+// TintboxTimeTiles wraps MEOS C function tintbox_time_tiles.
+func TintboxTimeTiles(box *TBox, duration timeutil.Timedelta, torigin int64) (*TBox, int) {
+	var _out_count C.int
+	res := C.tintbox_time_tiles(box._inner, duration.Inner(), C.TimestampTz(torigin), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tintbox_value_tiles: unsupported param int *
-// func TintboxValueTiles(...) { /* not yet handled by codegen */ }
+// TintboxValueTiles wraps MEOS C function tintbox_value_tiles.
+func TintboxValueTiles(box *TBox, xsize int, xorigin int) (*TBox, int) {
+	var _out_count C.int
+	res := C.tintbox_value_tiles(box._inner, C.int(xsize), C.int(xorigin), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tintbox_value_time_tiles: unsupported param int *
-// func TintboxValueTimeTiles(...) { /* not yet handled by codegen */ }
+// TintboxValueTimeTiles wraps MEOS C function tintbox_value_time_tiles.
+func TintboxValueTimeTiles(box *TBox, xsize int, duration timeutil.Timedelta, xorigin int, torigin int64) (*TBox, int) {
+	var _out_count C.int
+	res := C.tintbox_value_time_tiles(box._inner, C.int(xsize), duration.Inner(), C.int(xorigin), C.TimestampTz(torigin), &_out_count)
+	return &TBox{_inner: res}, int(_out_count)
+}
 
