@@ -1360,12 +1360,21 @@ func BigintsetStartValue(s *Set) int64 {
 func BigintsetValueN(s *Set, n int) (bool, int64) {
 	var _out_result C.int64
 	res := C.bigintset_value_n(s._inner, C.int(n), &_out_result)
-	return bool(res), int64({})
+	return bool(res), int64(_out_result)
 }
 
 
-// TODO bigintset_values: unsupported return type int64 *
-// func BigintsetValues(...) { /* not yet handled by codegen */ }
+// BigintsetValues wraps MEOS C function bigintset_values.
+func BigintsetValues(s *Set) []int64 {
+	res := C.bigintset_values(s._inner)
+	_n := int(C.set_num_values(s.Inner()))
+	_slice := unsafe.Slice((*C.int64)(unsafe.Pointer(res)), _n)
+	_out := make([]int64, _n)
+	for _i, _e := range _slice {
+		_out[_i] = int64(_e)
+	}
+	return _out
+}
 
 
 // BigintspanLower wraps MEOS C function bigintspan_lower.
@@ -1428,12 +1437,21 @@ func DatesetStartValue(s *Set) int32 {
 func DatesetValueN(s *Set, n int) (bool, int32) {
 	var _out_result C.DateADT
 	res := C.dateset_value_n(s._inner, C.int(n), &_out_result)
-	return bool(res), int32({})
+	return bool(res), int32(_out_result)
 }
 
 
-// TODO dateset_values: unsupported return type DateADT *
-// func DatesetValues(...) { /* not yet handled by codegen */ }
+// DatesetValues wraps MEOS C function dateset_values.
+func DatesetValues(s *Set) []int32 {
+	res := C.dateset_values(s._inner)
+	_n := int(C.set_num_values(s.Inner()))
+	_slice := unsafe.Slice((*C.DateADT)(unsafe.Pointer(res)), _n)
+	_out := make([]int32, _n)
+	for _i, _e := range _slice {
+		_out[_i] = int32(_e)
+	}
+	return _out
+}
 
 
 // DatespanDuration wraps MEOS C function datespan_duration.
@@ -1461,7 +1479,7 @@ func DatespanUpper(s *Span) int32 {
 func DatespansetDateN(ss *SpanSet, n int) (bool, int32) {
 	var _out_result C.DateADT
 	res := C.datespanset_date_n(ss._inner, C.int(n), &_out_result)
-	return bool(res), int32({})
+	return bool(res), int32(_out_result)
 }
 
 
@@ -1518,12 +1536,21 @@ func FloatsetStartValue(s *Set) float64 {
 func FloatsetValueN(s *Set, n int) (bool, float64) {
 	var _out_result C.double
 	res := C.floatset_value_n(s._inner, C.int(n), &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
-// TODO floatset_values: unsupported return type double *
-// func FloatsetValues(...) { /* not yet handled by codegen */ }
+// FloatsetValues wraps MEOS C function floatset_values.
+func FloatsetValues(s *Set) []float64 {
+	res := C.floatset_values(s._inner)
+	_n := int(C.set_num_values(s.Inner()))
+	_slice := unsafe.Slice((*C.double)(unsafe.Pointer(res)), _n)
+	_out := make([]float64, _n)
+	for _i, _e := range _slice {
+		_out[_i] = float64(_e)
+	}
+	return _out
+}
 
 
 // FloatspanLower wraps MEOS C function floatspan_lower.
@@ -1586,12 +1613,21 @@ func IntsetStartValue(s *Set) int {
 func IntsetValueN(s *Set, n int) (bool, int) {
 	var _out_result C.int
 	res := C.intset_value_n(s._inner, C.int(n), &_out_result)
-	return bool(res), int({})
+	return bool(res), int(_out_result)
 }
 
 
-// TODO intset_values: unsupported return type int *
-// func IntsetValues(...) { /* not yet handled by codegen */ }
+// IntsetValues wraps MEOS C function intset_values.
+func IntsetValues(s *Set) []int {
+	res := C.intset_values(s._inner)
+	_n := int(C.set_num_values(s.Inner()))
+	_slice := unsafe.Slice((*C.int)(unsafe.Pointer(res)), _n)
+	_out := make([]int, _n)
+	for _i, _e := range _slice {
+		_out[_i] = int(_e)
+	}
+	return _out
+}
 
 
 // IntspanLower wraps MEOS C function intspan_lower.
@@ -1734,8 +1770,17 @@ func SpansetSpanN(ss *SpanSet, i int) *Span {
 }
 
 
-// TODO spanset_spanarr: unsupported return type Span **
-// func SpansetSpanarr(...) { /* not yet handled by codegen */ }
+// SpansetSpanarr wraps MEOS C function spanset_spanarr.
+func SpansetSpanarr(ss *SpanSet) []*Span {
+	res := C.spanset_spanarr(ss._inner)
+	_n := int(C.spanset_num_spans(ss.Inner()))
+	_slice := unsafe.Slice((**C.Span)(unsafe.Pointer(res)), _n)
+	_out := make([]*Span, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Span{_inner: _e}
+	}
+	return _out
+}
 
 
 // SpansetStartSpan wraps MEOS C function spanset_start_span.
@@ -1774,8 +1819,17 @@ func TextsetValueN(s *Set, n int) (bool, string) {
 }
 
 
-// TODO textset_values: unsupported return type text **
-// func TextsetValues(...) { /* not yet handled by codegen */ }
+// TextsetValues wraps MEOS C function textset_values.
+func TextsetValues(s *Set) []string {
+	res := C.textset_values(s._inner)
+	_n := int(C.set_num_values(s.Inner()))
+	_slice := unsafe.Slice((**C.text)(unsafe.Pointer(res)), _n)
+	_out := make([]string, _n)
+	for _i, _e := range _slice {
+		_out[_i] = text2cstring(_e)
+	}
+	return _out
+}
 
 
 // TstzsetEndValue wraps MEOS C function tstzset_end_value.
@@ -1796,12 +1850,21 @@ func TstzsetStartValue(s *Set) int64 {
 func TstzsetValueN(s *Set, n int) (bool, int64) {
 	var _out_result C.TimestampTz
 	res := C.tstzset_value_n(s._inner, C.int(n), &_out_result)
-	return bool(res), int64({})
+	return bool(res), int64(_out_result)
 }
 
 
-// TODO tstzset_values: unsupported return type TimestampTz *
-// func TstzsetValues(...) { /* not yet handled by codegen */ }
+// TstzsetValues wraps MEOS C function tstzset_values.
+func TstzsetValues(s *Set) []int64 {
+	res := C.tstzset_values(s._inner)
+	_n := int(C.set_num_values(s.Inner()))
+	_slice := unsafe.Slice((*C.TimestampTz)(unsafe.Pointer(res)), _n)
+	_out := make([]int64, _n)
+	for _i, _e := range _slice {
+		_out[_i] = int64(_e)
+	}
+	return _out
+}
 
 
 // TstzspanDuration wraps MEOS C function tstzspan_duration.
@@ -1871,7 +1934,7 @@ func TstzspansetTimestamps(ss *SpanSet) *Set {
 func TstzspansetTimestamptzN(ss *SpanSet, n int) (bool, int64) {
 	var _out_result C.TimestampTz
 	res := C.tstzspanset_timestamptz_n(ss._inner, C.int(n), &_out_result)
-	return bool(res), int64({})
+	return bool(res), int64(_out_result)
 }
 
 
@@ -5261,7 +5324,7 @@ func TBOXHasx(box *TBox) bool {
 func TBOXTmax(box *TBox) (bool, int64) {
 	var _out_result C.TimestampTz
 	res := C.tbox_tmax(box._inner, &_out_result)
-	return bool(res), int64({})
+	return bool(res), int64(_out_result)
 }
 
 
@@ -5269,7 +5332,7 @@ func TBOXTmax(box *TBox) (bool, int64) {
 func TBOXTmaxInc(box *TBox) (bool, bool) {
 	var _out_result C.bool
 	res := C.tbox_tmax_inc(box._inner, &_out_result)
-	return bool(res), bool({})
+	return bool(res), bool(_out_result)
 }
 
 
@@ -5277,7 +5340,7 @@ func TBOXTmaxInc(box *TBox) (bool, bool) {
 func TBOXTmin(box *TBox) (bool, int64) {
 	var _out_result C.TimestampTz
 	res := C.tbox_tmin(box._inner, &_out_result)
-	return bool(res), int64({})
+	return bool(res), int64(_out_result)
 }
 
 
@@ -5285,7 +5348,7 @@ func TBOXTmin(box *TBox) (bool, int64) {
 func TBOXTminInc(box *TBox) (bool, bool) {
 	var _out_result C.bool
 	res := C.tbox_tmin_inc(box._inner, &_out_result)
-	return bool(res), bool({})
+	return bool(res), bool(_out_result)
 }
 
 
@@ -5293,7 +5356,7 @@ func TBOXTminInc(box *TBox) (bool, bool) {
 func TBOXXmax(box *TBox) (bool, float64) {
 	var _out_result C.double
 	res := C.tbox_xmax(box._inner, &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -5301,7 +5364,7 @@ func TBOXXmax(box *TBox) (bool, float64) {
 func TBOXXmaxInc(box *TBox) (bool, bool) {
 	var _out_result C.bool
 	res := C.tbox_xmax_inc(box._inner, &_out_result)
-	return bool(res), bool({})
+	return bool(res), bool(_out_result)
 }
 
 
@@ -5309,7 +5372,7 @@ func TBOXXmaxInc(box *TBox) (bool, bool) {
 func TBOXXmin(box *TBox) (bool, float64) {
 	var _out_result C.double
 	res := C.tbox_xmin(box._inner, &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -5317,7 +5380,7 @@ func TBOXXmin(box *TBox) (bool, float64) {
 func TBOXXminInc(box *TBox) (bool, bool) {
 	var _out_result C.bool
 	res := C.tbox_xmin_inc(box._inner, &_out_result)
-	return bool(res), bool({})
+	return bool(res), bool(_out_result)
 }
 
 
@@ -5325,7 +5388,7 @@ func TBOXXminInc(box *TBox) (bool, bool) {
 func TboxfloatXmax(box *TBox) (bool, float64) {
 	var _out_result C.double
 	res := C.tboxfloat_xmax(box._inner, &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -5333,7 +5396,7 @@ func TboxfloatXmax(box *TBox) (bool, float64) {
 func TboxfloatXmin(box *TBox) (bool, float64) {
 	var _out_result C.double
 	res := C.tboxfloat_xmin(box._inner, &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -5341,7 +5404,7 @@ func TboxfloatXmin(box *TBox) (bool, float64) {
 func TboxintXmax(box *TBox) (bool, int) {
 	var _out_result C.int
 	res := C.tboxint_xmax(box._inner, &_out_result)
-	return bool(res), int({})
+	return bool(res), int(_out_result)
 }
 
 
@@ -5349,7 +5412,7 @@ func TboxintXmax(box *TBox) (bool, int) {
 func TboxintXmin(box *TBox) (bool, int) {
 	var _out_result C.int
 	res := C.tboxint_xmin(box._inner, &_out_result)
-	return bool(res), int({})
+	return bool(res), int(_out_result)
 }
 
 
@@ -5947,7 +6010,7 @@ func TboolStartValue(temp Temporal) bool {
 func TboolValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, bool) {
 	var _out_value C.bool
 	res := C.tbool_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_value)
-	return bool(res), bool({})
+	return bool(res), bool(_out_value)
 }
 
 
@@ -5955,7 +6018,7 @@ func TboolValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, bool) {
 func TboolValueN(temp Temporal, n int) (bool, bool) {
 	var _out_result C.bool
 	res := C.tbool_value_n(temp.Inner(), C.int(n), &_out_result)
-	return bool(res), bool({})
+	return bool(res), bool(_out_result)
 }
 
 
@@ -6180,7 +6243,7 @@ func TemporalTimestamps(temp Temporal) []int64 {
 func TemporalTimestamptzN(temp Temporal, n int) (bool, int64) {
 	var _out_result C.TimestampTz
 	res := C.temporal_timestamptz_n(temp.Inner(), C.int(n), &_out_result)
-	return bool(res), int64({})
+	return bool(res), int64(_out_result)
 }
 
 
@@ -6230,7 +6293,7 @@ func TfloatStartValue(temp Temporal) float64 {
 func TfloatValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, float64) {
 	var _out_value C.double
 	res := C.tfloat_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_value)
-	return bool(res), float64({})
+	return bool(res), float64(_out_value)
 }
 
 
@@ -6238,7 +6301,7 @@ func TfloatValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, float6
 func TfloatValueN(temp Temporal, n int) (bool, float64) {
 	var _out_result C.double
 	res := C.tfloat_value_n(temp.Inner(), C.int(n), &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -6288,7 +6351,7 @@ func TintStartValue(temp Temporal) int {
 func TintValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, int) {
 	var _out_value C.int
 	res := C.tint_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_value)
-	return bool(res), int({})
+	return bool(res), int(_out_value)
 }
 
 
@@ -6296,7 +6359,7 @@ func TintValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, int) {
 func TintValueN(temp Temporal, n int) (bool, int) {
 	var _out_result C.int
 	res := C.tint_value_n(temp.Inner(), C.int(n), &_out_result)
-	return bool(res), int({})
+	return bool(res), int(_out_result)
 }
 
 
@@ -6386,8 +6449,18 @@ func TtextValueN(temp Temporal, n int) (bool, string) {
 }
 
 
-// TODO ttext_values: unsupported return type text **
-// func TtextValues(...) { /* not yet handled by codegen */ }
+// TtextValues wraps MEOS C function ttext_values.
+func TtextValues(temp Temporal) []string {
+	var _out_count C.int
+	res := C.ttext_values(temp.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.text)(unsafe.Pointer(res)), _n)
+	_out := make([]string, _n)
+	for _i, _e := range _slice {
+		_out[_i] = text2cstring(_e)
+	}
+	return _out
+}
 
 
 // FloatDegrees wraps MEOS C function float_degrees.
@@ -9205,8 +9278,19 @@ func TemporalTimeBins(temp Temporal, duration timeutil.Timedelta, origin int64) 
 }
 
 
-// TODO temporal_time_split: unsupported param TimestampTz **
-// func TemporalTimeSplit(...) { /* not yet handled by codegen */ }
+// TemporalTimeSplit wraps MEOS C function temporal_time_split.
+func TemporalTimeSplit(temp Temporal, duration timeutil.Timedelta, torigin int64) ([]Temporal, []int64) {
+	var _out_time_bins *C.TimestampTz
+	var _out_count C.int
+	res := C.temporal_time_split(temp.Inner(), duration.Inner(), C.TimestampTz(torigin), &_out_time_bins, &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
+	_out := make([]Temporal, _n)
+	for _i, _e := range _slice {
+		_out[_i] = CreateTemporal(_e)
+	}
+	return _out
+}
 
 
 // TfloatTimeBoxes wraps MEOS C function tfloat_time_boxes.
@@ -9233,8 +9317,19 @@ func TfloatValueBoxes(temp Temporal, vsize float64, vorigin float64) (*TBox, int
 }
 
 
-// TODO tfloat_value_split: unsupported param double **
-// func TfloatValueSplit(...) { /* not yet handled by codegen */ }
+// TfloatValueSplit wraps MEOS C function tfloat_value_split.
+func TfloatValueSplit(temp Temporal, size float64, origin float64) ([]Temporal, []float64) {
+	var _out_bins *C.double
+	var _out_count C.int
+	res := C.tfloat_value_split(temp.Inner(), C.double(size), C.double(origin), &_out_bins, &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
+	_out := make([]Temporal, _n)
+	for _i, _e := range _slice {
+		_out[_i] = CreateTemporal(_e)
+	}
+	return _out
+}
 
 
 // TfloatValueTimeBoxes wraps MEOS C function tfloat_value_time_boxes.
@@ -9245,8 +9340,20 @@ func TfloatValueTimeBoxes(temp Temporal, vsize float64, duration timeutil.Timede
 }
 
 
-// TODO tfloat_value_time_split: unsupported param double **
-// func TfloatValueTimeSplit(...) { /* not yet handled by codegen */ }
+// TfloatValueTimeSplit wraps MEOS C function tfloat_value_time_split.
+func TfloatValueTimeSplit(temp Temporal, vsize float64, duration timeutil.Timedelta, vorigin float64, torigin int64) ([]Temporal, []float64, []int64) {
+	var _out_value_bins *C.double
+	var _out_time_bins *C.TimestampTz
+	var _out_count C.int
+	res := C.tfloat_value_time_split(temp.Inner(), C.double(vsize), duration.Inner(), C.double(vorigin), C.TimestampTz(torigin), &_out_value_bins, &_out_time_bins, &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
+	_out := make([]Temporal, _n)
+	for _i, _e := range _slice {
+		_out[_i] = CreateTemporal(_e)
+	}
+	return _out
+}
 
 
 // TfloatboxTimeTiles wraps MEOS C function tfloatbox_time_tiles.
@@ -9297,8 +9404,19 @@ func TintValueBoxes(temp Temporal, vsize int, vorigin int) (*TBox, int) {
 }
 
 
-// TODO tint_value_split: unsupported param int **
-// func TintValueSplit(...) { /* not yet handled by codegen */ }
+// TintValueSplit wraps MEOS C function tint_value_split.
+func TintValueSplit(temp Temporal, vsize int, vorigin int) ([]Temporal, []int) {
+	var _out_bins *C.int
+	var _out_count C.int
+	res := C.tint_value_split(temp.Inner(), C.int(vsize), C.int(vorigin), &_out_bins, &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
+	_out := make([]Temporal, _n)
+	for _i, _e := range _slice {
+		_out[_i] = CreateTemporal(_e)
+	}
+	return _out
+}
 
 
 // TintValueTimeBoxes wraps MEOS C function tint_value_time_boxes.
@@ -9309,8 +9427,20 @@ func TintValueTimeBoxes(temp Temporal, vsize int, duration timeutil.Timedelta, v
 }
 
 
-// TODO tint_value_time_split: unsupported param int **
-// func TintValueTimeSplit(...) { /* not yet handled by codegen */ }
+// TintValueTimeSplit wraps MEOS C function tint_value_time_split.
+func TintValueTimeSplit(temp Temporal, size int, duration timeutil.Timedelta, vorigin int, torigin int64) ([]Temporal, []int, []int64) {
+	var _out_value_bins *C.int
+	var _out_time_bins *C.TimestampTz
+	var _out_count C.int
+	res := C.tint_value_time_split(temp.Inner(), C.int(size), duration.Inner(), C.int(vorigin), C.TimestampTz(torigin), &_out_value_bins, &_out_time_bins, &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
+	_out := make([]Temporal, _n)
+	for _i, _e := range _slice {
+		_out[_i] = CreateTemporal(_e)
+	}
+	return _out
+}
 
 
 // TintboxTimeTiles wraps MEOS C function tintbox_time_tiles.

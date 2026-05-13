@@ -15,11 +15,13 @@ python3 tools/codegen.py
 
 ## Coverage today
 
-2369 candidate functions across the six public headers.  2167 emit
-cleanly under the heuristic rules; 170 are skipped as `Datum`-bearing
-internal helpers (the hand-written surface exposes those through typed
-overloads which the codegen cannot synthesise from the IDL); 32 remain
-as TODO.
+2369 candidate functions across the six public headers.  2194 emit
+cleanly; 170 are excluded as `Datum`-bearing internal helpers (the
+hand-written surface exposes those through typed overloads which the
+codegen cannot synthesise from the IDL); 5 are excluded by an explicit
+`shape.skip` declaration in `meta/meos-meta.json` (the skiplist family
+takes function-pointer arguments / returns `void **`).  Zero unresolved
+TODOs remain.
 
 The covered shapes are: scalar inputs, wrapped opaque pointers
 (`Temporal`, `STBox`, `TBox`, `Span`, `SpanSet`, `Set`, `GSERIALIZED`,
@@ -31,32 +33,38 @@ out-params surfaced as additional Go return values), counted-array
 inputs (`T **` / `const T *` paired with `int count` or `size_t size`)
 lowered to Go slices, counted-array returns (`T **` paired with
 `int *count` or matching the input slice length) lowered to Go slices
-including byte buffers and `char **` string arrays, and
-`unsafe.Pointer` for `void *` arguments.
+including byte buffers and `char **` / `text **` string arrays,
+`unsafe.Pointer` for `void *` arguments, and metadata-driven shapes
+described below.
 
-The remaining 32 TODOs need per-function metadata:
+## meta/meos-meta.json shape annotations
 
-* `*_values` / `*_insts_p` / `*_sps` (~12 funcs) — array returns whose
-  length comes from a sibling accessor (`set_num_values`,
-  `temporal_num_instants`, etc.) the codegen cannot guess from the IDL
-  alone.
-* `*_split` family (`temporal_time_split`, `tfloat_value_split`,
-  `tint_value_time_split`, `tgeo_space_split`, etc.) — parallel output
-  arrays (`time_bins`, `value_bins`) sharing a single count, plus
-  `GSERIALIZED ***` triple-pointer outputs.
-* `tpoint_as_mvtgeom`, `tpointseq_make_coords` — multi-array shapes
-  beyond a single counted-array companion.
-* `tempsubtype_from_string`, `geom_min_bounding_radius` — output
-  parameters named `subtype` / `radius` rather than the canonical
-  `result` / `value` (could be hand-listed as named outputs once a
-  metadata catalog exists).
-* `skiplist_*` (function pointers, `void **`) — internal helpers; the
-  hand-written surface does not expose them either.
+The remaining ecosystem-wide editorial decisions live in MEOS-API's
+`meta/meos-meta.json` under each function's `shape` key, merged into
+`meos-idl.json` at IDL-generation time.  All bindings consume the same
+catalog.
 
-A metadata catalog of `output_parameters` / `result_parameters` /
-`array_length_for` tuples (mirroring `build_pymeos_functions.py`'s
-`output_parameters` / `result_parameters` / `nullable_parameters`)
-would close the remaining shapes without false positives.
+Annotation kinds:
+
+* `shape.arrayReturn.lengthFrom = { kind: "accessor", func, arg, castTo? }` —
+  the function returns an array whose length is obtained by calling a
+  sibling accessor on one of its inputs.  Used by the `*_values` family
+  (`bigintset_values` -> `set_num_values(s)`), the `*_insts_p` /
+  `*_sequences_p` accessors (cast to `const Temporal *`), and the
+  `*_spanarr` / `*_sps` spanset accessors.
+* `shape.arrayReturn.lengthFrom = { kind: "param", name }` — the
+  function returns an array whose length is written to an output
+  parameter of the same call.
+* `shape.outputArrays = [{ param, ... }]` — additional parallel output
+  arrays sharing the primary length.  Used by the `*_split` family
+  (`time_bins`, `value_bins`) including the triple-pointer
+  `GSERIALIZED ***` output of `tgeo_space_split` / `tgeo_space_time_split`.
+* `shape.namedOutputs = ["subtype", "radius"]` — scalar out-parameters
+  whose name is neither `result` nor `value`.
+* `shape.arrayInputGroup = { params, count, nullable }` — N parallel
+  input arrays sharing one count (`tpointseq_make_coords`).  Nullable
+  members accept Go `nil`.
+* `shape.skip = "<reason>"` — bindings omit the function entirely.
 
 ## Refreshing the IDL
 
@@ -67,6 +75,10 @@ MEOS-API against the new headers and copy the output back:
 cp ../MEOS-API/output/meos-idl.json tools/meos-idl.json
 python3 tools/codegen.py
 ```
+
+The vendored IDL relies on MEOS-API PR #1 (the stdbool stub) being in
+place so `bool` returns and `bool *` outputs do not get demoted to
+`int`.
 
 The vendored IDL relies on MEOS-API PR #1 (the stdbool stub) being in
 place so `bool` returns and `bool *` outputs do not get demoted to `int`.

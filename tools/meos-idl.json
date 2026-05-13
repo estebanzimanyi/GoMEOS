@@ -2972,7 +2972,16 @@
           "cType": "const Set *",
           "canonical": "const Set *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "accessor",
+            "func": "set_num_values",
+            "arg": "s"
+          }
+        }
+      }
     },
     {
       "name": "bigintspan_lower",
@@ -3137,7 +3146,16 @@
           "cType": "const Set *",
           "canonical": "const Set *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "accessor",
+            "func": "set_num_values",
+            "arg": "s"
+          }
+        }
+      }
     },
     {
       "name": "datespan_duration",
@@ -3357,7 +3375,16 @@
           "cType": "const Set *",
           "canonical": "const Set *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "accessor",
+            "func": "set_num_values",
+            "arg": "s"
+          }
+        }
+      }
     },
     {
       "name": "floatspan_lower",
@@ -3522,7 +3549,16 @@
           "cType": "const Set *",
           "canonical": "const Set *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "accessor",
+            "func": "set_num_values",
+            "arg": "s"
+          }
+        }
+      }
     },
     {
       "name": "intspan_lower",
@@ -3862,7 +3898,16 @@
           "cType": "const SpanSet *",
           "canonical": "const SpanSet *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "accessor",
+            "func": "spanset_num_spans",
+            "arg": "ss"
+          }
+        }
+      }
     },
     {
       "name": "spanset_start_span",
@@ -3962,7 +4007,16 @@
           "cType": "const Set *",
           "canonical": "const Set *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "accessor",
+            "func": "set_num_values",
+            "arg": "s"
+          }
+        }
+      }
     },
     {
       "name": "tstzset_end_value",
@@ -4032,7 +4086,16 @@
           "cType": "const Set *",
           "canonical": "const Set *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "accessor",
+            "func": "set_num_values",
+            "arg": "s"
+          }
+        }
+      }
     },
     {
       "name": "tstzspan_duration",
@@ -16727,7 +16790,15 @@
           "cType": "int *",
           "canonical": "int *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "param",
+            "name": "count"
+          }
+        }
+      }
     },
     {
       "name": "float_degrees",
@@ -24601,7 +24672,20 @@
           "cType": "int *",
           "canonical": "int *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "param",
+            "name": "count"
+          }
+        },
+        "outputArrays": [
+          {
+            "param": "time_bins"
+          }
+        ]
+      }
     },
     {
       "name": "tfloat_time_boxes",
@@ -24726,7 +24810,20 @@
           "cType": "int *",
           "canonical": "int *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "param",
+            "name": "count"
+          }
+        },
+        "outputArrays": [
+          {
+            "param": "bins"
+          }
+        ]
+      }
     },
     {
       "name": "tfloat_value_time_boxes",
@@ -24816,7 +24913,23 @@
           "cType": "int *",
           "canonical": "int *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "param",
+            "name": "count"
+          }
+        },
+        "outputArrays": [
+          {
+            "param": "value_bins"
+          },
+          {
+            "param": "time_bins"
+          }
+        ]
+      }
     },
     {
       "name": "tfloatbox_time_tiles",
@@ -25041,7 +25154,20 @@
           "cType": "int *",
           "canonical": "int *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "param",
+            "name": "count"
+          }
+        },
+        "outputArrays": [
+          {
+            "param": "bins"
+          }
+        ]
+      }
     },
     {
       "name": "tint_value_time_boxes",
@@ -25131,7 +25257,23 @@
           "cType": "int *",
           "canonical": "int *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "param",
+            "name": "count"
+          }
+        },
+        "outputArrays": [
+          {
+            "param": "value_bins"
+          },
+          {
+            "param": "time_bins"
+          }
+        ]
+      }
     },
     {
       "name": "tintbox_time_tiles",
@@ -25296,7 +25438,12 @@
           "cType": "int16 *",
           "canonical": "short *"
         }
-      ]
+      ],
+      "shape": {
+        "namedOutputs": [
+          "subtype"
+        ]
+      }
     },
     {
       "name": "meosoper_name",
@@ -27551,7 +27698,12 @@
           "cType": "double *",
           "canonical": "double *"
         }
-      ]
+      ],
+      "shape": {
+        "namedOutputs": [
+          "radius"
+        ]
+      }
     },
     {
       "name": "geom_shortestline2d",
@@ -28276,7 +28428,16 @@
           "cType": "const Set *",
           "canonical": "const Set *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "accessor",
+            "func": "set_num_values",
+            "arg": "s"
+          }
+        }
+      }
     },
     {
       "name": "contained_geo_set",
@@ -30556,7 +30717,22 @@
           "cType": "bool",
           "canonical": "bool"
         }
-      ]
+      ],
+      "shape": {
+        "arrayInputGroup": {
+          "params": [
+            "xcoords",
+            "ycoords",
+            "zcoords",
+            "times"
+          ],
+          "count": "count",
+          "nullable": [
+            "zcoords",
+            "times"
+          ]
+        }
+      }
     },
     {
       "name": "tpointseqset_from_base_tstzspanset",
@@ -30766,7 +30942,25 @@
           "cType": "int *",
           "canonical": "int *"
         }
-      ]
+      ],
+      "shape": {
+        "outputArrays": [
+          {
+            "param": "gsarr",
+            "lengthFrom": {
+              "kind": "param",
+              "name": "count"
+            }
+          },
+          {
+            "param": "timesarr",
+            "lengthFrom": {
+              "kind": "param",
+              "name": "count"
+            }
+          }
+        ]
+      }
     },
     {
       "name": "tpoint_tfloat_to_geomeas",
@@ -35055,7 +35249,20 @@
           "cType": "int *",
           "canonical": "int *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "param",
+            "name": "count"
+          }
+        },
+        "outputArrays": [
+          {
+            "param": "space_bins"
+          }
+        ]
+      }
     },
     {
       "name": "tgeo_space_time_split",
@@ -35125,7 +35332,23 @@
           "cType": "int *",
           "canonical": "int *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "param",
+            "name": "count"
+          }
+        },
+        "outputArrays": [
+          {
+            "param": "space_bins"
+          },
+          {
+            "param": "time_bins"
+          }
+        ]
+      }
     },
     {
       "name": "geo_cluster_kmeans",
@@ -36118,7 +36341,16 @@
           "cType": "const SpanSet *",
           "canonical": "const SpanSet *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "accessor",
+            "func": "spanset_num_spans",
+            "arg": "ss"
+          }
+        }
+      }
     },
     {
       "name": "spanset_upper",
@@ -40128,7 +40360,17 @@
           "cType": "const TSequence *",
           "canonical": "const TSequence *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "accessor",
+            "func": "temporal_num_instants",
+            "arg": "seq",
+            "castTo": "const Temporal *"
+          }
+        }
+      }
     },
     {
       "name": "tsequence_max_inst_p",
@@ -40413,7 +40655,16 @@
           "cType": "const TSequenceSet *",
           "canonical": "const TSequenceSet *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "accessor",
+            "func": "tsequenceset_num_instants",
+            "arg": "ss"
+          }
+        }
+      }
     },
     {
       "name": "tsequenceset_max_inst_p",
@@ -40538,7 +40789,17 @@
           "cType": "const TSequenceSet *",
           "canonical": "const TSequenceSet *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "accessor",
+            "func": "temporal_num_sequences",
+            "arg": "ss",
+            "castTo": "const Temporal *"
+          }
+        }
+      }
     },
     {
       "name": "tsequenceset_start_timestamptz",
@@ -43772,7 +44033,10 @@
           "cType": "void *(*)(void *, void *)",
           "canonical": "void *(*)(void *, void *)"
         }
-      ]
+      ],
+      "shape": {
+        "skip": "function-pointer args (comp_fn, merge_fn)"
+      }
     },
     {
       "name": "skiplist_search",
@@ -43857,7 +44121,10 @@
           "cType": "SkipListType",
           "canonical": "SkipListType"
         }
-      ]
+      ],
+      "shape": {
+        "skip": "function-pointer args (datum_func2)"
+      }
     },
     {
       "name": "temporal_skiplist_splice",
@@ -43892,7 +44159,10 @@
           "cType": "bool",
           "canonical": "bool"
         }
-      ]
+      ],
+      "shape": {
+        "skip": "function-pointer args (datum_func2)"
+      }
     },
     {
       "name": "skiplist_values",
@@ -43907,7 +44177,10 @@
           "cType": "SkipList *",
           "canonical": "struct SkipList *"
         }
-      ]
+      ],
+      "shape": {
+        "skip": "void ** internal helper"
+      }
     },
     {
       "name": "skiplist_keys_values",
@@ -43927,7 +44200,10 @@
           "cType": "void **",
           "canonical": "void **"
         }
-      ]
+      ],
+      "shape": {
+        "skip": "void ** internal helper"
+      }
     },
     {
       "name": "temporal_app_tinst_transfn",
@@ -47060,7 +47336,16 @@
           "cType": "const Set *",
           "canonical": "const Set *"
         }
-      ]
+      ],
+      "shape": {
+        "arrayReturn": {
+          "lengthFrom": {
+            "kind": "accessor",
+            "func": "set_num_values",
+            "arg": "s"
+          }
+        }
+      }
     },
     {
       "name": "contained_npoint_set",

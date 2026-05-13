@@ -32,8 +32,14 @@ func TempsubtypeName(subtype TempSubtype) string {
 }
 
 
-// TODO tempsubtype_from_string: unsupported param int16 *
-// func TempsubtypeFromString(...) { /* not yet handled by codegen */ }
+// TempsubtypeFromString wraps MEOS C function tempsubtype_from_string.
+func TempsubtypeFromString(str string) (bool, int16) {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	var _out_subtype C.int16
+	res := C.tempsubtype_from_string(_c_str, &_out_subtype)
+	return bool(res), int16(_out_subtype)
+}
 
 
 // MeosoperName wraps MEOS C function meosoper_name.

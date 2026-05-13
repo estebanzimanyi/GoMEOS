@@ -139,8 +139,17 @@ func SpansetMemSize(ss *SpanSet) int {
 }
 
 
-// TODO spanset_sps: unsupported return type const Span **
-// func SpansetSps(...) { /* not yet handled by codegen */ }
+// SpansetSps wraps MEOS C function spanset_sps.
+func SpansetSps(ss *SpanSet) []*Span {
+	res := C.spanset_sps(ss._inner)
+	_n := int(C.spanset_num_spans(ss.Inner()))
+	_slice := unsafe.Slice((**C.Span)(unsafe.Pointer(res)), _n)
+	_out := make([]*Span, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Span{_inner: _e}
+	}
+	return _out
+}
 
 
 // DatespanSetTstzspan wraps MEOS C function datespan_set_tstzspan.
@@ -834,8 +843,17 @@ func TsequenceHash(seq TSequence) uint32 {
 }
 
 
-// TODO tsequence_insts_p: unsupported return type const TInstant **
-// func TsequenceInstsP(...) { /* not yet handled by codegen */ }
+// TsequenceInstsP wraps MEOS C function tsequence_insts_p.
+func TsequenceInstsP(seq TSequence) []TInstant {
+	res := C.tsequence_insts_p(seq.Inner())
+	_n := int(C.temporal_num_instants((*C.Temporal)(unsafe.Pointer(seq.Inner()))))
+	_slice := unsafe.Slice((**C.TInstant)(unsafe.Pointer(res)), _n)
+	_out := make([]TInstant, _n)
+	for _i, _e := range _slice {
+		_out[_i] = TInstant{_inner: _e}
+	}
+	return _out
+}
 
 
 // TsequenceMaxInstP wraps MEOS C function tsequence_max_inst_p.
@@ -936,8 +954,17 @@ func TsequencesetInstN(ss TSequenceSet, n int) TInstant {
 }
 
 
-// TODO tsequenceset_insts_p: unsupported return type const TInstant **
-// func TsequencesetInstsP(...) { /* not yet handled by codegen */ }
+// TsequencesetInstsP wraps MEOS C function tsequenceset_insts_p.
+func TsequencesetInstsP(ss TSequenceSet) []TInstant {
+	res := C.tsequenceset_insts_p(ss.Inner())
+	_n := int(C.tsequenceset_num_instants(ss.Inner()))
+	_slice := unsafe.Slice((**C.TInstant)(unsafe.Pointer(res)), _n)
+	_out := make([]TInstant, _n)
+	for _i, _e := range _slice {
+		_out[_i] = TInstant{_inner: _e}
+	}
+	return _out
+}
 
 
 // TsequencesetMaxInstP wraps MEOS C function tsequenceset_max_inst_p.
@@ -982,8 +1009,17 @@ func TsequencesetSegments(ss TSequenceSet) []TSequence {
 }
 
 
-// TODO tsequenceset_sequences_p: unsupported return type const TSequence **
-// func TsequencesetSequencesP(...) { /* not yet handled by codegen */ }
+// TsequencesetSequencesP wraps MEOS C function tsequenceset_sequences_p.
+func TsequencesetSequencesP(ss TSequenceSet) []TSequence {
+	res := C.tsequenceset_sequences_p(ss.Inner())
+	_n := int(C.temporal_num_sequences((*C.Temporal)(unsafe.Pointer(ss.Inner()))))
+	_slice := unsafe.Slice((**C.TSequence)(unsafe.Pointer(res)), _n)
+	_out := make([]TSequence, _n)
+	for _i, _e := range _slice {
+		_out[_i] = TSequence{_inner: _e}
+	}
+	return _out
+}
 
 
 // TsequencesetStartTimestamptz wraps MEOS C function tsequenceset_start_timestamptz.
@@ -1004,7 +1040,7 @@ func TsequencesetTime(ss TSequenceSet) *SpanSet {
 func TsequencesetTimestamptzN(ss TSequenceSet, n int) (bool, int64) {
 	var _out_result C.TimestampTz
 	res := C.tsequenceset_timestamptz_n(ss.Inner(), C.int(n), &_out_result)
-	return bool(res), int64({})
+	return bool(res), int64(_out_result)
 }
 
 
@@ -1777,7 +1813,7 @@ func TemporalSkiplistMake() *SkipList {
 }
 
 
-// TODO skiplist_make: unsupported param int (*)(void *, void *)
+// TODO skiplist_make: skip: function-pointer args (comp_fn, merge_fn)
 // func SkiplistMake(...) { /* not yet handled by codegen */ }
 
 
@@ -1795,19 +1831,19 @@ func SkiplistFree(list *SkipList) {
 }
 
 
-// TODO skiplist_splice: unsupported param void **
+// TODO skiplist_splice: skip: function-pointer args (datum_func2)
 // func SkiplistSplice(...) { /* not yet handled by codegen */ }
 
 
-// TODO temporal_skiplist_splice: unsupported param void **
+// TODO temporal_skiplist_splice: skip: function-pointer args (datum_func2)
 // func TemporalSkiplistSplice(...) { /* not yet handled by codegen */ }
 
 
-// TODO skiplist_values: unsupported return type void **
+// TODO skiplist_values: skip: void ** internal helper
 // func SkiplistValues(...) { /* not yet handled by codegen */ }
 
 
-// TODO skiplist_keys_values: unsupported return type void **
+// TODO skiplist_keys_values: skip: void ** internal helper
 // func SkiplistKeysValues(...) { /* not yet handled by codegen */ }
 
 

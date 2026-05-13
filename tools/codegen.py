@@ -70,6 +70,7 @@ TYPE_MAP: dict[str, TypeMapping] = {
     "uint8_t":           TypeMapping("uint8",    "C.uint8_t({})",                     "uint8({})"),
     "uint16":            TypeMapping("uint16",   "C.uint16({})",                      "uint16({})"),
     "uint32":            TypeMapping("uint32",   "C.uint32({})",                      "uint32({})"),
+    "uint32_t":          TypeMapping("uint32",   "C.uint32_t({})",                    "uint32({})"),
     "uint64":            TypeMapping("uint64",   "C.uint64({})",                      "uint64({})"),
     "double":            TypeMapping("float64",  "C.double({})",                      "float64({})"),
     "size_t":            TypeMapping("uint",     "C.size_t({})",                      "uint({})"),
@@ -298,6 +299,9 @@ def _go_slice_elem(base: str, stars: int) -> tuple[str, str] | None:
     if stars == 2 and base == "char":
         # ``char **`` -> []string; each element is a C string.
         return "string", "C.GoString($x)"
+    if stars == 2 and base == "text":
+        # ``text **`` -> []string via text2cstring per element.
+        return "string", "text2cstring($x)"
     if stars == 1:
         scalar = TYPE_MAP.get(base)
         if scalar is not None:
@@ -311,17 +315,112 @@ def _go_slice_elem(base: str, stars: int) -> tuple[str, str] | None:
     return None
 
 
+def _emit_array_input_group(entry: dict, group: dict) -> EmittedFunc:
+    """Emit a wrapper for functions that take N parallel input arrays sharing
+    one count parameter (e.g. ``tpointseq_make_coords``).  Each array param
+    becomes a Go slice; nullable members accept ``nil`` for the empty case."""
+    c_name = entry["name"]
+    go_name = _go_name(c_name)
+    return_c = entry["returnType"]["c"]
+    params = entry["params"]
+    array_params = set(group["params"])
+    count_param = group["count"]
+    nullable = set(group.get("nullable", []))
+
+    ret_go, _, ret_from_c = _go_type_for(return_c)
+    if ret_go is None and return_c != "void":
+        return EmittedFunc(go_name, _todo_stub(c_name, "arrayInputGroup return shape " + return_c), True)
+
+    go_args, inner_args, deferred = [], [], []
+    primary = None
+    for p in params:
+        pname = _go_param_name(p["name"])
+        ptype = p["cType"]
+        base, stars = _strip_qualifiers(ptype)
+        if p["name"] in array_params:
+            primary = primary or pname
+            go_t = TYPE_MAP[base].go_type if base in TYPE_MAP else None
+            if go_t is None:
+                return EmittedFunc(go_name, _todo_stub(c_name, "arrayInputGroup element " + base), True)
+            go_args.append(f"{pname} []{go_t}")
+            local = f"_c_{pname}"
+            if p["name"] in nullable:
+                deferred.append(f"var {local} []C.{base}")
+                deferred.append(f"if {pname} != nil {{")
+                deferred.append(f"\t{local} = make([]C.{base}, len({pname}))")
+                deferred.append(f"\tfor _i, _v := range {pname} {{ {local}[_i] = C.{base}(_v) }}")
+                deferred.append(f"}}")
+                inner_args.append(f"_ptr_or_nil_{base}({local})")
+            else:
+                deferred.append(f"{local} := make([]C.{base}, len({pname}))")
+                deferred.append(f"for _i, _v := range {pname} {{ {local}[_i] = C.{base}(_v) }}")
+                inner_args.append(f"&{local}[0]")
+        elif p["name"] == count_param:
+            base, _ = _strip_qualifiers(ptype)
+            inner_args.append(f"C.{base}(len({primary}))")
+        else:
+            go_t, c_cast, _ = _go_type_for(ptype)
+            if go_t is None:
+                return EmittedFunc(go_name, _todo_stub(c_name, "arrayInputGroup other param " + ptype), True)
+            go_args.append(f"{pname} {go_t}")
+            inner_args.append(c_cast.replace("$x", pname) if c_cast else pname)
+
+    sig_args = ", ".join(go_args)
+    call = f"C.{c_name}({', '.join(inner_args)})"
+    body = "\n".join("\t" + d for d in deferred)
+    ret_sig = "" if return_c == "void" else f" {ret_go}"
+    if return_c == "void":
+        tail = f"\t{call}"
+    else:
+        tail = f"\tres := {call}\n\treturn {ret_from_c.replace('$x', 'res')}"
+    code = (
+        f"// {go_name} wraps MEOS C function {c_name}.\n"
+        f"func {go_name}({sig_args}){ret_sig} {{\n"
+        f"{body}\n{tail}\n}}\n"
+    )
+    return EmittedFunc(go_name, code, False)
+
+
 def emit_function(entry: dict) -> EmittedFunc:
     c_name = entry["name"]
     go_name = _go_name(c_name)
     return_c = entry["returnType"]["c"]
     params = entry["params"]
+    shape = entry.get("shape", {})
+
+    # ``shape.skip`` (from meta/meos-meta.json) marks functions the codegen
+    # is told to omit entirely (function-pointer args, void ** internals).
+    if "skip" in shape:
+        return EmittedFunc(go_name, _todo_stub(c_name, "skip: " + shape["skip"]), True)
+
+    # Metadata can mark scalar parameters as outputs even when their name is
+    # not the canonical ``result`` / ``value``.  Carry the set down to
+    # ``_classify_param`` via a closure-friendly local override.
+    named_outputs = set(shape.get("namedOutputs", []))
+
+    # ``shape.arrayInputGroup`` describes N parallel input arrays that share
+    # one count.  We hand-roll a separate emission path for these because
+    # the heuristic loop expects a single (array, count) pair.
+    if "arrayInputGroup" in shape:
+        return _emit_array_input_group(entry, shape["arrayInputGroup"])
+
+    # ``shape.outputArrays`` declares parallel out-parameters sharing the
+    # primary length.  Hold the metadata for the param walk to recognise
+    # them and for the body-assembly pass to unpack them after the call.
+    declared_output_arrays = {
+        oa["param"]: oa for oa in shape.get("outputArrays", [])
+    } if shape else {}
 
     # Pre-classify every parameter so the input loop can skip ones that
     # become outputs or array-length companions.
-    classes = [_classify_param(p, params, i) for i, p in enumerate(params)]
+    def classify_one(p, i):
+        if p["name"] in named_outputs:
+            return "OUTPUT_SCALAR"
+        return _classify_param(p, params, i)
+    classes = [classify_one(p, i) for i, p in enumerate(params)]
 
-    # Identify a paired array return.  Two shapes:
+    # Identify a paired array return.  Three shapes, in priority order:
+    #  (m) shape.arrayReturn metadata -> length from sibling accessor
     #  (a) explicit OUTPUT_COUNT param -> slice length comes from C
     #  (b) an ARRAY_LENGTH input -> slice length matches the input slice
     has_out_count = "OUTPUT_COUNT" in classes
@@ -329,6 +428,30 @@ def emit_function(entry: dict) -> EmittedFunc:
     is_array_return = False
     array_length_source: str | None = None  # ``c_count`` or ``len(input_slice)``
     array_elem_go = array_elem_ctor = None
+
+    array_meta = shape.get("arrayReturn", {}).get("lengthFrom") if shape else None
+    if array_meta and array_meta.get("kind") == "accessor" and return_c != "void":
+        info = _array_return_info(return_c)
+        if info is not None:
+            base, stars = info
+            elem = _go_slice_elem(base, stars)
+            if elem is None and stars == 2 and base == "text":
+                # ``text **`` array returns lower to []string.
+                elem = ("string", "text2cstring($x)")
+            if elem is not None:
+                is_array_return = True
+                array_elem_go, array_elem_ctor = elem
+                accessor_func = array_meta["func"]
+                accessor_arg = _go_param_name(array_meta["arg"])
+                cast_to = array_meta.get("castTo")
+                arg_expr = f"{accessor_arg}.Inner()" if cast_to else f"{accessor_arg}.Inner()"
+                # When castTo is set, force the accessor's first param to that
+                # type via cgo's unsafe.Pointer ladder.  Otherwise pass the
+                # wrapper's Inner() directly.
+                if cast_to:
+                    cast_base = _strip_qualifiers(cast_to)[0]
+                    arg_expr = f"(*C.{cast_base})(unsafe.Pointer({accessor_arg}.Inner()))"
+                array_length_source = f"int(C.{accessor_func}({arg_expr}))"
     if (has_out_count or has_in_length) and return_c not in ("void",):
         info = _array_return_info(return_c)
         if info is not None:
@@ -433,10 +556,49 @@ def emit_function(entry: dict) -> EmittedFunc:
                 local = f"_out_{pname}"
                 deferred.append(f"var {local} C.{base}")
                 inner_args.append(f"&{local}")
-                from_c = TYPE_MAP[base].from_c or "$x"
+                # TYPE_MAP entries use the legacy ``{}`` placeholder; the
+                # emitter's substitution dialect is ``$x``.
+                from_c = (TYPE_MAP[base].from_c or "$x").replace("{}", "$x")
                 extra_returns.append((go_type, local, from_c.replace("$x", local)))
                 continue
             return EmittedFunc(go_name, _todo_stub(c_name, "unhandled OUTPUT_SCALAR shape " + ptype), True)
+
+        # Metadata-declared output array (e.g. ``time_bins TimestampTz **``,
+        # ``space_bins GSERIALIZED ***``).  Allocate the appropriately-typed
+        # local; the body-assembly pass below converts to a Go slice using
+        # the primary length.
+        if p["name"] in declared_output_arrays:
+            base, stars = _strip_qualifiers(ptype)
+            local = f"_out_{pname}"
+            if stars == 2 and base in TYPE_MAP and base != "text":
+                deferred.append(f"var {local} *C.{base}")
+                inner_args.append(f"&{local}")
+                extra_returns.append((
+                    f"[]{TYPE_MAP[base].go_type}",
+                    local,
+                    f"@SLICE_SCALAR:{local}:{base}",
+                ))
+                continue
+            if stars == 3 and base in WRAPPER_TYPES:
+                go_elem = WRAPPER_TYPES[base][0]
+                deferred.append(f"var {local} **C.{base}")
+                inner_args.append(f"&{local}")
+                extra_returns.append((
+                    f"[]{go_elem}",
+                    local,
+                    f"@SLICE_WRAPPED:{local}:{base}",
+                ))
+                continue
+            if stars == 2 and base in WRAPPER_TYPES:
+                go_elem = WRAPPER_TYPES[base][0]
+                deferred.append(f"var {local} *C.{base}")
+                inner_args.append(f"&{local}")
+                extra_returns.append((
+                    f"[]{go_elem}",
+                    local,
+                    f"@SLICE_WRAPPED_2:{local}:{base}",
+                ))
+                continue
 
         # INPUT path -------------------------------------------------------
         base, stars = _strip_qualifiers(ptype)
@@ -519,10 +681,14 @@ def emit_function(entry: dict) -> EmittedFunc:
     call = f"C.{c_name}({', '.join(inner_args)})"
 
     if is_array_return:
-        # Slice length: either the OUTPUT_COUNT C local, or ``len(input)``
-        # when the C function takes a count input and returns an array of
-        # the same length.
-        count_expr = f"int({array_count_local})" if array_count_local else array_length_source
+        # Slice length resolution order:
+        #  1. shape.arrayReturn metadata (array_length_source pre-set)
+        #  2. OUTPUT_COUNT C local captured during param walk
+        #  3. len() of an ARRAY_LENGTH input slice
+        if array_count_local:
+            count_expr = f"int({array_count_local})"
+        else:
+            count_expr = array_length_source
         body_lines.append(f"\tres := {call}")
         body_lines.append(f"\t_n := {count_expr}")
         if array_elem_go == "byte":
@@ -544,6 +710,7 @@ def emit_function(entry: dict) -> EmittedFunc:
         if extra_returns:
             body_lines.append(f"\t{call}")
             tail = ", ".join(c2g for _, _, c2g in extra_returns)
+            tail = _expand_slice_markers(tail, body_lines, array_count_local, array_length_source)
             body_lines.append(f"\treturn {tail}")
         else:
             body_lines.append(f"\t{call}")
@@ -552,6 +719,7 @@ def emit_function(entry: dict) -> EmittedFunc:
         return_expr = ret_from_c.replace("$x", "res")
         if extra_returns:
             tail = ", ".join(c2g for _, _, c2g in extra_returns)
+            tail = _expand_slice_markers(tail, body_lines, array_count_local, array_length_source)
             body_lines.append(f"\treturn {return_expr}, {tail}")
         else:
             body_lines.append(f"\treturn {return_expr}")
@@ -563,6 +731,59 @@ def emit_function(entry: dict) -> EmittedFunc:
         + "\n}\n"
     )
     return EmittedFunc(go_name, code, False)
+
+
+def _expand_slice_markers(tail: str, body_lines: list[str], count_local: str | None,
+                          array_length_source: str | None) -> str:
+    """Resolve ``@SLICE_*`` placeholders left by output-array emission.
+
+    The marker carries everything we need (kind, C local, base type) to
+    synthesise both the unpacking statements and the final Go expression
+    used in the return tuple.  Statements are appended to ``body_lines``;
+    the substituted expression replaces the marker in the tail string."""
+    if "@SLICE_" not in tail:
+        return tail
+    length_expr = f"int({count_local})" if count_local else array_length_source
+
+    def _resolve(marker: str) -> str:
+        kind, local, base = marker.split(":", 2)
+        out_local = f"{local}_go"
+        if kind == "@SLICE_SCALAR":
+            elem_c = f"C.{base}"
+            elem_go = TYPE_MAP[base].go_type
+            from_c = (TYPE_MAP[base].from_c or "$x").replace("{}", "$x").replace("$x", "_e")
+            body_lines.append(f"\t_slice_{local} := unsafe.Slice({local}, {length_expr})")
+            body_lines.append(f"\t{out_local} := make([]{elem_go}, {length_expr})")
+            body_lines.append(f"\tfor _i, _e := range _slice_{local} {{ {out_local}[_i] = {from_c} }}")
+            return out_local
+        if kind == "@SLICE_WRAPPED_2":
+            go_elem, ctor = WRAPPER_TYPES[base]
+            ctor_expr = ctor.replace("$res", "_e")
+            elem_c = f"*C.{base}"
+            body_lines.append(f"\t_slice_{local} := unsafe.Slice({local}, {length_expr})")
+            body_lines.append(f"\t{out_local} := make([]{go_elem}, {length_expr})")
+            body_lines.append(f"\tfor _i, _e := range _slice_{local} {{ {out_local}[_i] = {ctor_expr} }}")
+            return out_local
+        if kind == "@SLICE_WRAPPED":
+            # Triple pointer: ``T ***`` means the C function writes a
+            # ``T **`` (an array of N pointers) to ``*local``.
+            go_elem, ctor = WRAPPER_TYPES[base]
+            ctor_expr = ctor.replace("$res", "_e")
+            body_lines.append(f"\t_slice_{local} := unsafe.Slice({local}, {length_expr})")
+            body_lines.append(f"\t{out_local} := make([]{go_elem}, {length_expr})")
+            body_lines.append(f"\tfor _i, _e := range _slice_{local} {{ {out_local}[_i] = {ctor_expr} }}")
+            return out_local
+        return marker
+
+    # Substitute every marker; ordering is preserved because we walk the
+    # comma-separated expression left to right.
+    out_pieces = []
+    for piece in tail.split(", "):
+        if piece.startswith("@SLICE_"):
+            out_pieces.append(_resolve(piece))
+        else:
+            out_pieces.append(piece)
+    return ", ".join(out_pieces)
 
 
 def _todo_stub(c_name: str, reason: str) -> str:
@@ -621,10 +842,10 @@ def generate(idl_path: Path, out_dir: Path) -> dict:
         if entry["file"] in entries_by_file:
             entries_by_file[entry["file"]].append(entry)
 
-    stats = {"emitted": 0, "skipped": 0, "datum": 0, "by_header": {}}
+    stats = {"emitted": 0, "skipped": 0, "explicit_skip": 0, "datum": 0, "by_header": {}}
     for header in HEADER_FILES:
         emitted_funcs = []
-        local_emit = local_skip = local_datum = 0
+        local_emit = local_skip = local_explicit = local_datum = 0
         for entry in entries_by_file[header]:
             if entry["name"] in SKIPPED_FUNCTIONS:
                 continue
@@ -636,12 +857,19 @@ def generate(idl_path: Path, out_dir: Path) -> dict:
             ef = emit_function(entry)
             emitted_funcs.append(ef)
             if ef.skipped:
-                local_skip += 1
+                # Differentiate explicit meta-driven skips (declared
+                # non-wrappable) from honest TODOs (shape the generator
+                # could not resolve).
+                if "skip:" in ef.code:
+                    local_explicit += 1
+                else:
+                    local_skip += 1
             else:
                 local_emit += 1
-        stats["by_header"][header] = (local_emit, local_skip, local_datum)
+        stats["by_header"][header] = (local_emit, local_skip, local_explicit, local_datum)
         stats["emitted"] += local_emit
         stats["skipped"] += local_skip
+        stats["explicit_skip"] += local_explicit
         stats["datum"] += local_datum
 
         out_file = out_dir / f"meos_{header.replace('.h', '')}.go"
@@ -663,7 +891,8 @@ if __name__ == "__main__":
     # are covered.
     stats = generate(here / "meos-idl.json", here / "_preview")
     print(f"Emitted {stats['emitted']} idiomatic wrappers")
-    print(f"Skipped {stats['skipped']} as TODO (unsupported signature shape)")
+    print(f"Skipped {stats['skipped']} as TODO (unresolved signature shape)")
+    print(f"Excluded {stats['explicit_skip']} via meta/meos-meta.json shape.skip declarations")
     print(f"Excluded {stats['datum']} as Datum-bearing internal helpers")
-    for h, (e, s, d) in stats["by_header"].items():
-        print(f"  {h}: {e} emitted, {s} TODO, {d} Datum")
+    for h, (e, s, sk, d) in stats["by_header"].items():
+        print(f"  {h}: {e} emitted, {s} TODO, {sk} explicit-skip, {d} Datum")

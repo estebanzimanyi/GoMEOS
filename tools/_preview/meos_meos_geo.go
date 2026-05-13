@@ -273,7 +273,7 @@ func GeogPerimeter(g *Geom, use_spheroid bool) float64 {
 func GeomAzimuth(gs1 *Geom, gs2 *Geom) (bool, float64) {
 	var _out_result C.double
 	res := C.geom_azimuth(gs1._inner, gs2._inner, &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -469,8 +469,12 @@ func GeomIntersection2dColl(gs1 *Geom, gs2 *Geom) *Geom {
 }
 
 
-// TODO geom_min_bounding_radius: unsupported param double *
-// func GeomMinBoundingRadius(...) { /* not yet handled by codegen */ }
+// GeomMinBoundingRadius wraps MEOS C function geom_min_bounding_radius.
+func GeomMinBoundingRadius(geom *Geom) (*Geom, float64) {
+	var _out_radius C.double
+	res := C.geom_min_bounding_radius(geom._inner, &_out_radius)
+	return &Geom{_inner: res}, float64(_out_radius)
+}
 
 
 // GeomShortestline2d wraps MEOS C function geom_shortestline2d.
@@ -723,8 +727,17 @@ func GeosetValueN(s *Set, n int) (bool, *Geom) {
 }
 
 
-// TODO geoset_values: unsupported return type GSERIALIZED **
-// func GeosetValues(...) { /* not yet handled by codegen */ }
+// GeosetValues wraps MEOS C function geoset_values.
+func GeosetValues(s *Set) []*Geom {
+	res := C.geoset_values(s._inner)
+	_n := int(C.set_num_values(s.Inner()))
+	_slice := unsafe.Slice((**C.GSERIALIZED)(unsafe.Pointer(res)), _n)
+	_out := make([]*Geom, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Geom{_inner: _e}
+	}
+	return _out
+}
 
 
 // ContainedGeoSet wraps MEOS C function contained_geo_set.
@@ -1032,7 +1045,7 @@ func STBOXPerimeter(box *STBox, spheroid bool) float64 {
 func STBOXTmax(box *STBox) (bool, int64) {
 	var _out_result C.TimestampTz
 	res := C.stbox_tmax(box._inner, &_out_result)
-	return bool(res), int64({})
+	return bool(res), int64(_out_result)
 }
 
 
@@ -1040,7 +1053,7 @@ func STBOXTmax(box *STBox) (bool, int64) {
 func STBOXTmaxInc(box *STBox) (bool, bool) {
 	var _out_result C.bool
 	res := C.stbox_tmax_inc(box._inner, &_out_result)
-	return bool(res), bool({})
+	return bool(res), bool(_out_result)
 }
 
 
@@ -1048,7 +1061,7 @@ func STBOXTmaxInc(box *STBox) (bool, bool) {
 func STBOXTmin(box *STBox) (bool, int64) {
 	var _out_result C.TimestampTz
 	res := C.stbox_tmin(box._inner, &_out_result)
-	return bool(res), int64({})
+	return bool(res), int64(_out_result)
 }
 
 
@@ -1056,7 +1069,7 @@ func STBOXTmin(box *STBox) (bool, int64) {
 func STBOXTminInc(box *STBox) (bool, bool) {
 	var _out_result C.bool
 	res := C.stbox_tmin_inc(box._inner, &_out_result)
-	return bool(res), bool({})
+	return bool(res), bool(_out_result)
 }
 
 
@@ -1071,7 +1084,7 @@ func STBOXVolume(box *STBox) float64 {
 func STBOXXmax(box *STBox) (bool, float64) {
 	var _out_result C.double
 	res := C.stbox_xmax(box._inner, &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -1079,7 +1092,7 @@ func STBOXXmax(box *STBox) (bool, float64) {
 func STBOXXmin(box *STBox) (bool, float64) {
 	var _out_result C.double
 	res := C.stbox_xmin(box._inner, &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -1087,7 +1100,7 @@ func STBOXXmin(box *STBox) (bool, float64) {
 func STBOXYmax(box *STBox) (bool, float64) {
 	var _out_result C.double
 	res := C.stbox_ymax(box._inner, &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -1095,7 +1108,7 @@ func STBOXYmax(box *STBox) (bool, float64) {
 func STBOXYmin(box *STBox) (bool, float64) {
 	var _out_result C.double
 	res := C.stbox_ymin(box._inner, &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -1103,7 +1116,7 @@ func STBOXYmin(box *STBox) (bool, float64) {
 func STBOXZmax(box *STBox) (bool, float64) {
 	var _out_result C.double
 	res := C.stbox_zmax(box._inner, &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -1111,7 +1124,7 @@ func STBOXZmax(box *STBox) (bool, float64) {
 func STBOXZmin(box *STBox) (bool, float64) {
 	var _out_result C.double
 	res := C.stbox_zmin(box._inner, &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -1561,8 +1574,25 @@ func TpointseqFromBaseTstzspan(gs *Geom, s *Span, interp Interpolation) TSequenc
 }
 
 
-// TODO tpointseq_make_coords: unsupported param const double *
-// func TpointseqMakeCoords(...) { /* not yet handled by codegen */ }
+// TpointseqMakeCoords wraps MEOS C function tpointseq_make_coords.
+func TpointseqMakeCoords(xcoords []float64, ycoords []float64, zcoords []float64, times []int64, srid int32, geodetic bool, lower_inc bool, upper_inc bool, interp Interpolation, normalize bool) TSequence {
+	_c_xcoords := make([]C.double, len(xcoords))
+	for _i, _v := range xcoords { _c_xcoords[_i] = C.double(_v) }
+	_c_ycoords := make([]C.double, len(ycoords))
+	for _i, _v := range ycoords { _c_ycoords[_i] = C.double(_v) }
+	var _c_zcoords []C.double
+	if zcoords != nil {
+		_c_zcoords = make([]C.double, len(zcoords))
+		for _i, _v := range zcoords { _c_zcoords[_i] = C.double(_v) }
+	}
+	var _c_times []C.TimestampTz
+	if times != nil {
+		_c_times = make([]C.TimestampTz, len(times))
+		for _i, _v := range times { _c_times[_i] = C.TimestampTz(_v) }
+	}
+	res := C.tpointseq_make_coords(&_c_xcoords[0], &_c_ycoords[0], _ptr_or_nil_double(_c_zcoords), _ptr_or_nil_TimestampTz(_c_times), C.int(len(xcoords)), C.int32(srid), C.bool(geodetic), C.bool(lower_inc), C.bool(upper_inc), C.interpType(interp), C.bool(normalize))
+	return TSequence{_inner: res}
+}
 
 
 // TpointseqsetFromBaseTstzspanset wraps MEOS C function tpointseqset_from_base_tstzspanset.
@@ -1635,8 +1665,20 @@ func TgeompointToTgeometry(temp Temporal) Temporal {
 }
 
 
-// TODO tpoint_as_mvtgeom: unsupported param GSERIALIZED **
-// func TpointAsMvtgeom(...) { /* not yet handled by codegen */ }
+// TpointAsMvtgeom wraps MEOS C function tpoint_as_mvtgeom.
+func TpointAsMvtgeom(temp Temporal, bounds *STBox, extent int32, buffer int32, clip_geom bool) (bool, []*Geom, []int64, int) {
+	var _out_gsarr *C.GSERIALIZED
+	var _out_timesarr *C.int64
+	var _out_count C.int
+	res := C.tpoint_as_mvtgeom(temp.Inner(), bounds._inner, C.int32_t(extent), C.int32_t(buffer), C.bool(clip_geom), &_out_gsarr, &_out_timesarr, &_out_count)
+	_slice__out_gsarr := unsafe.Slice(_out_gsarr, None)
+	_out_gsarr_go := make([]*Geom, None)
+	for _i, _e := range _slice__out_gsarr { _out_gsarr_go[_i] = &Geom{_inner: _e} }
+	_slice__out_timesarr := unsafe.Slice(_out_timesarr, None)
+	_out_timesarr_go := make([]int64, None)
+	for _i, _e := range _slice__out_timesarr { _out_timesarr_go[_i] = int64(_e) }
+	return bool(res), _out_gsarr_go, _out_timesarr_go, int(_out_count)
+}
 
 
 // TpointTfloatToGeomeas wraps MEOS C function tpoint_tfloat_to_geomeas.
@@ -1658,7 +1700,7 @@ func TspatialToSTBOX(temp Temporal) *STBox {
 func BearingPointPoint(gs1 *Geom, gs2 *Geom) (bool, float64) {
 	var _out_result C.double
 	res := C.bearing_point_point(gs1._inner, gs2._inner, &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -1766,7 +1808,7 @@ func TpointCumulativeLength(temp Temporal) Temporal {
 func TpointDirection(temp Temporal) (bool, float64) {
 	var _out_result C.double
 	res := C.tpoint_direction(temp.Inner(), &_out_result)
-	return bool(res), float64({})
+	return bool(res), float64(_out_result)
 }
 
 
@@ -3005,20 +3047,66 @@ func STBOXTimeTiles(bounds *STBox, duration timeutil.Timedelta, torigin int64, b
 }
 
 
-// TODO tgeo_space_split: unsupported param GSERIALIZED ***
-// func TgeoSpaceSplit(...) { /* not yet handled by codegen */ }
+// TgeoSpaceSplit wraps MEOS C function tgeo_space_split.
+func TgeoSpaceSplit(temp Temporal, xsize float64, ysize float64, zsize float64, sorigin *Geom, bitmatrix bool, border_inc bool) ([]Temporal, []*Geom) {
+	var _out_space_bins **C.GSERIALIZED
+	var _out_count C.int
+	res := C.tgeo_space_split(temp.Inner(), C.double(xsize), C.double(ysize), C.double(zsize), sorigin._inner, C.bool(bitmatrix), C.bool(border_inc), &_out_space_bins, &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
+	_out := make([]Temporal, _n)
+	for _i, _e := range _slice {
+		_out[_i] = CreateTemporal(_e)
+	}
+	return _out
+}
 
 
-// TODO tgeo_space_time_split: unsupported param GSERIALIZED ***
-// func TgeoSpaceTimeSplit(...) { /* not yet handled by codegen */ }
+// TgeoSpaceTimeSplit wraps MEOS C function tgeo_space_time_split.
+func TgeoSpaceTimeSplit(temp Temporal, xsize float64, ysize float64, zsize float64, duration timeutil.Timedelta, sorigin *Geom, torigin int64, bitmatrix bool, border_inc bool) ([]Temporal, []*Geom, []int64) {
+	var _out_space_bins **C.GSERIALIZED
+	var _out_time_bins *C.TimestampTz
+	var _out_count C.int
+	res := C.tgeo_space_time_split(temp.Inner(), C.double(xsize), C.double(ysize), C.double(zsize), duration.Inner(), sorigin._inner, C.TimestampTz(torigin), C.bool(bitmatrix), C.bool(border_inc), &_out_space_bins, &_out_time_bins, &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
+	_out := make([]Temporal, _n)
+	for _i, _e := range _slice {
+		_out[_i] = CreateTemporal(_e)
+	}
+	return _out
+}
 
 
-// TODO geo_cluster_kmeans: unsupported param uint32_t
-// func GeoClusterKmeans(...) { /* not yet handled by codegen */ }
+// GeoClusterKmeans wraps MEOS C function geo_cluster_kmeans.
+func GeoClusterKmeans(geoms []*Geom, k uint32) []int {
+	_c_geoms := make([]*C.GSERIALIZED, len(geoms))
+	for _i, _v := range geoms { _c_geoms[_i] = _v._inner }
+	res := C.geo_cluster_kmeans((**C.GSERIALIZED)(unsafe.Pointer(&_c_geoms[0])), C.uint32_t(len(geoms)), C.uint32_t(k))
+	_n := len(geoms)
+	_slice := unsafe.Slice((*C.int)(unsafe.Pointer(res)), _n)
+	_out := make([]int, _n)
+	for _i, _e := range _slice {
+		_out[_i] = int(_e)
+	}
+	return _out
+}
 
 
-// TODO geo_cluster_dbscan: unsupported return type uint32_t *
-// func GeoClusterDbscan(...) { /* not yet handled by codegen */ }
+// GeoClusterDbscan wraps MEOS C function geo_cluster_dbscan.
+func GeoClusterDbscan(geoms []*Geom, tolerance float64, minpoints int) []uint32 {
+	_c_geoms := make([]*C.GSERIALIZED, len(geoms))
+	for _i, _v := range geoms { _c_geoms[_i] = _v._inner }
+	var _out_count C.int
+	res := C.geo_cluster_dbscan((**C.GSERIALIZED)(unsafe.Pointer(&_c_geoms[0])), C.uint32_t(len(geoms)), C.double(tolerance), C.int(minpoints), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((*C.uint32_t)(unsafe.Pointer(res)), _n)
+	_out := make([]uint32, _n)
+	for _i, _e := range _slice {
+		_out[_i] = uint32(_e)
+	}
+	return _out
+}
 
 
 // GeoClusterIntersecting wraps MEOS C function geo_cluster_intersecting.

@@ -443,8 +443,17 @@ func NpointsetValueN(s *Set, n int) (bool, *Npoint) {
 }
 
 
-// TODO npointset_values: unsupported return type Npoint **
-// func NpointsetValues(...) { /* not yet handled by codegen */ }
+// NpointsetValues wraps MEOS C function npointset_values.
+func NpointsetValues(s *Set) []*Npoint {
+	res := C.npointset_values(s._inner)
+	_n := int(C.set_num_values(s.Inner()))
+	_slice := unsafe.Slice((**C.Npoint)(unsafe.Pointer(res)), _n)
+	_out := make([]*Npoint, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Npoint{_inner: _e}
+	}
+	return _out
+}
 
 
 // ContainedNpointSet wraps MEOS C function contained_npoint_set.
