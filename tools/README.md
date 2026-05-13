@@ -15,13 +15,16 @@ python3 tools/codegen.py
 
 ## Coverage today
 
-2369 candidate functions across the six public headers.  2194 emit
+2369 candidate functions across the six public headers.  2199 emit
 cleanly; 170 are excluded as `Datum`-bearing internal helpers (the
 hand-written surface exposes those through typed overloads which the
-codegen cannot synthesise from the IDL); 5 are excluded by an explicit
-`shape.skip` declaration in `meta/meos-meta.json` (the skiplist family
-takes function-pointer arguments / returns `void **`).  Zero unresolved
-TODOs remain.
+codegen cannot synthesise from the IDL).  Zero unresolved TODOs and
+zero explicit skips remain.  The skiplist primitives that take
+function-pointer arguments (`comp_fn`, `merge_fn`, `datum_func2`) or
+operate on `void **` element arrays surface as `unsafe.Pointer`,
+matching how PyMEOS-CFFI exposes them as `_ffi.CData` and MEOS.NET as
+`IntPtr` — callers provide the raw pointer obtained from another
+wrapped MEOS call (for example a typed comparator's address).
 
 The covered shapes are: scalar inputs, wrapped opaque pointers
 (`Temporal`, `STBox`, `TBox`, `Span`, `SpanSet`, `Set`, `GSERIALIZED`,
@@ -65,6 +68,8 @@ Annotation kinds:
   input arrays sharing one count (`tpointseq_make_coords`).  Nullable
   members accept Go `nil`.
 * `shape.skip = "<reason>"` — bindings omit the function entirely.
+  Retained as an escape hatch but no entries use it today; the
+  skiplist family now surfaces through `unsafe.Pointer` instead.
 
 ## Refreshing the IDL
 

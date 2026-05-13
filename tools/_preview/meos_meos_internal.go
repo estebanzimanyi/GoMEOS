@@ -1813,8 +1813,11 @@ func TemporalSkiplistMake() *SkipList {
 }
 
 
-// TODO skiplist_make: skip: function-pointer args (comp_fn, merge_fn)
-// func SkiplistMake(...) { /* not yet handled by codegen */ }
+// SkiplistMake wraps MEOS C function skiplist_make.
+func SkiplistMake(key_size uint, value_size uint, comp_fn unsafe.Pointer, merge_fn unsafe.Pointer) *SkipList {
+	res := C.skiplist_make(C.size_t(key_size), C.size_t(value_size), comp_fn, merge_fn)
+	return &SkipList{_inner: res}
+}
 
 
 // SkiplistSearch wraps MEOS C function skiplist_search.
@@ -1831,20 +1834,30 @@ func SkiplistFree(list *SkipList) {
 }
 
 
-// TODO skiplist_splice: skip: function-pointer args (datum_func2)
-// func SkiplistSplice(...) { /* not yet handled by codegen */ }
+// SkiplistSplice wraps MEOS C function skiplist_splice.
+func SkiplistSplice(list *SkipList, keys unsafe.Pointer, values unsafe.Pointer, count int, func_ unsafe.Pointer, crossings bool, sktype SkipListType) {
+	C.skiplist_splice(list._inner, unsafe.Pointer(keys), unsafe.Pointer(values), C.int(count), func_, C.bool(crossings), C.SkipListType(sktype))
+}
 
 
-// TODO temporal_skiplist_splice: skip: function-pointer args (datum_func2)
-// func TemporalSkiplistSplice(...) { /* not yet handled by codegen */ }
+// TemporalSkiplistSplice wraps MEOS C function temporal_skiplist_splice.
+func TemporalSkiplistSplice(list *SkipList, values unsafe.Pointer, count int, func_ unsafe.Pointer, crossings bool) {
+	C.temporal_skiplist_splice(list._inner, unsafe.Pointer(values), C.int(count), func_, C.bool(crossings))
+}
 
 
-// TODO skiplist_values: skip: void ** internal helper
-// func SkiplistValues(...) { /* not yet handled by codegen */ }
+// SkiplistValues wraps MEOS C function skiplist_values.
+func SkiplistValues(list *SkipList) unsafe.Pointer {
+	res := C.skiplist_values(list._inner)
+	return unsafe.Pointer(res)
+}
 
 
-// TODO skiplist_keys_values: skip: void ** internal helper
-// func SkiplistKeysValues(...) { /* not yet handled by codegen */ }
+// SkiplistKeysValues wraps MEOS C function skiplist_keys_values.
+func SkiplistKeysValues(list *SkipList, values unsafe.Pointer) unsafe.Pointer {
+	res := C.skiplist_keys_values(list._inner, unsafe.Pointer(values))
+	return unsafe.Pointer(res)
+}
 
 
 // TemporalAppTinstTransfn wraps MEOS C function temporal_app_tinst_transfn.

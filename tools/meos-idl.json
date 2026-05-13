@@ -44033,10 +44033,7 @@
           "cType": "void *(*)(void *, void *)",
           "canonical": "void *(*)(void *, void *)"
         }
-      ],
-      "shape": {
-        "skip": "function-pointer args (comp_fn, merge_fn)"
-      }
+      ]
     },
     {
       "name": "skiplist_search",
@@ -44121,10 +44118,7 @@
           "cType": "SkipListType",
           "canonical": "SkipListType"
         }
-      ],
-      "shape": {
-        "skip": "function-pointer args (datum_func2)"
-      }
+      ]
     },
     {
       "name": "temporal_skiplist_splice",
@@ -44159,10 +44153,7 @@
           "cType": "bool",
           "canonical": "bool"
         }
-      ],
-      "shape": {
-        "skip": "function-pointer args (datum_func2)"
-      }
+      ]
     },
     {
       "name": "skiplist_values",
@@ -44177,10 +44168,7 @@
           "cType": "SkipList *",
           "canonical": "struct SkipList *"
         }
-      ],
-      "shape": {
-        "skip": "void ** internal helper"
-      }
+      ]
     },
     {
       "name": "skiplist_keys_values",
@@ -44200,10 +44188,7 @@
           "cType": "void **",
           "canonical": "void **"
         }
-      ],
-      "shape": {
-        "skip": "void ** internal helper"
-      }
+      ]
     },
     {
       "name": "temporal_app_tinst_transfn",

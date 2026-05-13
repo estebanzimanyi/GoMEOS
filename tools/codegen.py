@@ -79,15 +79,29 @@ TYPE_MAP: dict[str, TypeMapping] = {
     "TimestampTz":       TypeMapping("int64",    "C.TimestampTz({})",                 "int64({})"),
     "TimeADT":           TypeMapping("int64",    "C.TimeADT({})",                     "int64({})"),
     "TimeOffset":        TypeMapping("int64",    "C.TimeOffset({})",                  "int64({})"),
-    # Opaque ``void *`` arguments (e.g. ``rtree_insert``'s box) and
-    # ``const void *`` query buffers map straight to ``unsafe.Pointer``.
-    "void *":            TypeMapping("unsafe.Pointer", "unsafe.Pointer({})",          "unsafe.Pointer({})"),
-    "const void *":      TypeMapping("unsafe.Pointer", "unsafe.Pointer({})",          "unsafe.Pointer({})"),
+    # Opaque pointer family.  Every binding that consumes meos-idl.json
+    # (PyMEOS-CFFI as `_ffi.CData`, MEOS.NET as `IntPtr`, meos-rs as
+    # `*mut c_void`) surfaces these as raw pointers and lets the caller
+    # supply a value obtained elsewhere (typically another wrapped
+    # function's return).  GoMEOS follows the same convention.
+    "void *":                  TypeMapping("unsafe.Pointer", "unsafe.Pointer({})",  "unsafe.Pointer({})"),
+    "const void *":            TypeMapping("unsafe.Pointer", "unsafe.Pointer({})",  "unsafe.Pointer({})"),
+    "void **":                 TypeMapping("unsafe.Pointer", "unsafe.Pointer({})",  "unsafe.Pointer({})"),
+    "const void **":           TypeMapping("unsafe.Pointer", "unsafe.Pointer({})",  "unsafe.Pointer({})"),
+    # Function-pointer typedefs.  MEOS exposes these as opaque handles
+    # the caller obtains from another MEOS call (e.g. taking the address
+    # of a typed comparator).  Skiplist primitives and the error handler
+    # are the only signatures that take one today.
+    "datum_func2":             TypeMapping("unsafe.Pointer", "{}",                  "{}"),
+    "error_handler_fn":        TypeMapping("unsafe.Pointer", "{}",                  "{}"),
+    "int (*)(void *, void *)": TypeMapping("unsafe.Pointer", "{}",                  "{}"),
+    "void *(*)(void *, void *)": TypeMapping("unsafe.Pointer", "{}",                "{}"),
     "interpType":        TypeMapping("Interpolation", "C.interpType({})",             "Interpolation({})"),
     "meosType":          TypeMapping("MeosType", "C.meosType({})",                    "MeosType({})"),
     "meosOper":          TypeMapping("MeosOper", "C.meosOper({})",                    "MeosOper({})"),
     "tempSubtype":       TypeMapping("TempSubtype", "C.tempSubtype({})",              "TempSubtype({})"),
     "errorLevel":        TypeMapping("ErrorLevel", "C.errorLevel({})",                "ErrorLevel({})"),
+    "SkipListType":      TypeMapping("SkipListType", "C.SkipListType({})",            "SkipListType({})"),
     "char *":            TypeMapping("string",   "C.CString({})",                     "C.GoString({})"),
     "const char *":      TypeMapping("string",   "C.CString({})",                     "C.GoString({})"),
     # PostgreSQL ``text`` is a varlena envelope around a Go string.  The
@@ -244,16 +258,16 @@ def _classify_param(p: dict, params: list[dict], i: int) -> str:
         prev = params[i - 1]
         prev_base, prev_stars = _strip_qualifiers(prev["cType"])
         prev_is_const = "const " in prev["cType"]
-        # ``T **`` non-const + ``count`` -> array input
-        if prev_stars == 2:
+        # ``T **`` where T is a wrappable element + ``count`` -> array input.
+        # ``void **`` is intentionally excluded: it maps to a raw
+        # unsafe.Pointer (not a Go slice), so the count is a real input
+        # the caller controls, not a length derived from len().
+        if prev_stars == 2 and (prev_base in WRAPPER_TYPES or prev_base == "text"):
             return "ARRAY_LENGTH"
         # ``const T *`` + ``count`` for scalar slices (intset_make etc.)
         if prev_stars == 1 and prev_is_const and prev_base in {
             "int", "int64", "double", "DateADT", "TimestampTz", "uint8_t",
         }:
-            return "ARRAY_LENGTH"
-        # ``const uint8_t *wkb`` + ``size`` byte buffer
-        if prev_stars == 1 and prev_is_const and prev_base == "uint8_t":
             return "ARRAY_LENGTH"
 
     # Trailing ``int *count`` or ``size_t *size_out`` at the tail or with a
