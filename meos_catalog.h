@@ -1,12 +1,12 @@
 /*****************************************************************************
  *
  * This MobilityDB code is provided under The PostgreSQL License.
- * Copyright (c) 2016-2024, Université libre de Bruxelles and MobilityDB
+ * Copyright (c) 2016-2025, Université libre de Bruxelles and MobilityDB
  * contributors
  *
  * MobilityDB includes portions of PostGIS version 3 source code released
  * under the GNU General Public License (GPLv2 or later).
- * Copyright (c) 2001-2024, PostGIS contributors
+ * Copyright (c) 2001-2025, PostGIS contributors
  *
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose, without fee, and without a written
@@ -108,10 +108,17 @@ typedef enum
   T_NSEGMENT       = 50,  /**< network segment type */
   T_TNPOINT        = 51,  /**< temporal network point type */
   T_POSE           = 54,  /**< pose type */
-  T_TPOSE          = 55,  /**< temporal pose type */
+  T_POSESET        = 55,  /**< pose set type */
+  T_TPOSE          = 56,  /**< temporal pose type */
+  T_CBUFFER        = 57,  /**< buffer type */
+  T_CBUFFERSET     = 58,  /**< buffer set type */
+  T_TCBUFFER       = 59,  /**< temporal buffer type */
+  T_TGEOMETRY      = 60,  /**< temporal geometry type */
+  T_TGEOGRAPHY     = 61,  /**< temporal geography type */
+  T_TRGEOMETRY     = 62,  /**< temporal rigid geometry type */
+  NO_MEOS_TYPES           /* Dummy value that determines the size of the 
+                           * lookup array meosType -> Oid */
 } meosType;
-
-#define NO_MEOS_TYPES 56
 
 /**
  * Enumeration that defines the classes of Boolean operators used in
@@ -202,8 +209,10 @@ typedef struct
 
 /*****************************************************************************/
 
+#ifndef NDEBUG
 extern bool temptype_subtype(tempSubtype subtype);
 extern bool temptype_subtype_all(tempSubtype subtype);
+#endif
 extern const char *tempsubtype_name(tempSubtype subtype);
 extern bool tempsubtype_from_string(const char *str, int16 *subtype);
 extern const char *meosoper_name(meosOper oper);
@@ -224,21 +233,23 @@ extern meosType basetype_settype(meosType type);
 
 /* Catalog functions */
 
-extern bool meos_basetype(meosType type);
-extern bool alpha_basetype(meosType type);
 extern bool tnumber_basetype(meosType type);
-extern bool alphanum_basetype(meosType type);
 extern bool geo_basetype(meosType type);
-extern bool spatial_basetype(meosType type);
+#ifndef NDEBUG
+extern bool meos_basetype(meosType type);
+extern bool alphanum_basetype(meosType type);
+extern bool alphanum_temptype(meosType type);
+#endif
 
 extern bool time_type(meosType type);
+#ifndef NDEBUG
 extern bool set_basetype(meosType type);
+#endif
 
 extern bool set_type(meosType type);
 extern bool numset_type(meosType type);
 extern bool ensure_numset_type(meosType type);
 extern bool timeset_type(meosType type);
-extern bool ensure_timeset_type(meosType type);
 extern bool set_spantype(meosType type);
 extern bool ensure_set_spantype(meosType type);
 extern bool alphanumset_type(meosType settype);
@@ -250,40 +261,49 @@ extern bool ensure_spatialset_type(meosType type);
 extern bool span_basetype(meosType type);
 extern bool span_canon_basetype(meosType type);
 extern bool span_type(meosType type);
-extern bool span_bbox_type(meosType type);
+extern bool type_span_bbox(meosType type);
+extern bool span_tbox_type(meosType type);
+extern bool ensure_span_tbox_type(meosType type);
 extern bool numspan_basetype(meosType type);
 extern bool numspan_type(meosType type);
 extern bool ensure_numspan_type(meosType type);
 extern bool timespan_basetype(meosType type);
 extern bool timespan_type(meosType type);
-extern bool ensure_timespan_type(meosType type);
 
 extern bool spanset_type(meosType type);
-extern bool numspanset_type(meosType type);
 extern bool timespanset_type(meosType type);
 extern bool ensure_timespanset_type(meosType type);
 
 extern bool temporal_type(meosType type);
+#ifndef NDEBUG
 extern bool temporal_basetype(meosType type);
+#endif
 extern bool temptype_continuous(meosType type);
 extern bool basetype_byvalue(meosType type);
 extern bool basetype_varlength(meosType type);
 extern int16 basetype_length(meosType type);
+#ifndef NDEBUG
 extern bool talphanum_type(meosType type);
+#endif
 extern bool talpha_type(meosType type);
 extern bool tnumber_type(meosType type);
 extern bool ensure_tnumber_type(meosType type);
-extern bool tnumber_basetype(meosType type);
 extern bool ensure_tnumber_basetype(meosType type);
-extern bool tnumber_settype(meosType type);
 extern bool tnumber_spantype(meosType type);
-extern bool tnumber_spansettype(meosType type);
+extern bool spatial_basetype(meosType type);
 extern bool tspatial_type(meosType type);
 extern bool ensure_tspatial_type(meosType type);
-extern bool tspatial_basetype(meosType type);
+extern bool tpoint_type(meosType type);
+extern bool ensure_tpoint_type(meosType type);
 extern bool tgeo_type(meosType type);
 extern bool ensure_tgeo_type(meosType type);
-extern bool ensure_tnumber_tgeo_type(meosType type);
+extern bool tgeo_type_all(meosType type);
+extern bool ensure_tgeo_type_all(meosType type);
+extern bool tgeometry_type(meosType type);
+extern bool ensure_tgeometry_type(meosType type);
+extern bool tgeodetic_type(meosType type);
+extern bool ensure_tgeodetic_type(meosType type);
+extern bool ensure_tnumber_tpoint_type(meosType type);
 
 /*****************************************************************************/
 
