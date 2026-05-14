@@ -51,7 +51,7 @@ var _ = timeutil.Timedelta{}
 // func CbufferMake(...) { /* not yet handled by codegen */ }
 
 
-// TODO cbuffer_to_geom: unsupported return type int *
+// TODO cbuffer_to_geom: unsupported param const Cbuffer *
 // func CbufferToGeom(...) { /* not yet handled by codegen */ }
 
 
@@ -59,7 +59,7 @@ var _ = timeutil.Timedelta{}
 // func CbufferToSTBOX(...) { /* not yet handled by codegen */ }
 
 
-// TODO cbufferarr_to_geom: unsupported return type int *
+// TODO cbufferarr_to_geom: unsupported param const Cbuffer **
 // func CbufferarrToGeom(...) { /* not yet handled by codegen */ }
 
 
@@ -75,7 +75,7 @@ var _ = timeutil.Timedelta{}
 // func CbufferHashExtended(...) { /* not yet handled by codegen */ }
 
 
-// TODO cbuffer_point: unsupported return type int *
+// TODO cbuffer_point: unsupported param const Cbuffer *
 // func CbufferPoint(...) { /* not yet handled by codegen */ }
 
 
@@ -297,8 +297,11 @@ func TcbufferRadius(temp Temporal) *Set {
 }
 
 
-// TODO tcbuffer_trav_area: unsupported return type int *
-// func TcbufferTravArea(...) { /* not yet handled by codegen */ }
+// TcbufferTravArea wraps MEOS C function tcbuffer_trav_area.
+func TcbufferTravArea(temp Temporal, merge_union bool) *Geom {
+	res := C.tcbuffer_trav_area(temp.Inner(), C.bool(merge_union))
+	return &Geom{_inner: res}
+}
 
 
 // TcbufferToTfloat wraps MEOS C function tcbuffer_to_tfloat.
@@ -333,8 +336,11 @@ func TcbufferExpand(temp Temporal, dist float64) Temporal {
 // func TcbufferAtCbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO tcbuffer_at_geom: unsupported param const int *
-// func TcbufferAtGeom(...) { /* not yet handled by codegen */ }
+// TcbufferAtGeom wraps MEOS C function tcbuffer_at_geom.
+func TcbufferAtGeom(temp Temporal, gs *Geom) Temporal {
+	res := C.tcbuffer_at_geom(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TcbufferAtSTBOX wraps MEOS C function tcbuffer_at_stbox.
@@ -348,8 +354,11 @@ func TcbufferAtSTBOX(temp Temporal, box *STBox, border_inc bool) Temporal {
 // func TcbufferMinusCbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO tcbuffer_minus_geom: unsupported param const int *
-// func TcbufferMinusGeom(...) { /* not yet handled by codegen */ }
+// TcbufferMinusGeom wraps MEOS C function tcbuffer_minus_geom.
+func TcbufferMinusGeom(temp Temporal, gs *Geom) Temporal {
+	res := C.tcbuffer_minus_geom(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TcbufferMinusSTBOX wraps MEOS C function tcbuffer_minus_stbox.
@@ -363,8 +372,11 @@ func TcbufferMinusSTBOX(temp Temporal, box *STBox, border_inc bool) Temporal {
 // func TdistanceTcbufferCbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO tdistance_tcbuffer_geo: unsupported param const int *
-// func TdistanceTcbufferGeo(...) { /* not yet handled by codegen */ }
+// TdistanceTcbufferGeo wraps MEOS C function tdistance_tcbuffer_geo.
+func TdistanceTcbufferGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.tdistance_tcbuffer_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TdistanceTcbufferTcbuffer wraps MEOS C function tdistance_tcbuffer_tcbuffer.
@@ -378,8 +390,11 @@ func TdistanceTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) Temporal {
 // func NadTcbufferCbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO nad_tcbuffer_geo: unsupported param const int *
-// func NadTcbufferGeo(...) { /* not yet handled by codegen */ }
+// NadTcbufferGeo wraps MEOS C function nad_tcbuffer_geo.
+func NadTcbufferGeo(temp Temporal, gs *Geom) float64 {
+	res := C.nad_tcbuffer_geo(temp.Inner(), gs._inner)
+	return float64(res)
+}
 
 
 // NadTcbufferSTBOX wraps MEOS C function nad_tcbuffer_stbox.
@@ -400,8 +415,11 @@ func NadTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) float64 {
 // func NaiTcbufferCbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO nai_tcbuffer_geo: unsupported param const int *
-// func NaiTcbufferGeo(...) { /* not yet handled by codegen */ }
+// NaiTcbufferGeo wraps MEOS C function nai_tcbuffer_geo.
+func NaiTcbufferGeo(temp Temporal, gs *Geom) TInstant {
+	res := C.nai_tcbuffer_geo(temp.Inner(), gs._inner)
+	return TInstant{_inner: res}
+}
 
 
 // NaiTcbufferTcbuffer wraps MEOS C function nai_tcbuffer_tcbuffer.
@@ -411,16 +429,22 @@ func NaiTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) TInstant {
 }
 
 
-// TODO shortestline_tcbuffer_cbuffer: unsupported return type int *
+// TODO shortestline_tcbuffer_cbuffer: unsupported param const Cbuffer *
 // func ShortestlineTcbufferCbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO shortestline_tcbuffer_geo: unsupported return type int *
-// func ShortestlineTcbufferGeo(...) { /* not yet handled by codegen */ }
+// ShortestlineTcbufferGeo wraps MEOS C function shortestline_tcbuffer_geo.
+func ShortestlineTcbufferGeo(temp Temporal, gs *Geom) *Geom {
+	res := C.shortestline_tcbuffer_geo(temp.Inner(), gs._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO shortestline_tcbuffer_tcbuffer: unsupported return type int *
-// func ShortestlineTcbufferTcbuffer(...) { /* not yet handled by codegen */ }
+// ShortestlineTcbufferTcbuffer wraps MEOS C function shortestline_tcbuffer_tcbuffer.
+func ShortestlineTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) *Geom {
+	res := C.shortestline_tcbuffer_tcbuffer(temp1.Inner(), temp2.Inner())
+	return &Geom{_inner: res}
+}
 
 
 // TODO always_eq_cbuffer_tcbuffer: unsupported param const Cbuffer *
@@ -503,36 +527,51 @@ func EverNeTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) int {
 // func AcontainsCbufferTcbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO acontains_geo_tcbuffer: unsupported param const int *
-// func AcontainsGeoTcbuffer(...) { /* not yet handled by codegen */ }
+// AcontainsGeoTcbuffer wraps MEOS C function acontains_geo_tcbuffer.
+func AcontainsGeoTcbuffer(gs *Geom, temp Temporal) int {
+	res := C.acontains_geo_tcbuffer(gs._inner, temp.Inner())
+	return int(res)
+}
 
 
 // TODO acontains_tcbuffer_cbuffer: unsupported param const Cbuffer *
 // func AcontainsTcbufferCbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO acontains_tcbuffer_geo: unsupported param const int *
-// func AcontainsTcbufferGeo(...) { /* not yet handled by codegen */ }
+// AcontainsTcbufferGeo wraps MEOS C function acontains_tcbuffer_geo.
+func AcontainsTcbufferGeo(temp Temporal, gs *Geom) int {
+	res := C.acontains_tcbuffer_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // TODO acovers_cbuffer_tcbuffer: unsupported param const Cbuffer *
 // func AcoversCbufferTcbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO acovers_geo_tcbuffer: unsupported param const int *
-// func AcoversGeoTcbuffer(...) { /* not yet handled by codegen */ }
+// AcoversGeoTcbuffer wraps MEOS C function acovers_geo_tcbuffer.
+func AcoversGeoTcbuffer(gs *Geom, temp Temporal) int {
+	res := C.acovers_geo_tcbuffer(gs._inner, temp.Inner())
+	return int(res)
+}
 
 
 // TODO acovers_tcbuffer_cbuffer: unsupported param const Cbuffer *
 // func AcoversTcbufferCbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO acovers_tcbuffer_geo: unsupported param const int *
-// func AcoversTcbufferGeo(...) { /* not yet handled by codegen */ }
+// AcoversTcbufferGeo wraps MEOS C function acovers_tcbuffer_geo.
+func AcoversTcbufferGeo(temp Temporal, gs *Geom) int {
+	res := C.acovers_tcbuffer_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
-// TODO adisjoint_tcbuffer_geo: unsupported param const int *
-// func AdisjointTcbufferGeo(...) { /* not yet handled by codegen */ }
+// AdisjointTcbufferGeo wraps MEOS C function adisjoint_tcbuffer_geo.
+func AdisjointTcbufferGeo(temp Temporal, gs *Geom) int {
+	res := C.adisjoint_tcbuffer_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // TODO adisjoint_tcbuffer_cbuffer: unsupported param const Cbuffer *
@@ -546,8 +585,11 @@ func AdisjointTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO adwithin_tcbuffer_geo: unsupported param const int *
-// func AdwithinTcbufferGeo(...) { /* not yet handled by codegen */ }
+// AdwithinTcbufferGeo wraps MEOS C function adwithin_tcbuffer_geo.
+func AdwithinTcbufferGeo(temp Temporal, gs *Geom, dist float64) int {
+	res := C.adwithin_tcbuffer_geo(temp.Inner(), gs._inner, C.double(dist))
+	return int(res)
+}
 
 
 // TODO adwithin_tcbuffer_cbuffer: unsupported param const Cbuffer *
@@ -561,8 +603,11 @@ func AdwithinTcbufferTcbuffer(temp1 Temporal, temp2 Temporal, dist float64) int 
 }
 
 
-// TODO aintersects_tcbuffer_geo: unsupported param const int *
-// func AintersectsTcbufferGeo(...) { /* not yet handled by codegen */ }
+// AintersectsTcbufferGeo wraps MEOS C function aintersects_tcbuffer_geo.
+func AintersectsTcbufferGeo(temp Temporal, gs *Geom) int {
+	res := C.aintersects_tcbuffer_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // TODO aintersects_tcbuffer_cbuffer: unsupported param const Cbuffer *
@@ -576,8 +621,11 @@ func AintersectsTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO atouches_tcbuffer_geo: unsupported param const int *
-// func AtouchesTcbufferGeo(...) { /* not yet handled by codegen */ }
+// AtouchesTcbufferGeo wraps MEOS C function atouches_tcbuffer_geo.
+func AtouchesTcbufferGeo(temp Temporal, gs *Geom) int {
+	res := C.atouches_tcbuffer_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // TODO atouches_tcbuffer_cbuffer: unsupported param const Cbuffer *
@@ -599,8 +647,11 @@ func AtouchesTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) int {
 // func EcontainsTcbufferCbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO econtains_tcbuffer_geo: unsupported param const int *
-// func EcontainsTcbufferGeo(...) { /* not yet handled by codegen */ }
+// EcontainsTcbufferGeo wraps MEOS C function econtains_tcbuffer_geo.
+func EcontainsTcbufferGeo(temp Temporal, gs *Geom) int {
+	res := C.econtains_tcbuffer_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // TODO ecovers_cbuffer_tcbuffer: unsupported param const Cbuffer *
@@ -611,8 +662,11 @@ func AtouchesTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) int {
 // func EcoversTcbufferCbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO ecovers_tcbuffer_geo: unsupported param const int *
-// func EcoversTcbufferGeo(...) { /* not yet handled by codegen */ }
+// EcoversTcbufferGeo wraps MEOS C function ecovers_tcbuffer_geo.
+func EcoversTcbufferGeo(temp Temporal, gs *Geom) int {
+	res := C.ecovers_tcbuffer_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // EcoversTcbufferTcbuffer wraps MEOS C function ecovers_tcbuffer_tcbuffer.
@@ -622,16 +676,22 @@ func EcoversTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO edisjoint_tcbuffer_geo: unsupported param const int *
-// func EdisjointTcbufferGeo(...) { /* not yet handled by codegen */ }
+// EdisjointTcbufferGeo wraps MEOS C function edisjoint_tcbuffer_geo.
+func EdisjointTcbufferGeo(temp Temporal, gs *Geom) int {
+	res := C.edisjoint_tcbuffer_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // TODO edisjoint_tcbuffer_cbuffer: unsupported param const Cbuffer *
 // func EdisjointTcbufferCbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO edwithin_tcbuffer_geo: unsupported param const int *
-// func EdwithinTcbufferGeo(...) { /* not yet handled by codegen */ }
+// EdwithinTcbufferGeo wraps MEOS C function edwithin_tcbuffer_geo.
+func EdwithinTcbufferGeo(temp Temporal, gs *Geom, dist float64) int {
+	res := C.edwithin_tcbuffer_geo(temp.Inner(), gs._inner, C.double(dist))
+	return int(res)
+}
 
 
 // TODO edwithin_tcbuffer_cbuffer: unsupported param const Cbuffer *
@@ -645,8 +705,11 @@ func EdwithinTcbufferTcbuffer(temp1 Temporal, temp2 Temporal, dist float64) int 
 }
 
 
-// TODO eintersects_tcbuffer_geo: unsupported param const int *
-// func EintersectsTcbufferGeo(...) { /* not yet handled by codegen */ }
+// EintersectsTcbufferGeo wraps MEOS C function eintersects_tcbuffer_geo.
+func EintersectsTcbufferGeo(temp Temporal, gs *Geom) int {
+	res := C.eintersects_tcbuffer_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // TODO eintersects_tcbuffer_cbuffer: unsupported param const Cbuffer *
@@ -660,8 +723,11 @@ func EintersectsTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO etouches_tcbuffer_geo: unsupported param const int *
-// func EtouchesTcbufferGeo(...) { /* not yet handled by codegen */ }
+// EtouchesTcbufferGeo wraps MEOS C function etouches_tcbuffer_geo.
+func EtouchesTcbufferGeo(temp Temporal, gs *Geom) int {
+	res := C.etouches_tcbuffer_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // TODO etouches_tcbuffer_cbuffer: unsupported param const Cbuffer *
@@ -679,12 +745,18 @@ func EtouchesTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) int {
 // func TcontainsCbufferTcbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO tcontains_geo_tcbuffer: unsupported param const int *
-// func TcontainsGeoTcbuffer(...) { /* not yet handled by codegen */ }
+// TcontainsGeoTcbuffer wraps MEOS C function tcontains_geo_tcbuffer.
+func TcontainsGeoTcbuffer(gs *Geom, temp Temporal) Temporal {
+	res := C.tcontains_geo_tcbuffer(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO tcontains_tcbuffer_geo: unsupported param const int *
-// func TcontainsTcbufferGeo(...) { /* not yet handled by codegen */ }
+// TcontainsTcbufferGeo wraps MEOS C function tcontains_tcbuffer_geo.
+func TcontainsTcbufferGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.tcontains_tcbuffer_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TODO tcontains_tcbuffer_cbuffer: unsupported param const Cbuffer *
@@ -702,12 +774,18 @@ func TcontainsTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) Temporal {
 // func TcoversCbufferTcbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO tcovers_geo_tcbuffer: unsupported param const int *
-// func TcoversGeoTcbuffer(...) { /* not yet handled by codegen */ }
+// TcoversGeoTcbuffer wraps MEOS C function tcovers_geo_tcbuffer.
+func TcoversGeoTcbuffer(gs *Geom, temp Temporal) Temporal {
+	res := C.tcovers_geo_tcbuffer(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO tcovers_tcbuffer_geo: unsupported param const int *
-// func TcoversTcbufferGeo(...) { /* not yet handled by codegen */ }
+// TcoversTcbufferGeo wraps MEOS C function tcovers_tcbuffer_geo.
+func TcoversTcbufferGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.tcovers_tcbuffer_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TODO tcovers_tcbuffer_cbuffer: unsupported param const Cbuffer *
@@ -721,12 +799,18 @@ func TcoversTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) Temporal {
 }
 
 
-// TODO tdwithin_geo_tcbuffer: unsupported param const int *
-// func TdwithinGeoTcbuffer(...) { /* not yet handled by codegen */ }
+// TdwithinGeoTcbuffer wraps MEOS C function tdwithin_geo_tcbuffer.
+func TdwithinGeoTcbuffer(gs *Geom, temp Temporal, dist float64) Temporal {
+	res := C.tdwithin_geo_tcbuffer(gs._inner, temp.Inner(), C.double(dist))
+	return CreateTemporal(res)
+}
 
 
-// TODO tdwithin_tcbuffer_geo: unsupported param const int *
-// func TdwithinTcbufferGeo(...) { /* not yet handled by codegen */ }
+// TdwithinTcbufferGeo wraps MEOS C function tdwithin_tcbuffer_geo.
+func TdwithinTcbufferGeo(temp Temporal, gs *Geom, dist float64) Temporal {
+	res := C.tdwithin_tcbuffer_geo(temp.Inner(), gs._inner, C.double(dist))
+	return CreateTemporal(res)
+}
 
 
 // TODO tdwithin_tcbuffer_cbuffer: unsupported param const Cbuffer *
@@ -744,12 +828,18 @@ func TdwithinTcbufferTcbuffer(temp1 Temporal, temp2 Temporal, dist float64) Temp
 // func TdisjointCbufferTcbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO tdisjoint_geo_tcbuffer: unsupported param const int *
-// func TdisjointGeoTcbuffer(...) { /* not yet handled by codegen */ }
+// TdisjointGeoTcbuffer wraps MEOS C function tdisjoint_geo_tcbuffer.
+func TdisjointGeoTcbuffer(gs *Geom, temp Temporal) Temporal {
+	res := C.tdisjoint_geo_tcbuffer(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO tdisjoint_tcbuffer_geo: unsupported param const int *
-// func TdisjointTcbufferGeo(...) { /* not yet handled by codegen */ }
+// TdisjointTcbufferGeo wraps MEOS C function tdisjoint_tcbuffer_geo.
+func TdisjointTcbufferGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.tdisjoint_tcbuffer_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TODO tdisjoint_tcbuffer_cbuffer: unsupported param const Cbuffer *
@@ -767,12 +857,18 @@ func TdisjointTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) Temporal {
 // func TintersectsCbufferTcbuffer(...) { /* not yet handled by codegen */ }
 
 
-// TODO tintersects_geo_tcbuffer: unsupported param const int *
-// func TintersectsGeoTcbuffer(...) { /* not yet handled by codegen */ }
+// TintersectsGeoTcbuffer wraps MEOS C function tintersects_geo_tcbuffer.
+func TintersectsGeoTcbuffer(gs *Geom, temp Temporal) Temporal {
+	res := C.tintersects_geo_tcbuffer(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO tintersects_tcbuffer_geo: unsupported param const int *
-// func TintersectsTcbufferGeo(...) { /* not yet handled by codegen */ }
+// TintersectsTcbufferGeo wraps MEOS C function tintersects_tcbuffer_geo.
+func TintersectsTcbufferGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.tintersects_tcbuffer_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TODO tintersects_tcbuffer_cbuffer: unsupported param const Cbuffer *
@@ -786,12 +882,18 @@ func TintersectsTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) Temporal {
 }
 
 
-// TODO ttouches_geo_tcbuffer: unsupported param const int *
-// func TtouchesGeoTcbuffer(...) { /* not yet handled by codegen */ }
+// TtouchesGeoTcbuffer wraps MEOS C function ttouches_geo_tcbuffer.
+func TtouchesGeoTcbuffer(gs *Geom, temp Temporal) Temporal {
+	res := C.ttouches_geo_tcbuffer(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO ttouches_tcbuffer_geo: unsupported param const int *
-// func TtouchesTcbufferGeo(...) { /* not yet handled by codegen */ }
+// TtouchesTcbufferGeo wraps MEOS C function ttouches_tcbuffer_geo.
+func TtouchesTcbufferGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.ttouches_tcbuffer_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TODO ttouches_cbuffer_tcbuffer: unsupported param const Cbuffer *

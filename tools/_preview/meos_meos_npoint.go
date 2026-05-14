@@ -96,29 +96,38 @@ func NsegmentOut(ns *Nsegment, maxdd int) string {
 
 
 // NpointMake wraps MEOS C function npoint_make.
-func NpointMake(rid int, pos float64) *Npoint {
-	res := C.npoint_make(C.int(rid), C.double(pos))
+func NpointMake(rid int64, pos float64) *Npoint {
+	res := C.npoint_make(C.int64(rid), C.double(pos))
 	return &Npoint{_inner: res}
 }
 
 
 // NsegmentMake wraps MEOS C function nsegment_make.
-func NsegmentMake(rid int, pos1 float64, pos2 float64) *Nsegment {
-	res := C.nsegment_make(C.int(rid), C.double(pos1), C.double(pos2))
+func NsegmentMake(rid int64, pos1 float64, pos2 float64) *Nsegment {
+	res := C.nsegment_make(C.int64(rid), C.double(pos1), C.double(pos2))
 	return &Nsegment{_inner: res}
 }
 
 
-// TODO geompoint_to_npoint: unsupported param const int *
-// func GeompointToNpoint(...) { /* not yet handled by codegen */ }
+// GeompointToNpoint wraps MEOS C function geompoint_to_npoint.
+func GeompointToNpoint(gs *Geom) *Npoint {
+	res := C.geompoint_to_npoint(gs._inner)
+	return &Npoint{_inner: res}
+}
 
 
-// TODO geom_to_nsegment: unsupported param const int *
-// func GeomToNsegment(...) { /* not yet handled by codegen */ }
+// GeomToNsegment wraps MEOS C function geom_to_nsegment.
+func GeomToNsegment(gs *Geom) *Nsegment {
+	res := C.geom_to_nsegment(gs._inner)
+	return &Nsegment{_inner: res}
+}
 
 
-// TODO npoint_to_geompoint: unsupported return type int *
-// func NpointToGeompoint(...) { /* not yet handled by codegen */ }
+// NpointToGeompoint wraps MEOS C function npoint_to_geompoint.
+func NpointToGeompoint(np *Npoint) *Geom {
+	res := C.npoint_to_geompoint(np._inner)
+	return &Geom{_inner: res}
+}
 
 
 // NpointToNsegment wraps MEOS C function npoint_to_nsegment.
@@ -135,8 +144,11 @@ func NpointToSTBOX(np *Npoint) *STBox {
 }
 
 
-// TODO nsegment_to_geom: unsupported return type int *
-// func NsegmentToGeom(...) { /* not yet handled by codegen */ }
+// NsegmentToGeom wraps MEOS C function nsegment_to_geom.
+func NsegmentToGeom(ns *Nsegment) *Geom {
+	res := C.nsegment_to_geom(ns._inner)
+	return &Geom{_inner: res}
+}
 
 
 // NsegmentToSTBOX wraps MEOS C function nsegment_to_stbox.
@@ -147,16 +159,16 @@ func NsegmentToSTBOX(np *Nsegment) *STBox {
 
 
 // NpointHash wraps MEOS C function npoint_hash.
-func NpointHash(np *Npoint) int {
+func NpointHash(np *Npoint) uint32 {
 	res := C.npoint_hash(np._inner)
-	return int(res)
+	return uint32(res)
 }
 
 
 // NpointHashExtended wraps MEOS C function npoint_hash_extended.
-func NpointHashExtended(np *Npoint, seed int) int {
-	res := C.npoint_hash_extended(np._inner, C.int(seed))
-	return int(res)
+func NpointHashExtended(np *Npoint, seed uint64) uint64 {
+	res := C.npoint_hash_extended(np._inner, C.uint64(seed))
+	return uint64(res)
 }
 
 
@@ -168,9 +180,9 @@ func NpointPosition(np *Npoint) float64 {
 
 
 // NpointRoute wraps MEOS C function npoint_route.
-func NpointRoute(np *Npoint) int {
+func NpointRoute(np *Npoint) int64 {
 	res := C.npoint_route(np._inner)
-	return int(res)
+	return int64(res)
 }
 
 
@@ -182,9 +194,9 @@ func NsegmentEndPosition(ns *Nsegment) float64 {
 
 
 // NsegmentRoute wraps MEOS C function nsegment_route.
-func NsegmentRoute(ns *Nsegment) int {
+func NsegmentRoute(ns *Nsegment) int64 {
 	res := C.nsegment_route(ns._inner)
-	return int(res)
+	return int64(res)
 }
 
 
@@ -196,19 +208,22 @@ func NsegmentStartPosition(ns *Nsegment) float64 {
 
 
 // RouteExists wraps MEOS C function route_exists.
-func RouteExists(rid int) bool {
-	res := C.route_exists(C.int(rid))
+func RouteExists(rid int64) bool {
+	res := C.route_exists(C.int64(rid))
 	return bool(res)
 }
 
 
-// TODO route_geom: unsupported return type const int *
-// func RouteGeom(...) { /* not yet handled by codegen */ }
+// RouteGeom wraps MEOS C function route_geom.
+func RouteGeom(rid int64) *Geom {
+	res := C.route_geom(C.int64(rid))
+	return &Geom{_inner: res}
+}
 
 
 // RouteLength wraps MEOS C function route_length.
-func RouteLength(rid int) float64 {
-	res := C.route_length(C.int(rid))
+func RouteLength(rid int64) float64 {
+	res := C.route_length(C.int64(rid))
 	return float64(res)
 }
 
@@ -249,8 +264,8 @@ func NsegmentSRID(ns *Nsegment) int32 {
 
 
 // NpointTimestamptzToSTBOX wraps MEOS C function npoint_timestamptz_to_stbox.
-func NpointTimestamptzToSTBOX(np *Npoint, t int) *STBox {
-	res := C.npoint_timestamptz_to_stbox(np._inner, C.int(t))
+func NpointTimestamptzToSTBOX(np *Npoint, t int64) *STBox {
+	res := C.npoint_timestamptz_to_stbox(np._inner, C.TimestampTz(t))
 	return &STBox{_inner: res}
 }
 
@@ -521,8 +536,8 @@ func TnpointOut(temp Temporal, maxdd int) string {
 
 
 // TnpointinstMake wraps MEOS C function tnpointinst_make.
-func TnpointinstMake(np *Npoint, t int) TInstant {
-	res := C.tnpointinst_make(np._inner, C.int(t))
+func TnpointinstMake(np *Npoint, t int64) TInstant {
+	res := C.tnpointinst_make(np._inner, C.TimestampTz(t))
 	return TInstant{_inner: res}
 }
 
@@ -570,9 +585,9 @@ func TnpointPositions(temp Temporal) []*Nsegment {
 
 
 // TnpointRoute wraps MEOS C function tnpoint_route.
-func TnpointRoute(temp Temporal) int {
+func TnpointRoute(temp Temporal) int64 {
 	res := C.tnpoint_route(temp.Inner())
-	return int(res)
+	return int64(res)
 }
 
 
@@ -590,16 +605,25 @@ func TnpointSpeed(temp Temporal) Temporal {
 }
 
 
-// TODO tnpoint_trajectory: unsupported return type int *
-// func TnpointTrajectory(...) { /* not yet handled by codegen */ }
+// TnpointTrajectory wraps MEOS C function tnpoint_trajectory.
+func TnpointTrajectory(temp Temporal) *Geom {
+	res := C.tnpoint_trajectory(temp.Inner())
+	return &Geom{_inner: res}
+}
 
 
-// TODO tnpoint_twcentroid: unsupported return type int *
-// func TnpointTwcentroid(...) { /* not yet handled by codegen */ }
+// TnpointTwcentroid wraps MEOS C function tnpoint_twcentroid.
+func TnpointTwcentroid(temp Temporal) *Geom {
+	res := C.tnpoint_twcentroid(temp.Inner())
+	return &Geom{_inner: res}
+}
 
 
-// TODO tnpoint_at_geom: unsupported param const int *
-// func TnpointAtGeom(...) { /* not yet handled by codegen */ }
+// TnpointAtGeom wraps MEOS C function tnpoint_at_geom.
+func TnpointAtGeom(temp Temporal, gs *Geom) Temporal {
+	res := C.tnpoint_at_geom(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TnpointAtNpoint wraps MEOS C function tnpoint_at_npoint.
@@ -623,8 +647,11 @@ func TnpointAtSTBOX(temp Temporal, box *STBox, border_inc bool) Temporal {
 }
 
 
-// TODO tnpoint_minus_geom: unsupported param const int *
-// func TnpointMinusGeom(...) { /* not yet handled by codegen */ }
+// TnpointMinusGeom wraps MEOS C function tnpoint_minus_geom.
+func TnpointMinusGeom(temp Temporal, gs *Geom) Temporal {
+	res := C.tnpoint_minus_geom(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TnpointMinusNpoint wraps MEOS C function tnpoint_minus_npoint.
@@ -655,8 +682,11 @@ func TdistanceTnpointNpoint(temp Temporal, np *Npoint) Temporal {
 }
 
 
-// TODO tdistance_tnpoint_point: unsupported param const int *
-// func TdistanceTnpointPoint(...) { /* not yet handled by codegen */ }
+// TdistanceTnpointPoint wraps MEOS C function tdistance_tnpoint_point.
+func TdistanceTnpointPoint(temp Temporal, gs *Geom) Temporal {
+	res := C.tdistance_tnpoint_point(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TdistanceTnpointTnpoint wraps MEOS C function tdistance_tnpoint_tnpoint.
@@ -666,8 +696,11 @@ func TdistanceTnpointTnpoint(temp1 Temporal, temp2 Temporal) Temporal {
 }
 
 
-// TODO nad_tnpoint_geo: unsupported param const int *
-// func NadTnpointGeo(...) { /* not yet handled by codegen */ }
+// NadTnpointGeo wraps MEOS C function nad_tnpoint_geo.
+func NadTnpointGeo(temp Temporal, gs *Geom) float64 {
+	res := C.nad_tnpoint_geo(temp.Inner(), gs._inner)
+	return float64(res)
+}
 
 
 // NadTnpointNpoint wraps MEOS C function nad_tnpoint_npoint.
@@ -691,8 +724,11 @@ func NadTnpointTnpoint(temp1 Temporal, temp2 Temporal) float64 {
 }
 
 
-// TODO nai_tnpoint_geo: unsupported param const int *
-// func NaiTnpointGeo(...) { /* not yet handled by codegen */ }
+// NaiTnpointGeo wraps MEOS C function nai_tnpoint_geo.
+func NaiTnpointGeo(temp Temporal, gs *Geom) TInstant {
+	res := C.nai_tnpoint_geo(temp.Inner(), gs._inner)
+	return TInstant{_inner: res}
+}
 
 
 // NaiTnpointNpoint wraps MEOS C function nai_tnpoint_npoint.
@@ -709,16 +745,25 @@ func NaiTnpointTnpoint(temp1 Temporal, temp2 Temporal) TInstant {
 }
 
 
-// TODO shortestline_tnpoint_geo: unsupported return type int *
-// func ShortestlineTnpointGeo(...) { /* not yet handled by codegen */ }
+// ShortestlineTnpointGeo wraps MEOS C function shortestline_tnpoint_geo.
+func ShortestlineTnpointGeo(temp Temporal, gs *Geom) *Geom {
+	res := C.shortestline_tnpoint_geo(temp.Inner(), gs._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO shortestline_tnpoint_npoint: unsupported return type int *
-// func ShortestlineTnpointNpoint(...) { /* not yet handled by codegen */ }
+// ShortestlineTnpointNpoint wraps MEOS C function shortestline_tnpoint_npoint.
+func ShortestlineTnpointNpoint(temp Temporal, np *Npoint) *Geom {
+	res := C.shortestline_tnpoint_npoint(temp.Inner(), np._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO shortestline_tnpoint_tnpoint: unsupported return type int *
-// func ShortestlineTnpointTnpoint(...) { /* not yet handled by codegen */ }
+// ShortestlineTnpointTnpoint wraps MEOS C function shortestline_tnpoint_tnpoint.
+func ShortestlineTnpointTnpoint(temp1 Temporal, temp2 Temporal) *Geom {
+	res := C.shortestline_tnpoint_tnpoint(temp1.Inner(), temp2.Inner())
+	return &Geom{_inner: res}
+}
 
 
 // TnpointTcentroidTransfn wraps MEOS C function tnpoint_tcentroid_transfn.

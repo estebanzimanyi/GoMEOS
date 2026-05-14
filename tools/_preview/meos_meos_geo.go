@@ -11,121 +11,227 @@ import (
 var _ = unsafe.Pointer(nil)
 var _ = timeutil.Timedelta{}
 
-// TODO geo_as_ewkb: unsupported param const int *
-// func GeoAsEWKB(...) { /* not yet handled by codegen */ }
+// GeoGetSRID wraps MEOS C function geo_get_srid.
+func GeoGetSRID(g *Geom) int32 {
+	res := C.geo_get_srid(g._inner)
+	return int32(res)
+}
 
 
-// TODO geo_as_ewkt: unsupported param const int *
-// func GeoAsEWKT(...) { /* not yet handled by codegen */ }
-
-
-// TODO geo_as_geojson: unsupported param const int *
-// func GeoAsGeojson(...) { /* not yet handled by codegen */ }
-
-
-// TODO geo_as_hexewkb: unsupported param const int *
-// func GeoAsHexewkb(...) { /* not yet handled by codegen */ }
-
-
-// TODO geo_as_text: unsupported param const int *
-// func GeoAsText(...) { /* not yet handled by codegen */ }
-
-
-// GeoFromEWKB wraps MEOS C function geo_from_ewkb.
-func GeoFromEWKB(wkb []byte, srid int) []int {
-	res := C.geo_from_ewkb((*C.uint8_t)(unsafe.Pointer(&wkb[0])), C.size_t(len(wkb)), C.int(srid))
-	_n := len(wkb)
-	_slice := unsafe.Slice((*C.int)(unsafe.Pointer(res)), _n)
-	_out := make([]int, _n)
+// GeoAsEWKB wraps MEOS C function geo_as_ewkb.
+func GeoAsEWKB(gs *Geom, endian string) []uint8 {
+	_c_endian := C.CString(endian)
+	defer C.free(unsafe.Pointer(_c_endian))
+	var _out_size C.size_t
+	res := C.geo_as_ewkb(gs._inner, _c_endian, &_out_size)
+	_n := int(_out_size)
+	_slice := unsafe.Slice((*C.uint8_t)(unsafe.Pointer(res)), _n)
+	_out := make([]uint8, _n)
 	for _i, _e := range _slice {
-		_out[_i] = int(_e)
+		_out[_i] = uint8(_e)
 	}
 	return _out
 }
 
 
-// TODO geo_from_geojson: unsupported return type int *
-// func GeoFromGeojson(...) { /* not yet handled by codegen */ }
+// GeoAsEWKT wraps MEOS C function geo_as_ewkt.
+func GeoAsEWKT(gs *Geom, precision int) string {
+	res := C.geo_as_ewkt(gs._inner, C.int(precision))
+	return C.GoString(res)
+}
 
 
-// TODO geo_from_text: unsupported return type int *
-// func GeoFromText(...) { /* not yet handled by codegen */ }
+// GeoAsGeojson wraps MEOS C function geo_as_geojson.
+func GeoAsGeojson(gs *Geom, option int, precision int, srs string) string {
+	_c_srs := C.CString(srs)
+	defer C.free(unsafe.Pointer(_c_srs))
+	res := C.geo_as_geojson(gs._inner, C.int(option), C.int(precision), _c_srs)
+	return C.GoString(res)
+}
 
 
-// TODO geo_out: unsupported param const int *
-// func GeoOut(...) { /* not yet handled by codegen */ }
+// GeoAsHexewkb wraps MEOS C function geo_as_hexewkb.
+func GeoAsHexewkb(gs *Geom, endian string) string {
+	_c_endian := C.CString(endian)
+	defer C.free(unsafe.Pointer(_c_endian))
+	res := C.geo_as_hexewkb(gs._inner, _c_endian)
+	return C.GoString(res)
+}
 
 
-// TODO geog_from_binary: unsupported return type int *
-// func GeogFromBinary(...) { /* not yet handled by codegen */ }
+// GeoAsText wraps MEOS C function geo_as_text.
+func GeoAsText(gs *Geom, precision int) string {
+	res := C.geo_as_text(gs._inner, C.int(precision))
+	return C.GoString(res)
+}
 
 
-// TODO geog_from_hexewkb: unsupported return type int *
-// func GeogFromHexewkb(...) { /* not yet handled by codegen */ }
+// GeoFromEWKB wraps MEOS C function geo_from_ewkb.
+func GeoFromEWKB(wkb []byte, srid int32) *Geom {
+	res := C.geo_from_ewkb((*C.uint8_t)(unsafe.Pointer(&wkb[0])), C.size_t(len(wkb)), C.int32(srid))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geog_in: unsupported return type int *
-// func GeogIn(...) { /* not yet handled by codegen */ }
+// GeoFromGeojson wraps MEOS C function geo_from_geojson.
+func GeoFromGeojson(geojson string) *Geom {
+	_c_geojson := C.CString(geojson)
+	defer C.free(unsafe.Pointer(_c_geojson))
+	res := C.geo_from_geojson(_c_geojson)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geom_from_hexewkb: unsupported return type int *
-// func GeomFromHexewkb(...) { /* not yet handled by codegen */ }
+// GeoFromText wraps MEOS C function geo_from_text.
+func GeoFromText(wkt string, srid int32) *Geom {
+	_c_wkt := C.CString(wkt)
+	defer C.free(unsafe.Pointer(_c_wkt))
+	res := C.geo_from_text(_c_wkt, C.int32_t(srid))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geom_in: unsupported return type int *
-// func GeomIn(...) { /* not yet handled by codegen */ }
+// GeoOut wraps MEOS C function geo_out.
+func GeoOut(gs *Geom) string {
+	res := C.geo_out(gs._inner)
+	return C.GoString(res)
+}
 
 
-// TODO box3d_make: unsupported return type int *
-// func Box3dMake(...) { /* not yet handled by codegen */ }
+// GeogFromBinary wraps MEOS C function geog_from_binary.
+func GeogFromBinary(wkb_bytea string) *Geom {
+	_c_wkb_bytea := C.CString(wkb_bytea)
+	defer C.free(unsafe.Pointer(_c_wkb_bytea))
+	res := C.geog_from_binary(_c_wkb_bytea)
+	return &Geom{_inner: res}
+}
 
 
-// TODO box3d_out: unsupported param const int *
-// func Box3dOut(...) { /* not yet handled by codegen */ }
+// GeogFromHexewkb wraps MEOS C function geog_from_hexewkb.
+func GeogFromHexewkb(wkt string) *Geom {
+	_c_wkt := C.CString(wkt)
+	defer C.free(unsafe.Pointer(_c_wkt))
+	res := C.geog_from_hexewkb(_c_wkt)
+	return &Geom{_inner: res}
+}
 
 
-// TODO gbox_make: unsupported return type int *
-// func GboxMake(...) { /* not yet handled by codegen */ }
+// GeogIn wraps MEOS C function geog_in.
+func GeogIn(str string, typmod int32) *Geom {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	res := C.geog_in(_c_str, C.int32(typmod))
+	return &Geom{_inner: res}
+}
 
 
-// TODO gbox_out: unsupported param const int *
-// func GboxOut(...) { /* not yet handled by codegen */ }
+// GeomFromHexewkb wraps MEOS C function geom_from_hexewkb.
+func GeomFromHexewkb(wkt string) *Geom {
+	_c_wkt := C.CString(wkt)
+	defer C.free(unsafe.Pointer(_c_wkt))
+	res := C.geom_from_hexewkb(_c_wkt)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_copy: unsupported return type int *
-// func GeoCopy(...) { /* not yet handled by codegen */ }
+// GeomIn wraps MEOS C function geom_in.
+func GeomIn(str string, typmod int32) *Geom {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	res := C.geom_in(_c_str, C.int32(typmod))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geogpoint_make2d: unsupported return type int *
-// func GeogpointMake2d(...) { /* not yet handled by codegen */ }
+// Box3dMake wraps MEOS C function box3d_make.
+func Box3dMake(xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, srid int32) *Box3D {
+	res := C.box3d_make(C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), C.int32_t(srid))
+	return &Box3D{_inner: res}
+}
 
 
-// TODO geogpoint_make3dz: unsupported return type int *
-// func GeogpointMake3dz(...) { /* not yet handled by codegen */ }
+// Box3dOut wraps MEOS C function box3d_out.
+func Box3dOut(box *Box3D, maxdd int) string {
+	res := C.box3d_out(box._inner, C.int(maxdd))
+	return C.GoString(res)
+}
 
 
-// TODO geompoint_make2d: unsupported return type int *
-// func GeompointMake2d(...) { /* not yet handled by codegen */ }
+// GboxMake wraps MEOS C function gbox_make.
+func GboxMake(hasz bool, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64) *GBox {
+	res := C.gbox_make(C.bool(hasz), C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax))
+	return &GBox{_inner: res}
+}
 
 
-// TODO geompoint_make3dz: unsupported return type int *
-// func GeompointMake3dz(...) { /* not yet handled by codegen */ }
+// GboxOut wraps MEOS C function gbox_out.
+func GboxOut(box *GBox, maxdd int) string {
+	res := C.gbox_out(box._inner, C.int(maxdd))
+	return C.GoString(res)
+}
 
 
-// TODO geom_to_geog: unsupported return type int *
-// func GeomToGeog(...) { /* not yet handled by codegen */ }
+// GeoCopy wraps MEOS C function geo_copy.
+func GeoCopy(g *Geom) *Geom {
+	res := C.geo_copy(g._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geog_to_geom: unsupported return type int *
-// func GeogToGeom(...) { /* not yet handled by codegen */ }
+// GeogpointMake2d wraps MEOS C function geogpoint_make2d.
+func GeogpointMake2d(srid int32, x float64, y float64) *Geom {
+	res := C.geogpoint_make2d(C.int32_t(srid), C.double(x), C.double(y))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_is_empty: unsupported param const int *
-// func GeoIsEmpty(...) { /* not yet handled by codegen */ }
+// GeogpointMake3dz wraps MEOS C function geogpoint_make3dz.
+func GeogpointMake3dz(srid int32, x float64, y float64, z float64) *Geom {
+	res := C.geogpoint_make3dz(C.int32_t(srid), C.double(x), C.double(y), C.double(z))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_is_unitary: unsupported param const int *
-// func GeoIsUnitary(...) { /* not yet handled by codegen */ }
+// GeompointMake2d wraps MEOS C function geompoint_make2d.
+func GeompointMake2d(srid int32, x float64, y float64) *Geom {
+	res := C.geompoint_make2d(C.int32_t(srid), C.double(x), C.double(y))
+	return &Geom{_inner: res}
+}
+
+
+// GeompointMake3dz wraps MEOS C function geompoint_make3dz.
+func GeompointMake3dz(srid int32, x float64, y float64, z float64) *Geom {
+	res := C.geompoint_make3dz(C.int32_t(srid), C.double(x), C.double(y), C.double(z))
+	return &Geom{_inner: res}
+}
+
+
+// GeomToGeog wraps MEOS C function geom_to_geog.
+func GeomToGeog(geom *Geom) *Geom {
+	res := C.geom_to_geog(geom._inner)
+	return &Geom{_inner: res}
+}
+
+
+// GeogToGeom wraps MEOS C function geog_to_geom.
+func GeogToGeom(geog *Geom) *Geom {
+	res := C.geog_to_geom(geog._inner)
+	return &Geom{_inner: res}
+}
+
+
+// GeoIsEmpty wraps MEOS C function geo_is_empty.
+func GeoIsEmpty(g *Geom) bool {
+	res := C.geo_is_empty(g._inner)
+	return bool(res)
+}
+
+
+// GeoIsUnitary wraps MEOS C function geo_is_unitary.
+func GeoIsUnitary(gs *Geom) bool {
+	res := C.geo_is_unitary(gs._inner)
+	return bool(res)
+}
 
 
 // GeoTypename wraps MEOS C function geo_typename.
@@ -135,228 +241,420 @@ func GeoTypename(type_ int) string {
 }
 
 
-// TODO geog_area: unsupported param const int *
-// func GeogArea(...) { /* not yet handled by codegen */ }
+// GeogArea wraps MEOS C function geog_area.
+func GeogArea(g *Geom, use_spheroid bool) float64 {
+	res := C.geog_area(g._inner, C.bool(use_spheroid))
+	return float64(res)
+}
 
 
-// TODO geog_centroid: unsupported return type int *
-// func GeogCentroid(...) { /* not yet handled by codegen */ }
+// GeogCentroid wraps MEOS C function geog_centroid.
+func GeogCentroid(g *Geom, use_spheroid bool) *Geom {
+	res := C.geog_centroid(g._inner, C.bool(use_spheroid))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geog_length: unsupported param const int *
-// func GeogLength(...) { /* not yet handled by codegen */ }
+// GeogLength wraps MEOS C function geog_length.
+func GeogLength(g *Geom, use_spheroid bool) float64 {
+	res := C.geog_length(g._inner, C.bool(use_spheroid))
+	return float64(res)
+}
 
 
-// TODO geog_perimeter: unsupported param const int *
-// func GeogPerimeter(...) { /* not yet handled by codegen */ }
+// GeogPerimeter wraps MEOS C function geog_perimeter.
+func GeogPerimeter(g *Geom, use_spheroid bool) float64 {
+	res := C.geog_perimeter(g._inner, C.bool(use_spheroid))
+	return float64(res)
+}
 
 
-// TODO geom_azimuth: unsupported param const int *
-// func GeomAzimuth(...) { /* not yet handled by codegen */ }
+// GeomAzimuth wraps MEOS C function geom_azimuth.
+func GeomAzimuth(gs1 *Geom, gs2 *Geom) (bool, float64) {
+	var _out_result C.double
+	res := C.geom_azimuth(gs1._inner, gs2._inner, &_out_result)
+	return bool(res), float64(_out_result)
+}
 
 
-// TODO geom_length: unsupported param const int *
-// func GeomLength(...) { /* not yet handled by codegen */ }
+// GeomLength wraps MEOS C function geom_length.
+func GeomLength(gs *Geom) float64 {
+	res := C.geom_length(gs._inner)
+	return float64(res)
+}
 
 
-// TODO geom_perimeter: unsupported param const int *
-// func GeomPerimeter(...) { /* not yet handled by codegen */ }
+// GeomPerimeter wraps MEOS C function geom_perimeter.
+func GeomPerimeter(gs *Geom) float64 {
+	res := C.geom_perimeter(gs._inner)
+	return float64(res)
+}
 
 
-// TODO line_numpoints: unsupported param const int *
-// func LineNumpoints(...) { /* not yet handled by codegen */ }
+// LineNumpoints wraps MEOS C function line_numpoints.
+func LineNumpoints(gs *Geom) int {
+	res := C.line_numpoints(gs._inner)
+	return int(res)
+}
 
 
-// TODO line_point_n: unsupported return type int *
-// func LinePointN(...) { /* not yet handled by codegen */ }
+// LinePointN wraps MEOS C function line_point_n.
+func LinePointN(geom *Geom, n int) *Geom {
+	res := C.line_point_n(geom._inner, C.int(n))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_reverse: unsupported return type int *
-// func GeoReverse(...) { /* not yet handled by codegen */ }
+// GeoReverse wraps MEOS C function geo_reverse.
+func GeoReverse(gs *Geom) *Geom {
+	res := C.geo_reverse(gs._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_round: unsupported return type int *
-// func GeoRound(...) { /* not yet handled by codegen */ }
+// GeoRound wraps MEOS C function geo_round.
+func GeoRound(gs *Geom, maxdd int) *Geom {
+	res := C.geo_round(gs._inner, C.int(maxdd))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_set_srid: unsupported return type int *
-// func GeoSetSRID(...) { /* not yet handled by codegen */ }
+// GeoSetSRID wraps MEOS C function geo_set_srid.
+func GeoSetSRID(gs *Geom, srid int32) *Geom {
+	res := C.geo_set_srid(gs._inner, C.int32_t(srid))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_srid: unsupported param const int *
-// func GeoSRID(...) { /* not yet handled by codegen */ }
+// GeoSRID wraps MEOS C function geo_srid.
+func GeoSRID(gs *Geom) int32 {
+	res := C.geo_srid(gs._inner)
+	return int32(res)
+}
 
 
-// TODO geo_transform: unsupported return type int *
-// func GeoTransform(...) { /* not yet handled by codegen */ }
+// GeoTransform wraps MEOS C function geo_transform.
+func GeoTransform(geom *Geom, srid_to int32) *Geom {
+	res := C.geo_transform(geom._inner, C.int32_t(srid_to))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_transform_pipeline: unsupported return type int *
-// func GeoTransformPipeline(...) { /* not yet handled by codegen */ }
+// GeoTransformPipeline wraps MEOS C function geo_transform_pipeline.
+func GeoTransformPipeline(gs *Geom, pipeline string, srid_to int32, is_forward bool) *Geom {
+	_c_pipeline := C.CString(pipeline)
+	defer C.free(unsafe.Pointer(_c_pipeline))
+	res := C.geo_transform_pipeline(gs._inner, _c_pipeline, C.int32_t(srid_to), C.bool(is_forward))
+	return &Geom{_inner: res}
+}
+
+
+// GeoCollectGarray wraps MEOS C function geo_collect_garray.
+func GeoCollectGarray(gsarr []*Geom) *Geom {
+	_c_gsarr := make([]*C.GSERIALIZED, len(gsarr))
+	for _i, _v := range gsarr { _c_gsarr[_i] = _v._inner }
+	res := C.geo_collect_garray((**C.GSERIALIZED)(unsafe.Pointer(&_c_gsarr[0])), C.int(len(gsarr)))
+	return &Geom{_inner: res}
+}
+
+
+// GeoMakelineGarray wraps MEOS C function geo_makeline_garray.
+func GeoMakelineGarray(gsarr []*Geom) *Geom {
+	_c_gsarr := make([]*C.GSERIALIZED, len(gsarr))
+	for _i, _v := range gsarr { _c_gsarr[_i] = _v._inner }
+	res := C.geo_makeline_garray((**C.GSERIALIZED)(unsafe.Pointer(&_c_gsarr[0])), C.int(len(gsarr)))
+	return &Geom{_inner: res}
+}
+
+
+// GeoNumPoints wraps MEOS C function geo_num_points.
+func GeoNumPoints(gs *Geom) int {
+	res := C.geo_num_points(gs._inner)
+	return int(res)
+}
+
+
+// GeoNumGeos wraps MEOS C function geo_num_geos.
+func GeoNumGeos(gs *Geom) int {
+	res := C.geo_num_geos(gs._inner)
+	return int(res)
+}
+
+
+// GeoGeoN wraps MEOS C function geo_geo_n.
+func GeoGeoN(geom *Geom, n int) *Geom {
+	res := C.geo_geo_n(geom._inner, C.int(n))
+	return &Geom{_inner: res}
+}
+
+
+// GeoPointarr wraps MEOS C function geo_pointarr.
+func GeoPointarr(gs *Geom) []*Geom {
+	var _out_count C.int
+	res := C.geo_pointarr(gs._inner, &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.GSERIALIZED)(unsafe.Pointer(res)), _n)
+	_out := make([]*Geom, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Geom{_inner: _e}
+	}
+	return _out
+}
 
 
-// TODO geo_collect_garray: unsupported return type int *
-// func GeoCollectGarray(...) { /* not yet handled by codegen */ }
+// GeoPoints wraps MEOS C function geo_points.
+func GeoPoints(gs *Geom) *Geom {
+	res := C.geo_points(gs._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_makeline_garray: unsupported return type int *
-// func GeoMakelineGarray(...) { /* not yet handled by codegen */ }
+// GeomArrayUnion wraps MEOS C function geom_array_union.
+func GeomArrayUnion(gsarr []*Geom) *Geom {
+	_c_gsarr := make([]*C.GSERIALIZED, len(gsarr))
+	for _i, _v := range gsarr { _c_gsarr[_i] = _v._inner }
+	res := C.geom_array_union((**C.GSERIALIZED)(unsafe.Pointer(&_c_gsarr[0])), C.int(len(gsarr)))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_num_points: unsupported param const int *
-// func GeoNumPoints(...) { /* not yet handled by codegen */ }
+// GeomBoundary wraps MEOS C function geom_boundary.
+func GeomBoundary(gs *Geom) *Geom {
+	res := C.geom_boundary(gs._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_num_geos: unsupported param const int *
-// func GeoNumGeos(...) { /* not yet handled by codegen */ }
+// GeomBuffer wraps MEOS C function geom_buffer.
+func GeomBuffer(gs *Geom, size float64, params string) *Geom {
+	_c_params := C.CString(params)
+	defer C.free(unsafe.Pointer(_c_params))
+	res := C.geom_buffer(gs._inner, C.double(size), _c_params)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_geo_n: unsupported return type int *
-// func GeoGeoN(...) { /* not yet handled by codegen */ }
+// GeomCentroid wraps MEOS C function geom_centroid.
+func GeomCentroid(gs *Geom) *Geom {
+	res := C.geom_centroid(gs._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_pointarr: unsupported return type int **
-// func GeoPointarr(...) { /* not yet handled by codegen */ }
+// GeomConvexHull wraps MEOS C function geom_convex_hull.
+func GeomConvexHull(gs *Geom) *Geom {
+	res := C.geom_convex_hull(gs._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geo_points: unsupported return type int *
-// func GeoPoints(...) { /* not yet handled by codegen */ }
+// GeomDifference2d wraps MEOS C function geom_difference2d.
+func GeomDifference2d(gs1 *Geom, gs2 *Geom) *Geom {
+	res := C.geom_difference2d(gs1._inner, gs2._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geom_array_union: unsupported return type int *
-// func GeomArrayUnion(...) { /* not yet handled by codegen */ }
+// GeomIntersection2d wraps MEOS C function geom_intersection2d.
+func GeomIntersection2d(gs1 *Geom, gs2 *Geom) *Geom {
+	res := C.geom_intersection2d(gs1._inner, gs2._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geom_boundary: unsupported return type int *
-// func GeomBoundary(...) { /* not yet handled by codegen */ }
+// GeomIntersection2dColl wraps MEOS C function geom_intersection2d_coll.
+func GeomIntersection2dColl(gs1 *Geom, gs2 *Geom) *Geom {
+	res := C.geom_intersection2d_coll(gs1._inner, gs2._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geom_buffer: unsupported return type int *
-// func GeomBuffer(...) { /* not yet handled by codegen */ }
+// GeomMinBoundingRadius wraps MEOS C function geom_min_bounding_radius.
+func GeomMinBoundingRadius(geom *Geom) (*Geom, float64) {
+	var _out_radius C.double
+	res := C.geom_min_bounding_radius(geom._inner, &_out_radius)
+	return &Geom{_inner: res}, float64(_out_radius)
+}
 
 
-// TODO geom_centroid: unsupported return type int *
-// func GeomCentroid(...) { /* not yet handled by codegen */ }
+// GeomShortestline2d wraps MEOS C function geom_shortestline2d.
+func GeomShortestline2d(gs1 *Geom, s2 *Geom) *Geom {
+	res := C.geom_shortestline2d(gs1._inner, s2._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geom_convex_hull: unsupported return type int *
-// func GeomConvexHull(...) { /* not yet handled by codegen */ }
+// GeomShortestline3d wraps MEOS C function geom_shortestline3d.
+func GeomShortestline3d(gs1 *Geom, s2 *Geom) *Geom {
+	res := C.geom_shortestline3d(gs1._inner, s2._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geom_difference2d: unsupported return type int *
-// func GeomDifference2d(...) { /* not yet handled by codegen */ }
+// GeomUnaryUnion wraps MEOS C function geom_unary_union.
+func GeomUnaryUnion(gs *Geom, prec float64) *Geom {
+	res := C.geom_unary_union(gs._inner, C.double(prec))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geom_intersection2d: unsupported return type int *
-// func GeomIntersection2d(...) { /* not yet handled by codegen */ }
+// LineInterpolatePoint wraps MEOS C function line_interpolate_point.
+func LineInterpolatePoint(gs *Geom, distance_fraction float64, repeat bool) *Geom {
+	res := C.line_interpolate_point(gs._inner, C.double(distance_fraction), C.bool(repeat))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geom_intersection2d_coll: unsupported return type int *
-// func GeomIntersection2dColl(...) { /* not yet handled by codegen */ }
+// LineLocatePoint wraps MEOS C function line_locate_point.
+func LineLocatePoint(gs1 *Geom, gs2 *Geom) float64 {
+	res := C.line_locate_point(gs1._inner, gs2._inner)
+	return float64(res)
+}
 
 
-// TODO geom_min_bounding_radius: unsupported return type int *
-// func GeomMinBoundingRadius(...) { /* not yet handled by codegen */ }
+// LineSubstring wraps MEOS C function line_substring.
+func LineSubstring(gs *Geom, from float64, to float64) *Geom {
+	res := C.line_substring(gs._inner, C.double(from), C.double(to))
+	return &Geom{_inner: res}
+}
 
 
-// TODO geom_shortestline2d: unsupported return type int *
-// func GeomShortestline2d(...) { /* not yet handled by codegen */ }
+// GeogDwithin wraps MEOS C function geog_dwithin.
+func GeogDwithin(g1 *Geom, g2 *Geom, tolerance float64, use_spheroid bool) bool {
+	res := C.geog_dwithin(g1._inner, g2._inner, C.double(tolerance), C.bool(use_spheroid))
+	return bool(res)
+}
 
 
-// TODO geom_shortestline3d: unsupported return type int *
-// func GeomShortestline3d(...) { /* not yet handled by codegen */ }
+// GeogIntersects wraps MEOS C function geog_intersects.
+func GeogIntersects(gs1 *Geom, gs2 *Geom, use_spheroid bool) bool {
+	res := C.geog_intersects(gs1._inner, gs2._inner, C.bool(use_spheroid))
+	return bool(res)
+}
 
 
-// TODO geom_unary_union: unsupported return type int *
-// func GeomUnaryUnion(...) { /* not yet handled by codegen */ }
+// GeomContains wraps MEOS C function geom_contains.
+func GeomContains(gs1 *Geom, gs2 *Geom) bool {
+	res := C.geom_contains(gs1._inner, gs2._inner)
+	return bool(res)
+}
 
 
-// TODO line_interpolate_point: unsupported return type int *
-// func LineInterpolatePoint(...) { /* not yet handled by codegen */ }
+// GeomCovers wraps MEOS C function geom_covers.
+func GeomCovers(gs1 *Geom, gs2 *Geom) bool {
+	res := C.geom_covers(gs1._inner, gs2._inner)
+	return bool(res)
+}
 
 
-// TODO line_locate_point: unsupported param const int *
-// func LineLocatePoint(...) { /* not yet handled by codegen */ }
+// GeomDisjoint2d wraps MEOS C function geom_disjoint2d.
+func GeomDisjoint2d(gs1 *Geom, gs2 *Geom) bool {
+	res := C.geom_disjoint2d(gs1._inner, gs2._inner)
+	return bool(res)
+}
 
 
-// TODO line_substring: unsupported return type int *
-// func LineSubstring(...) { /* not yet handled by codegen */ }
+// GeomDwithin2d wraps MEOS C function geom_dwithin2d.
+func GeomDwithin2d(gs1 *Geom, gs2 *Geom, tolerance float64) bool {
+	res := C.geom_dwithin2d(gs1._inner, gs2._inner, C.double(tolerance))
+	return bool(res)
+}
 
 
-// TODO geog_dwithin: unsupported param const int *
-// func GeogDwithin(...) { /* not yet handled by codegen */ }
+// GeomDwithin3d wraps MEOS C function geom_dwithin3d.
+func GeomDwithin3d(gs1 *Geom, gs2 *Geom, tolerance float64) bool {
+	res := C.geom_dwithin3d(gs1._inner, gs2._inner, C.double(tolerance))
+	return bool(res)
+}
 
 
-// TODO geog_intersects: unsupported param const int *
-// func GeogIntersects(...) { /* not yet handled by codegen */ }
+// GeomIntersects2d wraps MEOS C function geom_intersects2d.
+func GeomIntersects2d(gs1 *Geom, gs2 *Geom) bool {
+	res := C.geom_intersects2d(gs1._inner, gs2._inner)
+	return bool(res)
+}
 
 
-// TODO geom_contains: unsupported param const int *
-// func GeomContains(...) { /* not yet handled by codegen */ }
+// GeomIntersects3d wraps MEOS C function geom_intersects3d.
+func GeomIntersects3d(gs1 *Geom, gs2 *Geom) bool {
+	res := C.geom_intersects3d(gs1._inner, gs2._inner)
+	return bool(res)
+}
 
 
-// TODO geom_covers: unsupported param const int *
-// func GeomCovers(...) { /* not yet handled by codegen */ }
+// GeomRelatePattern wraps MEOS C function geom_relate_pattern.
+func GeomRelatePattern(gs1 *Geom, gs2 *Geom, patt string) bool {
+	_c_patt := C.CString(patt)
+	defer C.free(unsafe.Pointer(_c_patt))
+	res := C.geom_relate_pattern(gs1._inner, gs2._inner, _c_patt)
+	return bool(res)
+}
 
 
-// TODO geom_disjoint2d: unsupported param const int *
-// func GeomDisjoint2d(...) { /* not yet handled by codegen */ }
+// GeomTouches wraps MEOS C function geom_touches.
+func GeomTouches(gs1 *Geom, gs2 *Geom) bool {
+	res := C.geom_touches(gs1._inner, gs2._inner)
+	return bool(res)
+}
 
 
-// TODO geom_dwithin2d: unsupported param const int *
-// func GeomDwithin2d(...) { /* not yet handled by codegen */ }
+// GeoStboxes wraps MEOS C function geo_stboxes.
+func GeoStboxes(gs *Geom) (*STBox, int) {
+	var _out_count C.int
+	res := C.geo_stboxes(gs._inner, &_out_count)
+	return &STBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO geom_dwithin3d: unsupported param const int *
-// func GeomDwithin3d(...) { /* not yet handled by codegen */ }
+// GeoSplitEachNStboxes wraps MEOS C function geo_split_each_n_stboxes.
+func GeoSplitEachNStboxes(gs *Geom, elem_count int) (*STBox, int) {
+	var _out_count C.int
+	res := C.geo_split_each_n_stboxes(gs._inner, C.int(elem_count), &_out_count)
+	return &STBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO geom_intersects2d: unsupported param const int *
-// func GeomIntersects2d(...) { /* not yet handled by codegen */ }
+// GeoSplitNStboxes wraps MEOS C function geo_split_n_stboxes.
+func GeoSplitNStboxes(gs *Geom, box_count int) (*STBox, int) {
+	var _out_count C.int
+	res := C.geo_split_n_stboxes(gs._inner, C.int(box_count), &_out_count)
+	return &STBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO geom_intersects3d: unsupported param const int *
-// func GeomIntersects3d(...) { /* not yet handled by codegen */ }
+// GeogDistance wraps MEOS C function geog_distance.
+func GeogDistance(g1 *Geom, g2 *Geom) float64 {
+	res := C.geog_distance(g1._inner, g2._inner)
+	return float64(res)
+}
 
 
-// TODO geom_relate_pattern: unsupported param const int *
-// func GeomRelatePattern(...) { /* not yet handled by codegen */ }
+// GeomDistance2d wraps MEOS C function geom_distance2d.
+func GeomDistance2d(gs1 *Geom, gs2 *Geom) float64 {
+	res := C.geom_distance2d(gs1._inner, gs2._inner)
+	return float64(res)
+}
 
 
-// TODO geom_touches: unsupported param const int *
-// func GeomTouches(...) { /* not yet handled by codegen */ }
+// GeomDistance3d wraps MEOS C function geom_distance3d.
+func GeomDistance3d(gs1 *Geom, gs2 *Geom) float64 {
+	res := C.geom_distance3d(gs1._inner, gs2._inner)
+	return float64(res)
+}
 
 
-// TODO geo_stboxes: unsupported param const int *
-// func GeoStboxes(...) { /* not yet handled by codegen */ }
+// GeoEquals wraps MEOS C function geo_equals.
+func GeoEquals(gs1 *Geom, gs2 *Geom) int {
+	res := C.geo_equals(gs1._inner, gs2._inner)
+	return int(res)
+}
 
 
-// TODO geo_split_each_n_stboxes: unsupported param const int *
-// func GeoSplitEachNStboxes(...) { /* not yet handled by codegen */ }
-
-
-// TODO geo_split_n_stboxes: unsupported param const int *
-// func GeoSplitNStboxes(...) { /* not yet handled by codegen */ }
-
-
-// TODO geog_distance: unsupported param const int *
-// func GeogDistance(...) { /* not yet handled by codegen */ }
-
-
-// TODO geom_distance2d: unsupported param const int *
-// func GeomDistance2d(...) { /* not yet handled by codegen */ }
-
-
-// TODO geom_distance3d: unsupported param const int *
-// func GeomDistance3d(...) { /* not yet handled by codegen */ }
-
-
-// TODO geo_equals: unsupported param const int *
-// func GeoEquals(...) { /* not yet handled by codegen */ }
-
-
-// TODO geo_same: unsupported param const int *
-// func GeoSame(...) { /* not yet handled by codegen */ }
+// GeoSame wraps MEOS C function geo_same.
+func GeoSame(gs1 *Geom, gs2 *Geom) bool {
+	res := C.geo_same(gs1._inner, gs2._inner)
+	return bool(res)
+}
 
 
 // GeogsetIn wraps MEOS C function geogset_in.
@@ -391,64 +689,118 @@ func SpatialsetAsEWKT(set *Set, maxdd int) string {
 }
 
 
-// TODO geoset_make: unsupported param int **
-// func GeosetMake(...) { /* not yet handled by codegen */ }
+// GeosetMake wraps MEOS C function geoset_make.
+func GeosetMake(values []*Geom) *Set {
+	_c_values := make([]*C.GSERIALIZED, len(values))
+	for _i, _v := range values { _c_values[_i] = _v._inner }
+	res := C.geoset_make((**C.GSERIALIZED)(unsafe.Pointer(&_c_values[0])), C.int(len(values)))
+	return &Set{_inner: res}
+}
 
 
-// TODO geo_to_set: unsupported param const int *
-// func GeoToSet(...) { /* not yet handled by codegen */ }
+// GeoToSet wraps MEOS C function geo_to_set.
+func GeoToSet(gs *Geom) *Set {
+	res := C.geo_to_set(gs._inner)
+	return &Set{_inner: res}
+}
 
 
-// TODO geoset_end_value: unsupported return type int *
-// func GeosetEndValue(...) { /* not yet handled by codegen */ }
+// GeosetEndValue wraps MEOS C function geoset_end_value.
+func GeosetEndValue(s *Set) *Geom {
+	res := C.geoset_end_value(s._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geoset_start_value: unsupported return type int *
-// func GeosetStartValue(...) { /* not yet handled by codegen */ }
+// GeosetStartValue wraps MEOS C function geoset_start_value.
+func GeosetStartValue(s *Set) *Geom {
+	res := C.geoset_start_value(s._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO geoset_value_n: unhandled OUTPUT_SCALAR shape int **
-// func GeosetValueN(...) { /* not yet handled by codegen */ }
+// GeosetValueN wraps MEOS C function geoset_value_n.
+func GeosetValueN(s *Set, n int) (bool, *Geom) {
+	var _out_result *C.GSERIALIZED
+	res := C.geoset_value_n(s._inner, C.int(n), &_out_result)
+	return bool(res), &Geom{_inner: _out_result}
+}
 
 
-// TODO geoset_values: unsupported return type int **
-// func GeosetValues(...) { /* not yet handled by codegen */ }
+// GeosetValues wraps MEOS C function geoset_values.
+func GeosetValues(s *Set) []*Geom {
+	res := C.geoset_values(s._inner)
+	_n := int(C.set_num_values(s.Inner()))
+	_slice := unsafe.Slice((**C.GSERIALIZED)(unsafe.Pointer(res)), _n)
+	_out := make([]*Geom, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Geom{_inner: _e}
+	}
+	return _out
+}
 
 
-// TODO contained_geo_set: unsupported param const int *
-// func ContainedGeoSet(...) { /* not yet handled by codegen */ }
+// ContainedGeoSet wraps MEOS C function contained_geo_set.
+func ContainedGeoSet(gs *Geom, s *Set) bool {
+	res := C.contained_geo_set(gs._inner, s._inner)
+	return bool(res)
+}
 
 
-// TODO contains_set_geo: unsupported param int *
-// func ContainsSetGeo(...) { /* not yet handled by codegen */ }
+// ContainsSetGeo wraps MEOS C function contains_set_geo.
+func ContainsSetGeo(s *Set, gs *Geom) bool {
+	res := C.contains_set_geo(s._inner, gs._inner)
+	return bool(res)
+}
 
 
-// TODO geo_union_transfn: unsupported param const int *
-// func GeoUnionTransfn(...) { /* not yet handled by codegen */ }
+// GeoUnionTransfn wraps MEOS C function geo_union_transfn.
+func GeoUnionTransfn(state *Set, gs *Geom) *Set {
+	res := C.geo_union_transfn(state._inner, gs._inner)
+	return &Set{_inner: res}
+}
 
 
-// TODO intersection_geo_set: unsupported param const int *
-// func IntersectionGeoSet(...) { /* not yet handled by codegen */ }
+// IntersectionGeoSet wraps MEOS C function intersection_geo_set.
+func IntersectionGeoSet(gs *Geom, s *Set) *Set {
+	res := C.intersection_geo_set(gs._inner, s._inner)
+	return &Set{_inner: res}
+}
 
 
-// TODO intersection_set_geo: unsupported param const int *
-// func IntersectionSetGeo(...) { /* not yet handled by codegen */ }
+// IntersectionSetGeo wraps MEOS C function intersection_set_geo.
+func IntersectionSetGeo(s *Set, gs *Geom) *Set {
+	res := C.intersection_set_geo(s._inner, gs._inner)
+	return &Set{_inner: res}
+}
 
 
-// TODO minus_geo_set: unsupported param const int *
-// func MinusGeoSet(...) { /* not yet handled by codegen */ }
+// MinusGeoSet wraps MEOS C function minus_geo_set.
+func MinusGeoSet(gs *Geom, s *Set) *Set {
+	res := C.minus_geo_set(gs._inner, s._inner)
+	return &Set{_inner: res}
+}
 
 
-// TODO minus_set_geo: unsupported param const int *
-// func MinusSetGeo(...) { /* not yet handled by codegen */ }
+// MinusSetGeo wraps MEOS C function minus_set_geo.
+func MinusSetGeo(s *Set, gs *Geom) *Set {
+	res := C.minus_set_geo(s._inner, gs._inner)
+	return &Set{_inner: res}
+}
 
 
-// TODO union_geo_set: unsupported param const int *
-// func UnionGeoSet(...) { /* not yet handled by codegen */ }
+// UnionGeoSet wraps MEOS C function union_geo_set.
+func UnionGeoSet(gs *Geom, s *Set) *Set {
+	res := C.union_geo_set(gs._inner, s._inner)
+	return &Set{_inner: res}
+}
 
 
-// TODO union_set_geo: unsupported param const int *
-// func UnionSetGeo(...) { /* not yet handled by codegen */ }
+// UnionSetGeo wraps MEOS C function union_set_geo.
+func UnionSetGeo(s *Set, gs *Geom) *Set {
+	res := C.union_set_geo(s._inner, gs._inner)
+	return &Set{_inner: res}
+}
 
 
 // SpatialsetSetSRID wraps MEOS C function spatialset_set_srid.
@@ -535,12 +887,18 @@ func STBOXOut(box *STBox, maxdd int) string {
 }
 
 
-// TODO geo_timestamptz_to_stbox: unsupported param const int *
-// func GeoTimestamptzToSTBOX(...) { /* not yet handled by codegen */ }
+// GeoTimestamptzToSTBOX wraps MEOS C function geo_timestamptz_to_stbox.
+func GeoTimestamptzToSTBOX(gs *Geom, t int64) *STBox {
+	res := C.geo_timestamptz_to_stbox(gs._inner, C.TimestampTz(t))
+	return &STBox{_inner: res}
+}
 
 
-// TODO geo_tstzspan_to_stbox: unsupported param const int *
-// func GeoTstzspanToSTBOX(...) { /* not yet handled by codegen */ }
+// GeoTstzspanToSTBOX wraps MEOS C function geo_tstzspan_to_stbox.
+func GeoTstzspanToSTBOX(gs *Geom, s *Span) *STBox {
+	res := C.geo_tstzspan_to_stbox(gs._inner, s._inner)
+	return &STBox{_inner: res}
+}
 
 
 // STBOXCopy wraps MEOS C function stbox_copy.
@@ -551,14 +909,17 @@ func STBOXCopy(box *STBox) *STBox {
 
 
 // STBOXMake wraps MEOS C function stbox_make.
-func STBOXMake(hasx bool, hasz bool, geodetic bool, srid int, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, s *Span) *STBox {
-	res := C.stbox_make(C.bool(hasx), C.bool(hasz), C.bool(geodetic), C.int(srid), C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), s._inner)
+func STBOXMake(hasx bool, hasz bool, geodetic bool, srid int32, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, s *Span) *STBox {
+	res := C.stbox_make(C.bool(hasx), C.bool(hasz), C.bool(geodetic), C.int32(srid), C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), s._inner)
 	return &STBox{_inner: res}
 }
 
 
-// TODO geo_to_stbox: unsupported param const int *
-// func GeoToSTBOX(...) { /* not yet handled by codegen */ }
+// GeoToSTBOX wraps MEOS C function geo_to_stbox.
+func GeoToSTBOX(gs *Geom) *STBox {
+	res := C.geo_to_stbox(gs._inner)
+	return &STBox{_inner: res}
+}
 
 
 // SpatialsetToSTBOX wraps MEOS C function spatialset_to_stbox.
@@ -568,16 +929,25 @@ func SpatialsetToSTBOX(s *Set) *STBox {
 }
 
 
-// TODO stbox_to_box3d: unsupported return type int *
-// func STBOXToBox3d(...) { /* not yet handled by codegen */ }
+// STBOXToBox3d wraps MEOS C function stbox_to_box3d.
+func STBOXToBox3d(box *STBox) *Box3D {
+	res := C.stbox_to_box3d(box._inner)
+	return &Box3D{_inner: res}
+}
 
 
-// TODO stbox_to_gbox: unsupported return type int *
-// func STBOXToGbox(...) { /* not yet handled by codegen */ }
+// STBOXToGbox wraps MEOS C function stbox_to_gbox.
+func STBOXToGbox(box *STBox) *GBox {
+	res := C.stbox_to_gbox(box._inner)
+	return &GBox{_inner: res}
+}
 
 
-// TODO stbox_to_geo: unsupported return type int *
-// func STBOXToGeo(...) { /* not yet handled by codegen */ }
+// STBOXToGeo wraps MEOS C function stbox_to_geo.
+func STBOXToGeo(box *STBox) *Geom {
+	res := C.stbox_to_geo(box._inner)
+	return &Geom{_inner: res}
+}
 
 
 // STBOXToTstzspan wraps MEOS C function stbox_to_tstzspan.
@@ -588,8 +958,8 @@ func STBOXToTstzspan(box *STBox) *Span {
 
 
 // TimestamptzToSTBOX wraps MEOS C function timestamptz_to_stbox.
-func TimestamptzToSTBOX(t int) *STBox {
-	res := C.timestamptz_to_stbox(C.int(t))
+func TimestamptzToSTBOX(t int64) *STBox {
+	res := C.timestamptz_to_stbox(C.TimestampTz(t))
 	return &STBox{_inner: res}
 }
 
@@ -623,16 +993,16 @@ func STBOXArea(box *STBox, spheroid bool) float64 {
 
 
 // STBOXHash wraps MEOS C function stbox_hash.
-func STBOXHash(box *STBox) int {
+func STBOXHash(box *STBox) uint32 {
 	res := C.stbox_hash(box._inner)
-	return int(res)
+	return uint32(res)
 }
 
 
 // STBOXHashExtended wraps MEOS C function stbox_hash_extended.
-func STBOXHashExtended(box *STBox, seed int) int {
-	res := C.stbox_hash_extended(box._inner, C.int(seed))
-	return int(res)
+func STBOXHashExtended(box *STBox, seed uint64) uint64 {
+	res := C.stbox_hash_extended(box._inner, C.uint64(seed))
+	return uint64(res)
 }
 
 
@@ -672,10 +1042,10 @@ func STBOXPerimeter(box *STBox, spheroid bool) float64 {
 
 
 // STBOXTmax wraps MEOS C function stbox_tmax.
-func STBOXTmax(box *STBox) (bool, int) {
-	var _out_result C.int
+func STBOXTmax(box *STBox) (bool, int64) {
+	var _out_result C.TimestampTz
 	res := C.stbox_tmax(box._inner, &_out_result)
-	return bool(res), int(_out_result)
+	return bool(res), int64(_out_result)
 }
 
 
@@ -688,10 +1058,10 @@ func STBOXTmaxInc(box *STBox) (bool, bool) {
 
 
 // STBOXTmin wraps MEOS C function stbox_tmin.
-func STBOXTmin(box *STBox) (bool, int) {
-	var _out_result C.int
+func STBOXTmin(box *STBox) (bool, int64) {
+	var _out_result C.TimestampTz
 	res := C.stbox_tmin(box._inner, &_out_result)
-	return bool(res), int(_out_result)
+	return bool(res), int64(_out_result)
 }
 
 
@@ -765,8 +1135,11 @@ func STBOXExpandSpace(box *STBox, d float64) *STBox {
 }
 
 
-// TODO stbox_expand_time: unsupported param const int *
-// func STBOXExpandTime(...) { /* not yet handled by codegen */ }
+// STBOXExpandTime wraps MEOS C function stbox_expand_time.
+func STBOXExpandTime(box *STBox, interv timeutil.Timedelta) *STBox {
+	res := C.stbox_expand_time(box._inner, interv.Inner())
+	return &STBox{_inner: res}
+}
 
 
 // STBOXGetSpace wraps MEOS C function stbox_get_space.
@@ -791,8 +1164,11 @@ func STBOXRound(box *STBox, maxdd int) *STBox {
 }
 
 
-// TODO stbox_shift_scale_time: unsupported param const int *
-// func STBOXShiftScaleTime(...) { /* not yet handled by codegen */ }
+// STBOXShiftScaleTime wraps MEOS C function stbox_shift_scale_time.
+func STBOXShiftScaleTime(box *STBox, shift timeutil.Timedelta, duration timeutil.Timedelta) *STBox {
+	res := C.stbox_shift_scale_time(box._inner, shift.Inner(), duration.Inner())
+	return &STBox{_inner: res}
+}
 
 
 // StboxarrRound wraps MEOS C function stboxarr_round.
@@ -1135,44 +1511,71 @@ func TspatialOut(temp Temporal, maxdd int) string {
 }
 
 
-// TODO tgeo_from_base_temp: unsupported param const int *
-// func TgeoFromBaseTemp(...) { /* not yet handled by codegen */ }
+// TgeoFromBaseTemp wraps MEOS C function tgeo_from_base_temp.
+func TgeoFromBaseTemp(gs *Geom, temp Temporal) Temporal {
+	res := C.tgeo_from_base_temp(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO tgeoinst_make: unsupported param const int *
-// func TgeoinstMake(...) { /* not yet handled by codegen */ }
+// TgeoinstMake wraps MEOS C function tgeoinst_make.
+func TgeoinstMake(gs *Geom, t int64) TInstant {
+	res := C.tgeoinst_make(gs._inner, C.TimestampTz(t))
+	return TInstant{_inner: res}
+}
 
 
-// TODO tgeoseq_from_base_tstzset: unsupported param const int *
-// func TgeoseqFromBaseTstzset(...) { /* not yet handled by codegen */ }
+// TgeoseqFromBaseTstzset wraps MEOS C function tgeoseq_from_base_tstzset.
+func TgeoseqFromBaseTstzset(gs *Geom, s *Set) TSequence {
+	res := C.tgeoseq_from_base_tstzset(gs._inner, s._inner)
+	return TSequence{_inner: res}
+}
 
 
-// TODO tgeoseq_from_base_tstzspan: unsupported param const int *
-// func TgeoseqFromBaseTstzspan(...) { /* not yet handled by codegen */ }
+// TgeoseqFromBaseTstzspan wraps MEOS C function tgeoseq_from_base_tstzspan.
+func TgeoseqFromBaseTstzspan(gs *Geom, s *Span, interp Interpolation) TSequence {
+	res := C.tgeoseq_from_base_tstzspan(gs._inner, s._inner, C.interpType(interp))
+	return TSequence{_inner: res}
+}
 
 
-// TODO tgeoseqset_from_base_tstzspanset: unsupported param const int *
-// func TgeoseqsetFromBaseTstzspanset(...) { /* not yet handled by codegen */ }
+// TgeoseqsetFromBaseTstzspanset wraps MEOS C function tgeoseqset_from_base_tstzspanset.
+func TgeoseqsetFromBaseTstzspanset(gs *Geom, ss *SpanSet, interp Interpolation) TSequenceSet {
+	res := C.tgeoseqset_from_base_tstzspanset(gs._inner, ss._inner, C.interpType(interp))
+	return TSequenceSet{_inner: res}
+}
 
 
-// TODO tpoint_from_base_temp: unsupported param const int *
-// func TpointFromBaseTemp(...) { /* not yet handled by codegen */ }
+// TpointFromBaseTemp wraps MEOS C function tpoint_from_base_temp.
+func TpointFromBaseTemp(gs *Geom, temp Temporal) Temporal {
+	res := C.tpoint_from_base_temp(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO tpointinst_make: unsupported param const int *
-// func TpointinstMake(...) { /* not yet handled by codegen */ }
+// TpointinstMake wraps MEOS C function tpointinst_make.
+func TpointinstMake(gs *Geom, t int64) TInstant {
+	res := C.tpointinst_make(gs._inner, C.TimestampTz(t))
+	return TInstant{_inner: res}
+}
 
 
-// TODO tpointseq_from_base_tstzset: unsupported param const int *
-// func TpointseqFromBaseTstzset(...) { /* not yet handled by codegen */ }
+// TpointseqFromBaseTstzset wraps MEOS C function tpointseq_from_base_tstzset.
+func TpointseqFromBaseTstzset(gs *Geom, s *Set) TSequence {
+	res := C.tpointseq_from_base_tstzset(gs._inner, s._inner)
+	return TSequence{_inner: res}
+}
 
 
-// TODO tpointseq_from_base_tstzspan: unsupported param const int *
-// func TpointseqFromBaseTstzspan(...) { /* not yet handled by codegen */ }
+// TpointseqFromBaseTstzspan wraps MEOS C function tpointseq_from_base_tstzspan.
+func TpointseqFromBaseTstzspan(gs *Geom, s *Span, interp Interpolation) TSequence {
+	res := C.tpointseq_from_base_tstzspan(gs._inner, s._inner, C.interpType(interp))
+	return TSequence{_inner: res}
+}
 
 
 // TpointseqMakeCoords wraps MEOS C function tpointseq_make_coords.
-func TpointseqMakeCoords(xcoords []float64, ycoords []float64, zcoords []float64, times []int, srid int, geodetic bool, lower_inc bool, upper_inc bool, interp Interpolation, normalize bool) TSequence {
+func TpointseqMakeCoords(xcoords []float64, ycoords []float64, zcoords []float64, times []int64, srid int32, geodetic bool, lower_inc bool, upper_inc bool, interp Interpolation, normalize bool) TSequence {
 	_c_xcoords := make([]C.double, len(xcoords))
 	for _i, _v := range xcoords { _c_xcoords[_i] = C.double(_v) }
 	_c_ycoords := make([]C.double, len(ycoords))
@@ -1182,30 +1585,42 @@ func TpointseqMakeCoords(xcoords []float64, ycoords []float64, zcoords []float64
 		_c_zcoords = make([]C.double, len(zcoords))
 		for _i, _v := range zcoords { _c_zcoords[_i] = C.double(_v) }
 	}
-	var _c_times []C.int
+	var _c_times []C.TimestampTz
 	if times != nil {
-		_c_times = make([]C.int, len(times))
-		for _i, _v := range times { _c_times[_i] = C.int(_v) }
+		_c_times = make([]C.TimestampTz, len(times))
+		for _i, _v := range times { _c_times[_i] = C.TimestampTz(_v) }
 	}
-	res := C.tpointseq_make_coords(&_c_xcoords[0], &_c_ycoords[0], _ptr_or_nil_double(_c_zcoords), _ptr_or_nil_int(_c_times), C.int(len(xcoords)), C.int(srid), C.bool(geodetic), C.bool(lower_inc), C.bool(upper_inc), C.interpType(interp), C.bool(normalize))
+	res := C.tpointseq_make_coords(&_c_xcoords[0], &_c_ycoords[0], _ptr_or_nil_double(_c_zcoords), _ptr_or_nil_TimestampTz(_c_times), C.int(len(xcoords)), C.int32(srid), C.bool(geodetic), C.bool(lower_inc), C.bool(upper_inc), C.interpType(interp), C.bool(normalize))
 	return TSequence{_inner: res}
 }
 
 
-// TODO tpointseqset_from_base_tstzspanset: unsupported param const int *
-// func TpointseqsetFromBaseTstzspanset(...) { /* not yet handled by codegen */ }
+// TpointseqsetFromBaseTstzspanset wraps MEOS C function tpointseqset_from_base_tstzspanset.
+func TpointseqsetFromBaseTstzspanset(gs *Geom, ss *SpanSet, interp Interpolation) TSequenceSet {
+	res := C.tpointseqset_from_base_tstzspanset(gs._inner, ss._inner, C.interpType(interp))
+	return TSequenceSet{_inner: res}
+}
 
 
-// TODO box3d_to_stbox: unsupported param const int *
-// func Box3dToSTBOX(...) { /* not yet handled by codegen */ }
+// Box3dToSTBOX wraps MEOS C function box3d_to_stbox.
+func Box3dToSTBOX(box *Box3D) *STBox {
+	res := C.box3d_to_stbox(box._inner)
+	return &STBox{_inner: res}
+}
 
 
-// TODO gbox_to_stbox: unsupported param const int *
-// func GboxToSTBOX(...) { /* not yet handled by codegen */ }
+// GboxToSTBOX wraps MEOS C function gbox_to_stbox.
+func GboxToSTBOX(box *GBox) *STBox {
+	res := C.gbox_to_stbox(box._inner)
+	return &STBox{_inner: res}
+}
 
 
-// TODO geomeas_to_tpoint: unsupported param const int *
-// func GeomeasToTpoint(...) { /* not yet handled by codegen */ }
+// GeomeasToTpoint wraps MEOS C function geomeas_to_tpoint.
+func GeomeasToTpoint(gs *Geom) Temporal {
+	res := C.geomeas_to_tpoint(gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TgeogpointToTgeography wraps MEOS C function tgeogpoint_to_tgeography.
@@ -1251,23 +1666,27 @@ func TgeompointToTgeometry(temp Temporal) Temporal {
 
 
 // TpointAsMvtgeom wraps MEOS C function tpoint_as_mvtgeom.
-func TpointAsMvtgeom(temp Temporal, bounds *STBox, extent int32, buffer int32, clip_geom bool) (bool, []int, []int, int) {
-	var _out_gsarr *C.int
-	var _out_timesarr *C.int
+func TpointAsMvtgeom(temp Temporal, bounds *STBox, extent int32, buffer int32, clip_geom bool) (bool, []*Geom, []int64, int) {
+	var _out_gsarr *C.GSERIALIZED
+	var _out_timesarr *C.int64
 	var _out_count C.int
 	res := C.tpoint_as_mvtgeom(temp.Inner(), bounds._inner, C.int32_t(extent), C.int32_t(buffer), C.bool(clip_geom), &_out_gsarr, &_out_timesarr, &_out_count)
 	_slice__out_gsarr := unsafe.Slice(_out_gsarr, None)
-	_out_gsarr_go := make([]int, None)
-	for _i, _e := range _slice__out_gsarr { _out_gsarr_go[_i] = int(_e) }
+	_out_gsarr_go := make([]*Geom, None)
+	for _i, _e := range _slice__out_gsarr { _out_gsarr_go[_i] = &Geom{_inner: _e} }
 	_slice__out_timesarr := unsafe.Slice(_out_timesarr, None)
-	_out_timesarr_go := make([]int, None)
-	for _i, _e := range _slice__out_timesarr { _out_timesarr_go[_i] = int(_e) }
+	_out_timesarr_go := make([]int64, None)
+	for _i, _e := range _slice__out_timesarr { _out_timesarr_go[_i] = int64(_e) }
 	return bool(res), _out_gsarr_go, _out_timesarr_go, int(_out_count)
 }
 
 
-// TODO tpoint_tfloat_to_geomeas: unhandled OUTPUT_SCALAR shape int **
-// func TpointTfloatToGeomeas(...) { /* not yet handled by codegen */ }
+// TpointTfloatToGeomeas wraps MEOS C function tpoint_tfloat_to_geomeas.
+func TpointTfloatToGeomeas(tpoint Temporal, measure Temporal, segmentize bool) (bool, *Geom) {
+	var _out_result *C.GSERIALIZED
+	res := C.tpoint_tfloat_to_geomeas(tpoint.Inner(), measure.Inner(), C.bool(segmentize), &_out_result)
+	return bool(res), &Geom{_inner: _out_result}
+}
 
 
 // TspatialToSTBOX wraps MEOS C function tspatial_to_stbox.
@@ -1277,12 +1696,19 @@ func TspatialToSTBOX(temp Temporal) *STBox {
 }
 
 
-// TODO bearing_point_point: unsupported param const int *
-// func BearingPointPoint(...) { /* not yet handled by codegen */ }
+// BearingPointPoint wraps MEOS C function bearing_point_point.
+func BearingPointPoint(gs1 *Geom, gs2 *Geom) (bool, float64) {
+	var _out_result C.double
+	res := C.bearing_point_point(gs1._inner, gs2._inner, &_out_result)
+	return bool(res), float64(_out_result)
+}
 
 
-// TODO bearing_tpoint_point: unsupported param const int *
-// func BearingTpointPoint(...) { /* not yet handled by codegen */ }
+// BearingTpointPoint wraps MEOS C function bearing_tpoint_point.
+func BearingTpointPoint(temp Temporal, gs *Geom, invert bool) Temporal {
+	res := C.bearing_tpoint_point(temp.Inner(), gs._inner, C.bool(invert))
+	return CreateTemporal(res)
+}
 
 
 // BearingTpointTpoint wraps MEOS C function bearing_tpoint_tpoint.
@@ -1299,32 +1725,62 @@ func TgeoCentroid(temp Temporal) Temporal {
 }
 
 
-// TODO tgeo_convex_hull: unsupported return type int *
-// func TgeoConvexHull(...) { /* not yet handled by codegen */ }
+// TgeoConvexHull wraps MEOS C function tgeo_convex_hull.
+func TgeoConvexHull(temp Temporal) *Geom {
+	res := C.tgeo_convex_hull(temp.Inner())
+	return &Geom{_inner: res}
+}
 
 
-// TODO tgeo_end_value: unsupported return type int *
-// func TgeoEndValue(...) { /* not yet handled by codegen */ }
+// TgeoEndValue wraps MEOS C function tgeo_end_value.
+func TgeoEndValue(temp Temporal) *Geom {
+	res := C.tgeo_end_value(temp.Inner())
+	return &Geom{_inner: res}
+}
 
 
-// TODO tgeo_start_value: unsupported return type int *
-// func TgeoStartValue(...) { /* not yet handled by codegen */ }
+// TgeoStartValue wraps MEOS C function tgeo_start_value.
+func TgeoStartValue(temp Temporal) *Geom {
+	res := C.tgeo_start_value(temp.Inner())
+	return &Geom{_inner: res}
+}
 
 
-// TODO tgeo_traversed_area: unsupported return type int *
-// func TgeoTraversedArea(...) { /* not yet handled by codegen */ }
+// TgeoTraversedArea wraps MEOS C function tgeo_traversed_area.
+func TgeoTraversedArea(temp Temporal, unary_union bool) *Geom {
+	res := C.tgeo_traversed_area(temp.Inner(), C.bool(unary_union))
+	return &Geom{_inner: res}
+}
 
 
-// TODO tgeo_value_at_timestamptz: unhandled OUTPUT_SCALAR shape int **
-// func TgeoValueAtTimestamptz(...) { /* not yet handled by codegen */ }
+// TgeoValueAtTimestamptz wraps MEOS C function tgeo_value_at_timestamptz.
+func TgeoValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, *Geom) {
+	var _out_value *C.GSERIALIZED
+	res := C.tgeo_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_value)
+	return bool(res), &Geom{_inner: _out_value}
+}
 
 
-// TODO tgeo_value_n: unhandled OUTPUT_SCALAR shape int **
-// func TgeoValueN(...) { /* not yet handled by codegen */ }
+// TgeoValueN wraps MEOS C function tgeo_value_n.
+func TgeoValueN(temp Temporal, n int) (bool, *Geom) {
+	var _out_result *C.GSERIALIZED
+	res := C.tgeo_value_n(temp.Inner(), C.int(n), &_out_result)
+	return bool(res), &Geom{_inner: _out_result}
+}
 
 
-// TODO tgeo_values: unsupported return type int **
-// func TgeoValues(...) { /* not yet handled by codegen */ }
+// TgeoValues wraps MEOS C function tgeo_values.
+func TgeoValues(temp Temporal) []*Geom {
+	var _out_count C.int
+	res := C.tgeo_values(temp.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.GSERIALIZED)(unsafe.Pointer(res)), _n)
+	_out := make([]*Geom, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Geom{_inner: _e}
+	}
+	return _out
+}
 
 
 // TpointAngularDifference wraps MEOS C function tpoint_angular_difference.
@@ -1398,20 +1854,32 @@ func TpointSpeed(temp Temporal) Temporal {
 }
 
 
-// TODO tpoint_trajectory: unsupported return type int *
-// func TpointTrajectory(...) { /* not yet handled by codegen */ }
+// TpointTrajectory wraps MEOS C function tpoint_trajectory.
+func TpointTrajectory(temp Temporal, unary_union bool) *Geom {
+	res := C.tpoint_trajectory(temp.Inner(), C.bool(unary_union))
+	return &Geom{_inner: res}
+}
 
 
-// TODO tpoint_twcentroid: unsupported return type int *
-// func TpointTwcentroid(...) { /* not yet handled by codegen */ }
+// TpointTwcentroid wraps MEOS C function tpoint_twcentroid.
+func TpointTwcentroid(temp Temporal) *Geom {
+	res := C.tpoint_twcentroid(temp.Inner())
+	return &Geom{_inner: res}
+}
 
 
-// TODO tgeo_affine: unsupported param const int *
-// func TgeoAffine(...) { /* not yet handled by codegen */ }
+// TgeoAffine wraps MEOS C function tgeo_affine.
+func TgeoAffine(temp Temporal, a *AFFINE) Temporal {
+	res := C.tgeo_affine(temp.Inner(), a._inner)
+	return CreateTemporal(res)
+}
 
 
-// TODO tgeo_scale: unsupported param const int *
-// func TgeoScale(...) { /* not yet handled by codegen */ }
+// TgeoScale wraps MEOS C function tgeo_scale.
+func TgeoScale(temp Temporal, scale *Geom, sorigin *Geom) Temporal {
+	res := C.tgeo_scale(temp.Inner(), scale._inner, sorigin._inner)
+	return CreateTemporal(res)
+}
 
 
 // TpointMakeSimple wraps MEOS C function tpoint_make_simple.
@@ -1458,8 +1926,11 @@ func TspatialTransformPipeline(temp Temporal, pipelinestr string, srid int32, is
 }
 
 
-// TODO tgeo_at_geom: unsupported param const int *
-// func TgeoAtGeom(...) { /* not yet handled by codegen */ }
+// TgeoAtGeom wraps MEOS C function tgeo_at_geom.
+func TgeoAtGeom(temp Temporal, gs *Geom) Temporal {
+	res := C.tgeo_at_geom(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TgeoAtSTBOX wraps MEOS C function tgeo_at_stbox.
@@ -1469,12 +1940,18 @@ func TgeoAtSTBOX(temp Temporal, box *STBox, border_inc bool) Temporal {
 }
 
 
-// TODO tgeo_at_value: unsupported param int *
-// func TgeoAtValue(...) { /* not yet handled by codegen */ }
+// TgeoAtValue wraps MEOS C function tgeo_at_value.
+func TgeoAtValue(temp Temporal, gs *Geom) Temporal {
+	res := C.tgeo_at_value(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
-// TODO tgeo_minus_geom: unsupported param const int *
-// func TgeoMinusGeom(...) { /* not yet handled by codegen */ }
+// TgeoMinusGeom wraps MEOS C function tgeo_minus_geom.
+func TgeoMinusGeom(temp Temporal, gs *Geom) Temporal {
+	res := C.tgeo_minus_geom(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TgeoMinusSTBOX wraps MEOS C function tgeo_minus_stbox.
@@ -1484,8 +1961,11 @@ func TgeoMinusSTBOX(temp Temporal, box *STBox, border_inc bool) Temporal {
 }
 
 
-// TODO tgeo_minus_value: unsupported param int *
-// func TgeoMinusValue(...) { /* not yet handled by codegen */ }
+// TgeoMinusValue wraps MEOS C function tgeo_minus_value.
+func TgeoMinusValue(temp Temporal, gs *Geom) Temporal {
+	res := C.tgeo_minus_value(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TpointAtElevation wraps MEOS C function tpoint_at_elevation.
@@ -1495,12 +1975,18 @@ func TpointAtElevation(temp Temporal, s *Span) Temporal {
 }
 
 
-// TODO tpoint_at_geom: unsupported param const int *
-// func TpointAtGeom(...) { /* not yet handled by codegen */ }
+// TpointAtGeom wraps MEOS C function tpoint_at_geom.
+func TpointAtGeom(temp Temporal, gs *Geom) Temporal {
+	res := C.tpoint_at_geom(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
-// TODO tpoint_at_value: unsupported param int *
-// func TpointAtValue(...) { /* not yet handled by codegen */ }
+// TpointAtValue wraps MEOS C function tpoint_at_value.
+func TpointAtValue(temp Temporal, gs *Geom) Temporal {
+	res := C.tpoint_at_value(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TpointMinusElevation wraps MEOS C function tpoint_minus_elevation.
@@ -1510,20 +1996,32 @@ func TpointMinusElevation(temp Temporal, s *Span) Temporal {
 }
 
 
-// TODO tpoint_minus_geom: unsupported param const int *
-// func TpointMinusGeom(...) { /* not yet handled by codegen */ }
+// TpointMinusGeom wraps MEOS C function tpoint_minus_geom.
+func TpointMinusGeom(temp Temporal, gs *Geom) Temporal {
+	res := C.tpoint_minus_geom(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
-// TODO tpoint_minus_value: unsupported param int *
-// func TpointMinusValue(...) { /* not yet handled by codegen */ }
+// TpointMinusValue wraps MEOS C function tpoint_minus_value.
+func TpointMinusValue(temp Temporal, gs *Geom) Temporal {
+	res := C.tpoint_minus_value(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
-// TODO always_eq_geo_tgeo: unsupported param const int *
-// func AlwaysEqGeoTgeo(...) { /* not yet handled by codegen */ }
+// AlwaysEqGeoTgeo wraps MEOS C function always_eq_geo_tgeo.
+func AlwaysEqGeoTgeo(gs *Geom, temp Temporal) int {
+	res := C.always_eq_geo_tgeo(gs._inner, temp.Inner())
+	return int(res)
+}
 
 
-// TODO always_eq_tgeo_geo: unsupported param const int *
-// func AlwaysEqTgeoGeo(...) { /* not yet handled by codegen */ }
+// AlwaysEqTgeoGeo wraps MEOS C function always_eq_tgeo_geo.
+func AlwaysEqTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.always_eq_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // AlwaysEqTgeoTgeo wraps MEOS C function always_eq_tgeo_tgeo.
@@ -1533,12 +2031,18 @@ func AlwaysEqTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO always_ne_geo_tgeo: unsupported param const int *
-// func AlwaysNeGeoTgeo(...) { /* not yet handled by codegen */ }
+// AlwaysNeGeoTgeo wraps MEOS C function always_ne_geo_tgeo.
+func AlwaysNeGeoTgeo(gs *Geom, temp Temporal) int {
+	res := C.always_ne_geo_tgeo(gs._inner, temp.Inner())
+	return int(res)
+}
 
 
-// TODO always_ne_tgeo_geo: unsupported param const int *
-// func AlwaysNeTgeoGeo(...) { /* not yet handled by codegen */ }
+// AlwaysNeTgeoGeo wraps MEOS C function always_ne_tgeo_geo.
+func AlwaysNeTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.always_ne_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // AlwaysNeTgeoTgeo wraps MEOS C function always_ne_tgeo_tgeo.
@@ -1548,12 +2052,18 @@ func AlwaysNeTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO ever_eq_geo_tgeo: unsupported param const int *
-// func EverEqGeoTgeo(...) { /* not yet handled by codegen */ }
+// EverEqGeoTgeo wraps MEOS C function ever_eq_geo_tgeo.
+func EverEqGeoTgeo(gs *Geom, temp Temporal) int {
+	res := C.ever_eq_geo_tgeo(gs._inner, temp.Inner())
+	return int(res)
+}
 
 
-// TODO ever_eq_tgeo_geo: unsupported param const int *
-// func EverEqTgeoGeo(...) { /* not yet handled by codegen */ }
+// EverEqTgeoGeo wraps MEOS C function ever_eq_tgeo_geo.
+func EverEqTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.ever_eq_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // EverEqTgeoTgeo wraps MEOS C function ever_eq_tgeo_tgeo.
@@ -1563,12 +2073,18 @@ func EverEqTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO ever_ne_geo_tgeo: unsupported param const int *
-// func EverNeGeoTgeo(...) { /* not yet handled by codegen */ }
+// EverNeGeoTgeo wraps MEOS C function ever_ne_geo_tgeo.
+func EverNeGeoTgeo(gs *Geom, temp Temporal) int {
+	res := C.ever_ne_geo_tgeo(gs._inner, temp.Inner())
+	return int(res)
+}
 
 
-// TODO ever_ne_tgeo_geo: unsupported param const int *
-// func EverNeTgeoGeo(...) { /* not yet handled by codegen */ }
+// EverNeTgeoGeo wraps MEOS C function ever_ne_tgeo_geo.
+func EverNeTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.ever_ne_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // EverNeTgeoTgeo wraps MEOS C function ever_ne_tgeo_tgeo.
@@ -1578,20 +2094,32 @@ func EverNeTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO teq_geo_tgeo: unsupported param const int *
-// func TeqGeoTgeo(...) { /* not yet handled by codegen */ }
+// TeqGeoTgeo wraps MEOS C function teq_geo_tgeo.
+func TeqGeoTgeo(gs *Geom, temp Temporal) Temporal {
+	res := C.teq_geo_tgeo(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO teq_tgeo_geo: unsupported param const int *
-// func TeqTgeoGeo(...) { /* not yet handled by codegen */ }
+// TeqTgeoGeo wraps MEOS C function teq_tgeo_geo.
+func TeqTgeoGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.teq_tgeo_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
-// TODO tne_geo_tgeo: unsupported param const int *
-// func TneGeoTgeo(...) { /* not yet handled by codegen */ }
+// TneGeoTgeo wraps MEOS C function tne_geo_tgeo.
+func TneGeoTgeo(gs *Geom, temp Temporal) Temporal {
+	res := C.tne_geo_tgeo(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO tne_tgeo_geo: unsupported param const int *
-// func TneTgeoGeo(...) { /* not yet handled by codegen */ }
+// TneTgeoGeo wraps MEOS C function tne_tgeo_geo.
+func TneTgeoGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.tne_tgeo_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TgeoStboxes wraps MEOS C function tgeo_stboxes.
@@ -1602,12 +2130,20 @@ func TgeoStboxes(temp Temporal) (*STBox, int) {
 }
 
 
-// TODO tgeo_space_boxes: unsupported param const int *
-// func TgeoSpaceBoxes(...) { /* not yet handled by codegen */ }
+// TgeoSpaceBoxes wraps MEOS C function tgeo_space_boxes.
+func TgeoSpaceBoxes(temp Temporal, xsize float64, ysize float64, zsize float64, sorigin *Geom, bitmatrix bool, border_inc bool) (*STBox, int) {
+	var _out_count C.int
+	res := C.tgeo_space_boxes(temp.Inner(), C.double(xsize), C.double(ysize), C.double(zsize), sorigin._inner, C.bool(bitmatrix), C.bool(border_inc), &_out_count)
+	return &STBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tgeo_space_time_boxes: unsupported param const int *
-// func TgeoSpaceTimeBoxes(...) { /* not yet handled by codegen */ }
+// TgeoSpaceTimeBoxes wraps MEOS C function tgeo_space_time_boxes.
+func TgeoSpaceTimeBoxes(temp Temporal, xsize float64, ysize float64, zsize float64, duration timeutil.Timedelta, sorigin *Geom, torigin int64, bitmatrix bool, border_inc bool) (*STBox, int) {
+	var _out_count C.int
+	res := C.tgeo_space_time_boxes(temp.Inner(), C.double(xsize), C.double(ysize), C.double(zsize), duration.Inner(), sorigin._inner, C.TimestampTz(torigin), C.bool(bitmatrix), C.bool(border_inc), &_out_count)
+	return &STBox{_inner: res}, int(_out_count)
+}
 
 
 // TgeoSplitEachNStboxes wraps MEOS C function tgeo_split_each_n_stboxes.
@@ -2067,12 +2603,18 @@ func RightTspatialTspatial(temp1 Temporal, temp2 Temporal) bool {
 }
 
 
-// TODO acontains_geo_tgeo: unsupported param const int *
-// func AcontainsGeoTgeo(...) { /* not yet handled by codegen */ }
+// AcontainsGeoTgeo wraps MEOS C function acontains_geo_tgeo.
+func AcontainsGeoTgeo(gs *Geom, temp Temporal) int {
+	res := C.acontains_geo_tgeo(gs._inner, temp.Inner())
+	return int(res)
+}
 
 
-// TODO acontains_tgeo_geo: unsupported param const int *
-// func AcontainsTgeoGeo(...) { /* not yet handled by codegen */ }
+// AcontainsTgeoGeo wraps MEOS C function acontains_tgeo_geo.
+func AcontainsTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.acontains_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // AcontainsTgeoTgeo wraps MEOS C function acontains_tgeo_tgeo.
@@ -2082,8 +2624,11 @@ func AcontainsTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO adisjoint_tgeo_geo: unsupported param const int *
-// func AdisjointTgeoGeo(...) { /* not yet handled by codegen */ }
+// AdisjointTgeoGeo wraps MEOS C function adisjoint_tgeo_geo.
+func AdisjointTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.adisjoint_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // AdisjointTgeoTgeo wraps MEOS C function adisjoint_tgeo_tgeo.
@@ -2093,8 +2638,11 @@ func AdisjointTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO adwithin_tgeo_geo: unsupported param const int *
-// func AdwithinTgeoGeo(...) { /* not yet handled by codegen */ }
+// AdwithinTgeoGeo wraps MEOS C function adwithin_tgeo_geo.
+func AdwithinTgeoGeo(temp Temporal, gs *Geom, dist float64) int {
+	res := C.adwithin_tgeo_geo(temp.Inner(), gs._inner, C.double(dist))
+	return int(res)
+}
 
 
 // AdwithinTgeoTgeo wraps MEOS C function adwithin_tgeo_tgeo.
@@ -2104,8 +2652,11 @@ func AdwithinTgeoTgeo(temp1 Temporal, temp2 Temporal, dist float64) int {
 }
 
 
-// TODO aintersects_tgeo_geo: unsupported param const int *
-// func AintersectsTgeoGeo(...) { /* not yet handled by codegen */ }
+// AintersectsTgeoGeo wraps MEOS C function aintersects_tgeo_geo.
+func AintersectsTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.aintersects_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // AintersectsTgeoTgeo wraps MEOS C function aintersects_tgeo_tgeo.
@@ -2115,8 +2666,11 @@ func AintersectsTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO atouches_tgeo_geo: unsupported param const int *
-// func AtouchesTgeoGeo(...) { /* not yet handled by codegen */ }
+// AtouchesTgeoGeo wraps MEOS C function atouches_tgeo_geo.
+func AtouchesTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.atouches_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // AtouchesTgeoTgeo wraps MEOS C function atouches_tgeo_tgeo.
@@ -2126,16 +2680,25 @@ func AtouchesTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO atouches_tpoint_geo: unsupported param const int *
-// func AtouchesTpointGeo(...) { /* not yet handled by codegen */ }
+// AtouchesTpointGeo wraps MEOS C function atouches_tpoint_geo.
+func AtouchesTpointGeo(temp Temporal, gs *Geom) int {
+	res := C.atouches_tpoint_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
-// TODO econtains_geo_tgeo: unsupported param const int *
-// func EcontainsGeoTgeo(...) { /* not yet handled by codegen */ }
+// EcontainsGeoTgeo wraps MEOS C function econtains_geo_tgeo.
+func EcontainsGeoTgeo(gs *Geom, temp Temporal) int {
+	res := C.econtains_geo_tgeo(gs._inner, temp.Inner())
+	return int(res)
+}
 
 
-// TODO econtains_tgeo_geo: unsupported param const int *
-// func EcontainsTgeoGeo(...) { /* not yet handled by codegen */ }
+// EcontainsTgeoGeo wraps MEOS C function econtains_tgeo_geo.
+func EcontainsTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.econtains_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // EcontainsTgeoTgeo wraps MEOS C function econtains_tgeo_tgeo.
@@ -2145,12 +2708,18 @@ func EcontainsTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO ecovers_geo_tgeo: unsupported param const int *
-// func EcoversGeoTgeo(...) { /* not yet handled by codegen */ }
+// EcoversGeoTgeo wraps MEOS C function ecovers_geo_tgeo.
+func EcoversGeoTgeo(gs *Geom, temp Temporal) int {
+	res := C.ecovers_geo_tgeo(gs._inner, temp.Inner())
+	return int(res)
+}
 
 
-// TODO ecovers_tgeo_geo: unsupported param const int *
-// func EcoversTgeoGeo(...) { /* not yet handled by codegen */ }
+// EcoversTgeoGeo wraps MEOS C function ecovers_tgeo_geo.
+func EcoversTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.ecovers_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // EcoversTgeoTgeo wraps MEOS C function ecovers_tgeo_tgeo.
@@ -2160,8 +2729,11 @@ func EcoversTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO edisjoint_tgeo_geo: unsupported param const int *
-// func EdisjointTgeoGeo(...) { /* not yet handled by codegen */ }
+// EdisjointTgeoGeo wraps MEOS C function edisjoint_tgeo_geo.
+func EdisjointTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.edisjoint_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // EdisjointTgeoTgeo wraps MEOS C function edisjoint_tgeo_tgeo.
@@ -2171,8 +2743,11 @@ func EdisjointTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO edwithin_tgeo_geo: unsupported param const int *
-// func EdwithinTgeoGeo(...) { /* not yet handled by codegen */ }
+// EdwithinTgeoGeo wraps MEOS C function edwithin_tgeo_geo.
+func EdwithinTgeoGeo(temp Temporal, gs *Geom, dist float64) int {
+	res := C.edwithin_tgeo_geo(temp.Inner(), gs._inner, C.double(dist))
+	return int(res)
+}
 
 
 // EdwithinTgeoTgeo wraps MEOS C function edwithin_tgeo_tgeo.
@@ -2182,8 +2757,11 @@ func EdwithinTgeoTgeo(temp1 Temporal, temp2 Temporal, dist float64) int {
 }
 
 
-// TODO eintersects_tgeo_geo: unsupported param const int *
-// func EintersectsTgeoGeo(...) { /* not yet handled by codegen */ }
+// EintersectsTgeoGeo wraps MEOS C function eintersects_tgeo_geo.
+func EintersectsTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.eintersects_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // EintersectsTgeoTgeo wraps MEOS C function eintersects_tgeo_tgeo.
@@ -2193,8 +2771,11 @@ func EintersectsTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO etouches_tgeo_geo: unsupported param const int *
-// func EtouchesTgeoGeo(...) { /* not yet handled by codegen */ }
+// EtouchesTgeoGeo wraps MEOS C function etouches_tgeo_geo.
+func EtouchesTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.etouches_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
 // EtouchesTgeoTgeo wraps MEOS C function etouches_tgeo_tgeo.
@@ -2204,16 +2785,25 @@ func EtouchesTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
-// TODO etouches_tpoint_geo: unsupported param const int *
-// func EtouchesTpointGeo(...) { /* not yet handled by codegen */ }
+// EtouchesTpointGeo wraps MEOS C function etouches_tpoint_geo.
+func EtouchesTpointGeo(temp Temporal, gs *Geom) int {
+	res := C.etouches_tpoint_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
 
 
-// TODO tcontains_geo_tgeo: unsupported param const int *
-// func TcontainsGeoTgeo(...) { /* not yet handled by codegen */ }
+// TcontainsGeoTgeo wraps MEOS C function tcontains_geo_tgeo.
+func TcontainsGeoTgeo(gs *Geom, temp Temporal) Temporal {
+	res := C.tcontains_geo_tgeo(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO tcontains_tgeo_geo: unsupported param const int *
-// func TcontainsTgeoGeo(...) { /* not yet handled by codegen */ }
+// TcontainsTgeoGeo wraps MEOS C function tcontains_tgeo_geo.
+func TcontainsTgeoGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.tcontains_tgeo_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TcontainsTgeoTgeo wraps MEOS C function tcontains_tgeo_tgeo.
@@ -2223,12 +2813,18 @@ func TcontainsTgeoTgeo(temp1 Temporal, temp2 Temporal) Temporal {
 }
 
 
-// TODO tcovers_geo_tgeo: unsupported param const int *
-// func TcoversGeoTgeo(...) { /* not yet handled by codegen */ }
+// TcoversGeoTgeo wraps MEOS C function tcovers_geo_tgeo.
+func TcoversGeoTgeo(gs *Geom, temp Temporal) Temporal {
+	res := C.tcovers_geo_tgeo(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO tcovers_tgeo_geo: unsupported param const int *
-// func TcoversTgeoGeo(...) { /* not yet handled by codegen */ }
+// TcoversTgeoGeo wraps MEOS C function tcovers_tgeo_geo.
+func TcoversTgeoGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.tcovers_tgeo_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TcoversTgeoTgeo wraps MEOS C function tcovers_tgeo_tgeo.
@@ -2238,12 +2834,18 @@ func TcoversTgeoTgeo(temp1 Temporal, temp2 Temporal) Temporal {
 }
 
 
-// TODO tdisjoint_geo_tgeo: unsupported param const int *
-// func TdisjointGeoTgeo(...) { /* not yet handled by codegen */ }
+// TdisjointGeoTgeo wraps MEOS C function tdisjoint_geo_tgeo.
+func TdisjointGeoTgeo(gs *Geom, temp Temporal) Temporal {
+	res := C.tdisjoint_geo_tgeo(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO tdisjoint_tgeo_geo: unsupported param const int *
-// func TdisjointTgeoGeo(...) { /* not yet handled by codegen */ }
+// TdisjointTgeoGeo wraps MEOS C function tdisjoint_tgeo_geo.
+func TdisjointTgeoGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.tdisjoint_tgeo_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TdisjointTgeoTgeo wraps MEOS C function tdisjoint_tgeo_tgeo.
@@ -2253,12 +2855,18 @@ func TdisjointTgeoTgeo(temp1 Temporal, temp2 Temporal) Temporal {
 }
 
 
-// TODO tdwithin_geo_tgeo: unsupported param const int *
-// func TdwithinGeoTgeo(...) { /* not yet handled by codegen */ }
+// TdwithinGeoTgeo wraps MEOS C function tdwithin_geo_tgeo.
+func TdwithinGeoTgeo(gs *Geom, temp Temporal, dist float64) Temporal {
+	res := C.tdwithin_geo_tgeo(gs._inner, temp.Inner(), C.double(dist))
+	return CreateTemporal(res)
+}
 
 
-// TODO tdwithin_tgeo_geo: unsupported param const int *
-// func TdwithinTgeoGeo(...) { /* not yet handled by codegen */ }
+// TdwithinTgeoGeo wraps MEOS C function tdwithin_tgeo_geo.
+func TdwithinTgeoGeo(temp Temporal, gs *Geom, dist float64) Temporal {
+	res := C.tdwithin_tgeo_geo(temp.Inner(), gs._inner, C.double(dist))
+	return CreateTemporal(res)
+}
 
 
 // TdwithinTgeoTgeo wraps MEOS C function tdwithin_tgeo_tgeo.
@@ -2268,12 +2876,18 @@ func TdwithinTgeoTgeo(temp1 Temporal, temp2 Temporal, dist float64) Temporal {
 }
 
 
-// TODO tintersects_geo_tgeo: unsupported param const int *
-// func TintersectsGeoTgeo(...) { /* not yet handled by codegen */ }
+// TintersectsGeoTgeo wraps MEOS C function tintersects_geo_tgeo.
+func TintersectsGeoTgeo(gs *Geom, temp Temporal) Temporal {
+	res := C.tintersects_geo_tgeo(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO tintersects_tgeo_geo: unsupported param const int *
-// func TintersectsTgeoGeo(...) { /* not yet handled by codegen */ }
+// TintersectsTgeoGeo wraps MEOS C function tintersects_tgeo_geo.
+func TintersectsTgeoGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.tintersects_tgeo_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TintersectsTgeoTgeo wraps MEOS C function tintersects_tgeo_tgeo.
@@ -2283,12 +2897,18 @@ func TintersectsTgeoTgeo(temp1 Temporal, temp2 Temporal) Temporal {
 }
 
 
-// TODO ttouches_geo_tgeo: unsupported param const int *
-// func TtouchesGeoTgeo(...) { /* not yet handled by codegen */ }
+// TtouchesGeoTgeo wraps MEOS C function ttouches_geo_tgeo.
+func TtouchesGeoTgeo(gs *Geom, temp Temporal) Temporal {
+	res := C.ttouches_geo_tgeo(gs._inner, temp.Inner())
+	return CreateTemporal(res)
+}
 
 
-// TODO ttouches_tgeo_geo: unsupported param const int *
-// func TtouchesTgeoGeo(...) { /* not yet handled by codegen */ }
+// TtouchesTgeoGeo wraps MEOS C function ttouches_tgeo_geo.
+func TtouchesTgeoGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.ttouches_tgeo_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TtouchesTgeoTgeo wraps MEOS C function ttouches_tgeo_tgeo.
@@ -2298,8 +2918,11 @@ func TtouchesTgeoTgeo(temp1 Temporal, temp2 Temporal) Temporal {
 }
 
 
-// TODO tdistance_tgeo_geo: unsupported param const int *
-// func TdistanceTgeoGeo(...) { /* not yet handled by codegen */ }
+// TdistanceTgeoGeo wraps MEOS C function tdistance_tgeo_geo.
+func TdistanceTgeoGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.tdistance_tgeo_geo(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TdistanceTgeoTgeo wraps MEOS C function tdistance_tgeo_tgeo.
@@ -2309,8 +2932,11 @@ func TdistanceTgeoTgeo(temp1 Temporal, temp2 Temporal) Temporal {
 }
 
 
-// TODO nad_stbox_geo: unsupported param const int *
-// func NadSTBOXGeo(...) { /* not yet handled by codegen */ }
+// NadSTBOXGeo wraps MEOS C function nad_stbox_geo.
+func NadSTBOXGeo(box *STBox, gs *Geom) float64 {
+	res := C.nad_stbox_geo(box._inner, gs._inner)
+	return float64(res)
+}
 
 
 // NadSTBOXSTBOX wraps MEOS C function nad_stbox_stbox.
@@ -2320,8 +2946,11 @@ func NadSTBOXSTBOX(box1 *STBox, box2 *STBox) float64 {
 }
 
 
-// TODO nad_tgeo_geo: unsupported param const int *
-// func NadTgeoGeo(...) { /* not yet handled by codegen */ }
+// NadTgeoGeo wraps MEOS C function nad_tgeo_geo.
+func NadTgeoGeo(temp Temporal, gs *Geom) float64 {
+	res := C.nad_tgeo_geo(temp.Inner(), gs._inner)
+	return float64(res)
+}
 
 
 // NadTgeoSTBOX wraps MEOS C function nad_tgeo_stbox.
@@ -2338,8 +2967,11 @@ func NadTgeoTgeo(temp1 Temporal, temp2 Temporal) float64 {
 }
 
 
-// TODO nai_tgeo_geo: unsupported param const int *
-// func NaiTgeoGeo(...) { /* not yet handled by codegen */ }
+// NaiTgeoGeo wraps MEOS C function nai_tgeo_geo.
+func NaiTgeoGeo(temp Temporal, gs *Geom) TInstant {
+	res := C.nai_tgeo_geo(temp.Inner(), gs._inner)
+	return TInstant{_inner: res}
+}
 
 
 // NaiTgeoTgeo wraps MEOS C function nai_tgeo_tgeo.
@@ -2349,12 +2981,18 @@ func NaiTgeoTgeo(temp1 Temporal, temp2 Temporal) TInstant {
 }
 
 
-// TODO shortestline_tgeo_geo: unsupported return type int *
-// func ShortestlineTgeoGeo(...) { /* not yet handled by codegen */ }
+// ShortestlineTgeoGeo wraps MEOS C function shortestline_tgeo_geo.
+func ShortestlineTgeoGeo(temp Temporal, gs *Geom) *Geom {
+	res := C.shortestline_tgeo_geo(temp.Inner(), gs._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO shortestline_tgeo_tgeo: unsupported return type int *
-// func ShortestlineTgeoTgeo(...) { /* not yet handled by codegen */ }
+// ShortestlineTgeoTgeo wraps MEOS C function shortestline_tgeo_tgeo.
+func ShortestlineTgeoTgeo(temp1 Temporal, temp2 Temporal) *Geom {
+	res := C.shortestline_tgeo_tgeo(temp1.Inner(), temp2.Inner())
+	return &Geom{_inner: res}
+}
 
 
 // TpointTcentroidFinalfn wraps MEOS C function tpoint_tcentroid_finalfn.
@@ -2378,50 +3016,141 @@ func TspatialExtentTransfn(box *STBox, temp Temporal) *STBox {
 }
 
 
-// TODO stbox_get_space_tile: unsupported param const int *
-// func STBOXGetSpaceTile(...) { /* not yet handled by codegen */ }
+// STBOXGetSpaceTile wraps MEOS C function stbox_get_space_tile.
+func STBOXGetSpaceTile(point *Geom, xsize float64, ysize float64, zsize float64, sorigin *Geom) *STBox {
+	res := C.stbox_get_space_tile(point._inner, C.double(xsize), C.double(ysize), C.double(zsize), sorigin._inner)
+	return &STBox{_inner: res}
+}
 
 
-// TODO stbox_get_space_time_tile: unsupported param const int *
-// func STBOXGetSpaceTimeTile(...) { /* not yet handled by codegen */ }
+// STBOXGetSpaceTimeTile wraps MEOS C function stbox_get_space_time_tile.
+func STBOXGetSpaceTimeTile(point *Geom, t int64, xsize float64, ysize float64, zsize float64, duration timeutil.Timedelta, sorigin *Geom, torigin int64) *STBox {
+	res := C.stbox_get_space_time_tile(point._inner, C.TimestampTz(t), C.double(xsize), C.double(ysize), C.double(zsize), duration.Inner(), sorigin._inner, C.TimestampTz(torigin))
+	return &STBox{_inner: res}
+}
 
 
-// TODO stbox_get_time_tile: unsupported param const int *
-// func STBOXGetTimeTile(...) { /* not yet handled by codegen */ }
+// STBOXGetTimeTile wraps MEOS C function stbox_get_time_tile.
+func STBOXGetTimeTile(t int64, duration timeutil.Timedelta, torigin int64) *STBox {
+	res := C.stbox_get_time_tile(C.TimestampTz(t), duration.Inner(), C.TimestampTz(torigin))
+	return &STBox{_inner: res}
+}
 
 
-// TODO stbox_space_tiles: unsupported param const int *
-// func STBOXSpaceTiles(...) { /* not yet handled by codegen */ }
+// STBOXSpaceTiles wraps MEOS C function stbox_space_tiles.
+func STBOXSpaceTiles(bounds *STBox, xsize float64, ysize float64, zsize float64, sorigin *Geom, border_inc bool) (*STBox, int) {
+	var _out_count C.int
+	res := C.stbox_space_tiles(bounds._inner, C.double(xsize), C.double(ysize), C.double(zsize), sorigin._inner, C.bool(border_inc), &_out_count)
+	return &STBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO stbox_space_time_tiles: unsupported param const int *
-// func STBOXSpaceTimeTiles(...) { /* not yet handled by codegen */ }
+// STBOXSpaceTimeTiles wraps MEOS C function stbox_space_time_tiles.
+func STBOXSpaceTimeTiles(bounds *STBox, xsize float64, ysize float64, zsize float64, duration timeutil.Timedelta, sorigin *Geom, torigin int64, border_inc bool) (*STBox, int) {
+	var _out_count C.int
+	res := C.stbox_space_time_tiles(bounds._inner, C.double(xsize), C.double(ysize), C.double(zsize), duration.Inner(), sorigin._inner, C.TimestampTz(torigin), C.bool(border_inc), &_out_count)
+	return &STBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO stbox_time_tiles: unsupported param const int *
-// func STBOXTimeTiles(...) { /* not yet handled by codegen */ }
+// STBOXTimeTiles wraps MEOS C function stbox_time_tiles.
+func STBOXTimeTiles(bounds *STBox, duration timeutil.Timedelta, torigin int64, border_inc bool) (*STBox, int) {
+	var _out_count C.int
+	res := C.stbox_time_tiles(bounds._inner, duration.Inner(), C.TimestampTz(torigin), C.bool(border_inc), &_out_count)
+	return &STBox{_inner: res}, int(_out_count)
+}
 
 
-// TODO tgeo_space_split: unsupported param const int *
-// func TgeoSpaceSplit(...) { /* not yet handled by codegen */ }
+// TgeoSpaceSplit wraps MEOS C function tgeo_space_split.
+func TgeoSpaceSplit(temp Temporal, xsize float64, ysize float64, zsize float64, sorigin *Geom, bitmatrix bool, border_inc bool) ([]Temporal, []*Geom) {
+	var _out_space_bins **C.GSERIALIZED
+	var _out_count C.int
+	res := C.tgeo_space_split(temp.Inner(), C.double(xsize), C.double(ysize), C.double(zsize), sorigin._inner, C.bool(bitmatrix), C.bool(border_inc), &_out_space_bins, &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
+	_out := make([]Temporal, _n)
+	for _i, _e := range _slice {
+		_out[_i] = CreateTemporal(_e)
+	}
+	return _out
+}
 
 
-// TODO tgeo_space_time_split: unsupported param const int *
-// func TgeoSpaceTimeSplit(...) { /* not yet handled by codegen */ }
+// TgeoSpaceTimeSplit wraps MEOS C function tgeo_space_time_split.
+func TgeoSpaceTimeSplit(temp Temporal, xsize float64, ysize float64, zsize float64, duration timeutil.Timedelta, sorigin *Geom, torigin int64, bitmatrix bool, border_inc bool) ([]Temporal, []*Geom, []int64) {
+	var _out_space_bins **C.GSERIALIZED
+	var _out_time_bins *C.TimestampTz
+	var _out_count C.int
+	res := C.tgeo_space_time_split(temp.Inner(), C.double(xsize), C.double(ysize), C.double(zsize), duration.Inner(), sorigin._inner, C.TimestampTz(torigin), C.bool(bitmatrix), C.bool(border_inc), &_out_space_bins, &_out_time_bins, &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
+	_out := make([]Temporal, _n)
+	for _i, _e := range _slice {
+		_out[_i] = CreateTemporal(_e)
+	}
+	return _out
+}
 
 
-// TODO geo_cluster_kmeans: unsupported return type int *
-// func GeoClusterKmeans(...) { /* not yet handled by codegen */ }
+// GeoClusterKmeans wraps MEOS C function geo_cluster_kmeans.
+func GeoClusterKmeans(geoms []*Geom, k uint32) []int {
+	_c_geoms := make([]*C.GSERIALIZED, len(geoms))
+	for _i, _v := range geoms { _c_geoms[_i] = _v._inner }
+	res := C.geo_cluster_kmeans((**C.GSERIALIZED)(unsafe.Pointer(&_c_geoms[0])), C.uint32_t(len(geoms)), C.uint32_t(k))
+	_n := len(geoms)
+	_slice := unsafe.Slice((*C.int)(unsafe.Pointer(res)), _n)
+	_out := make([]int, _n)
+	for _i, _e := range _slice {
+		_out[_i] = int(_e)
+	}
+	return _out
+}
 
 
-// TODO geo_cluster_dbscan: unsupported param const int **
-// func GeoClusterDbscan(...) { /* not yet handled by codegen */ }
+// GeoClusterDbscan wraps MEOS C function geo_cluster_dbscan.
+func GeoClusterDbscan(geoms []*Geom, tolerance float64, minpoints int) []uint32 {
+	_c_geoms := make([]*C.GSERIALIZED, len(geoms))
+	for _i, _v := range geoms { _c_geoms[_i] = _v._inner }
+	var _out_count C.int
+	res := C.geo_cluster_dbscan((**C.GSERIALIZED)(unsafe.Pointer(&_c_geoms[0])), C.uint32_t(len(geoms)), C.double(tolerance), C.int(minpoints), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((*C.uint32_t)(unsafe.Pointer(res)), _n)
+	_out := make([]uint32, _n)
+	for _i, _e := range _slice {
+		_out[_i] = uint32(_e)
+	}
+	return _out
+}
 
 
-// TODO geo_cluster_intersecting: unsupported return type int **
-// func GeoClusterIntersecting(...) { /* not yet handled by codegen */ }
+// GeoClusterIntersecting wraps MEOS C function geo_cluster_intersecting.
+func GeoClusterIntersecting(geoms []*Geom) []*Geom {
+	_c_geoms := make([]*C.GSERIALIZED, len(geoms))
+	for _i, _v := range geoms { _c_geoms[_i] = _v._inner }
+	var _out_count C.int
+	res := C.geo_cluster_intersecting((**C.GSERIALIZED)(unsafe.Pointer(&_c_geoms[0])), C.uint32_t(len(geoms)), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.GSERIALIZED)(unsafe.Pointer(res)), _n)
+	_out := make([]*Geom, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Geom{_inner: _e}
+	}
+	return _out
+}
 
 
-// TODO geo_cluster_within: unsupported return type int **
-// func GeoClusterWithin(...) { /* not yet handled by codegen */ }
+// GeoClusterWithin wraps MEOS C function geo_cluster_within.
+func GeoClusterWithin(geoms []*Geom, tolerance float64) []*Geom {
+	_c_geoms := make([]*C.GSERIALIZED, len(geoms))
+	for _i, _v := range geoms { _c_geoms[_i] = _v._inner }
+	var _out_count C.int
+	res := C.geo_cluster_within((**C.GSERIALIZED)(unsafe.Pointer(&_c_geoms[0])), C.uint32_t(len(geoms)), C.double(tolerance), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.GSERIALIZED)(unsafe.Pointer(res)), _n)
+	_out := make([]*Geom, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Geom{_inner: _e}
+	}
+	return _out
+}
 

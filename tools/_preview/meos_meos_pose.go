@@ -63,7 +63,7 @@ var _ = timeutil.Timedelta{}
 // func PoseMakePoint3d(...) { /* not yet handled by codegen */ }
 
 
-// TODO pose_to_point: unsupported return type int *
+// TODO pose_to_point: unsupported param const Pose *
 // func PoseToPoint(...) { /* not yet handled by codegen */ }
 
 
@@ -288,8 +288,11 @@ func TposeRotation(temp Temporal) Temporal {
 // func TposeStartValue(...) { /* not yet handled by codegen */ }
 
 
-// TODO tpose_trajectory: unsupported return type int *
-// func TposeTrajectory(...) { /* not yet handled by codegen */ }
+// TposeTrajectory wraps MEOS C function tpose_trajectory.
+func TposeTrajectory(temp Temporal) *Geom {
+	res := C.tpose_trajectory(temp.Inner())
+	return &Geom{_inner: res}
+}
 
 
 // TODO tpose_value_at_timestamptz: unhandled OUTPUT_SCALAR shape Pose **
@@ -304,8 +307,11 @@ func TposeRotation(temp Temporal) Temporal {
 // func TposeValues(...) { /* not yet handled by codegen */ }
 
 
-// TODO tpose_at_geom: unsupported param const int *
-// func TposeAtGeom(...) { /* not yet handled by codegen */ }
+// TposeAtGeom wraps MEOS C function tpose_at_geom.
+func TposeAtGeom(temp Temporal, gs *Geom) Temporal {
+	res := C.tpose_at_geom(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TposeAtSTBOX wraps MEOS C function tpose_at_stbox.
@@ -319,8 +325,11 @@ func TposeAtSTBOX(temp Temporal, box *STBox, border_inc bool) Temporal {
 // func TposeAtPose(...) { /* not yet handled by codegen */ }
 
 
-// TODO tpose_minus_geom: unsupported param const int *
-// func TposeMinusGeom(...) { /* not yet handled by codegen */ }
+// TposeMinusGeom wraps MEOS C function tpose_minus_geom.
+func TposeMinusGeom(temp Temporal, gs *Geom) Temporal {
+	res := C.tpose_minus_geom(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TODO tpose_minus_pose: unsupported param const Pose *
@@ -338,8 +347,11 @@ func TposeMinusSTBOX(temp Temporal, box *STBox, border_inc bool) Temporal {
 // func TdistanceTposePose(...) { /* not yet handled by codegen */ }
 
 
-// TODO tdistance_tpose_point: unsupported param const int *
-// func TdistanceTposePoint(...) { /* not yet handled by codegen */ }
+// TdistanceTposePoint wraps MEOS C function tdistance_tpose_point.
+func TdistanceTposePoint(temp Temporal, gs *Geom) Temporal {
+	res := C.tdistance_tpose_point(temp.Inner(), gs._inner)
+	return CreateTemporal(res)
+}
 
 
 // TdistanceTposeTpose wraps MEOS C function tdistance_tpose_tpose.
@@ -349,8 +361,11 @@ func TdistanceTposeTpose(temp1 Temporal, temp2 Temporal) Temporal {
 }
 
 
-// TODO nad_tpose_geo: unsupported param const int *
-// func NadTposeGeo(...) { /* not yet handled by codegen */ }
+// NadTposeGeo wraps MEOS C function nad_tpose_geo.
+func NadTposeGeo(temp Temporal, gs *Geom) float64 {
+	res := C.nad_tpose_geo(temp.Inner(), gs._inner)
+	return float64(res)
+}
 
 
 // TODO nad_tpose_pose: unsupported param const Pose *
@@ -371,8 +386,11 @@ func NadTposeTpose(temp1 Temporal, temp2 Temporal) float64 {
 }
 
 
-// TODO nai_tpose_geo: unsupported param const int *
-// func NaiTposeGeo(...) { /* not yet handled by codegen */ }
+// NaiTposeGeo wraps MEOS C function nai_tpose_geo.
+func NaiTposeGeo(temp Temporal, gs *Geom) TInstant {
+	res := C.nai_tpose_geo(temp.Inner(), gs._inner)
+	return TInstant{_inner: res}
+}
 
 
 // TODO nai_tpose_pose: unsupported param const Pose *
@@ -386,16 +404,22 @@ func NaiTposeTpose(temp1 Temporal, temp2 Temporal) TInstant {
 }
 
 
-// TODO shortestline_tpose_geo: unsupported return type int *
-// func ShortestlineTposeGeo(...) { /* not yet handled by codegen */ }
+// ShortestlineTposeGeo wraps MEOS C function shortestline_tpose_geo.
+func ShortestlineTposeGeo(temp Temporal, gs *Geom) *Geom {
+	res := C.shortestline_tpose_geo(temp.Inner(), gs._inner)
+	return &Geom{_inner: res}
+}
 
 
-// TODO shortestline_tpose_pose: unsupported return type int *
+// TODO shortestline_tpose_pose: unsupported param const Pose *
 // func ShortestlineTposePose(...) { /* not yet handled by codegen */ }
 
 
-// TODO shortestline_tpose_tpose: unsupported return type int *
-// func ShortestlineTposeTpose(...) { /* not yet handled by codegen */ }
+// ShortestlineTposeTpose wraps MEOS C function shortestline_tpose_tpose.
+func ShortestlineTposeTpose(temp1 Temporal, temp2 Temporal) *Geom {
+	res := C.shortestline_tpose_tpose(temp1.Inner(), temp2.Inner())
+	return &Geom{_inner: res}
+}
 
 
 // TODO always_eq_pose_tpose: unsupported param const Pose *
