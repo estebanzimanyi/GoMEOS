@@ -37,6 +37,7 @@
 
 /* C */
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 /* PostgreSQL */
 #ifndef POSTGRES_H
@@ -113,6 +114,15 @@ extern char *timestamptz_out(TimestampTz t);
  */
 #define strdup _strdup
 #endif
+
+/*
+ * Thread-local storage qualifier (MEOS_TLS) used internally by MEOS to
+ * make per-thread state (last-error number, PROJ context, SRS cache,
+ * ways cache, RNG, session timezone) safe under multithreading. Defined
+ * in a stand-alone header so that vendored PostgreSQL files can pick it
+ * up without pulling in the full meos.h.
+ */
+#include "meos_tls.h"
 
 /*****************************************************************************
  * Type definitions
@@ -310,6 +320,34 @@ typedef struct SkipList SkipList;
 /*****************************************************************************/
 
 /**
+ * Structure for expandable arrays
+ */
+typedef struct MeosArray MeosArray;
+
+/* MeosArray functions */
+
+extern MeosArray *meos_array_create(int elem_size);
+extern void meos_array_add(MeosArray *array, void *value);
+extern void *meos_array_get(const MeosArray *array, int n);
+extern int meos_array_count(const MeosArray *array);
+extern void meos_array_reset(MeosArray *array);
+extern void meos_array_reset_free(MeosArray *array);
+extern void meos_array_destroy(MeosArray *array);
+extern void meos_array_destroy_free(MeosArray *array);
+
+/*****************************************************************************/
+
+/**
+ * @brief Enumeration that defines the search operations for an RTree.
+ */
+typedef enum
+{
+  RTREE_OVERLAPS,      /**< Find stored boxes that overlap the query */
+  RTREE_CONTAINS,      /**< Find stored boxes that contain the query */
+  RTREE_CONTAINED_BY   /**< Find stored boxes contained by the query */
+} RTreeSearchOp;
+
+/**
  * Structure for the in-memory Rtree index
  */
 typedef struct RTree RTree;
@@ -324,8 +362,10 @@ extern RTree *rtree_create_tstzspan();
 extern RTree *rtree_create_tbox();
 extern RTree *rtree_create_stbox();
 extern void rtree_free(RTree *rtree);
-extern void rtree_insert(RTree *rtree, void *box, int64 id);
-extern int *rtree_search(const RTree *rtree,const void *query, int *count);
+extern void rtree_insert(RTree *rtree, void *box, int id);
+extern void rtree_insert_temporal(RTree *rtree, const Temporal *temp, int id);
+extern int rtree_search(const RTree *rtree, RTreeSearchOp op, const void *query, MeosArray *result);
+extern int rtree_search_temporal(const RTree *rtree, RTreeSearchOp op, const Temporal *temp, MeosArray *result);
 
 /*****************************************************************************
  * Error codes
@@ -371,6 +411,18 @@ extern int meos_errno_reset(void);
 
 /*****************************************************************************
  * Initialization of the MEOS library
+ *
+ * Multithreading
+ * --------------
+ * The MEOS state managed by these functions is per-thread. Each thread
+ * that calls into MEOS must call `meos_initialize()` before its first
+ * MEOS call and `meos_finalize()` before exiting; the PROJ context, SRS
+ * cache, ways cache, RNGs, last-error number (`meos_errno`), and
+ * session timezone are all thread-local.
+ *
+ * The error handler set by `meos_initialize_error_handler()` is the
+ * one exception: it is process-global and should be installed once
+ * before workers are spawned.
  *****************************************************************************/
 
 /* Definition of error handler function */
@@ -1797,6 +1849,8 @@ extern int nad_tint_tint(const Temporal *temp1, const Temporal *temp2);
 extern SkipList *tbool_tand_transfn(SkipList *state, const Temporal *temp);
 extern SkipList *tbool_tor_transfn(SkipList *state, const Temporal *temp);
 extern Span *temporal_extent_transfn(Span *s, const Temporal *temp);
+extern SkipList *temporal_merge_transfn(SkipList *state, const Temporal *temp);
+extern SkipList *temporal_merge_combinefn(SkipList *state1, SkipList *state2);
 extern Temporal *temporal_tagg_finalfn(SkipList *state);
 extern SkipList *temporal_tcount_transfn(SkipList *state, const Temporal *temp);
 extern SkipList *tfloat_tmax_transfn(SkipList *state, const Temporal *temp);

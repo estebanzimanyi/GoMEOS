@@ -33,13 +33,8 @@ func FloatspanRoundSet(s *Span, maxdd int) *Span {
 }
 
 
-// SetIn wraps MEOS C function set_in.
-func SetIn(str string, basetype MeosType) *Set {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.set_in(_c_str, C.meosType(basetype))
-	return &Set{_inner: res}
-}
+// TODO set_in: unsupported param MeosType
+// func SetIn(...) { /* not yet handled by codegen */ }
 
 
 // SetOut wraps MEOS C function set_out.
@@ -49,13 +44,8 @@ func SetOut(s *Set, maxdd int) string {
 }
 
 
-// SpanIn wraps MEOS C function span_in.
-func SpanIn(str string, spantype MeosType) *Span {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.span_in(_c_str, C.meosType(spantype))
-	return &Span{_inner: res}
-}
+// TODO span_in: unsupported param MeosType
+// func SpanIn(...) { /* not yet handled by codegen */ }
 
 
 // SpanOut wraps MEOS C function span_out.
@@ -65,13 +55,8 @@ func SpanOut(s *Span, maxdd int) string {
 }
 
 
-// SpansetIn wraps MEOS C function spanset_in.
-func SpansetIn(str string, spantype MeosType) *SpanSet {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.spanset_in(_c_str, C.meosType(spantype))
-	return &SpanSet{_inner: res}
-}
+// TODO spanset_in: unsupported param MeosType
+// func SpansetIn(...) { /* not yet handled by codegen */ }
 
 
 // SpansetOut wraps MEOS C function spanset_out.
@@ -109,6 +94,27 @@ func SetSpanset(s *Set) *SpanSet {
 }
 
 
+// NumspanWidth wraps MEOS C function numspan_width.
+func NumspanWidth(s *Span) int {
+	res := C.numspan_width(s._inner)
+	return int(res)
+}
+
+
+// NumspansetWidth wraps MEOS C function numspanset_width.
+func NumspansetWidth(ss *SpanSet, boundspan bool) int {
+	res := C.numspanset_width(ss._inner, C.bool(boundspan))
+	return int(res)
+}
+
+
+// SetEndValue wraps MEOS C function set_end_value.
+func SetEndValue(s *Set) int {
+	res := C.set_end_value(s._inner)
+	return int(res)
+}
+
+
 // SetMemSize wraps MEOS C function set_mem_size.
 func SetMemSize(s *Set) int {
 	res := C.set_mem_size(s._inner)
@@ -132,6 +138,20 @@ func SetSetSpan(s *Set) *Span {
 }
 
 
+// SetStartValue wraps MEOS C function set_start_value.
+func SetStartValue(s *Set) int {
+	res := C.set_start_value(s._inner)
+	return int(res)
+}
+
+
+// SpansetLower wraps MEOS C function spanset_lower.
+func SpansetLower(ss *SpanSet) int {
+	res := C.spanset_lower(ss._inner)
+	return int(res)
+}
+
+
 // SpansetMemSize wraps MEOS C function spanset_mem_size.
 func SpansetMemSize(ss *SpanSet) int {
 	res := C.spanset_mem_size(ss._inner)
@@ -149,6 +169,13 @@ func SpansetSps(ss *SpanSet) []*Span {
 		_out[_i] = &Span{_inner: _e}
 	}
 	return _out
+}
+
+
+// SpansetUpper wraps MEOS C function spanset_upper.
+func SpansetUpper(ss *SpanSet) int {
+	res := C.spanset_upper(ss._inner)
+	return int(res)
 }
 
 
@@ -190,13 +217,8 @@ func SpansetCompact(ss *SpanSet) *SpanSet {
 }
 
 
-// TextcatTextsetTextCommon wraps MEOS C function textcat_textset_text_common.
-func TextcatTextsetTextCommon(s *Set, txt string, invert bool) *Set {
-	_c_txt := cstring2text(txt)
-	defer C.free(unsafe.Pointer(_c_txt))
-	res := C.textcat_textset_text_common(s._inner, _c_txt, C.bool(invert))
-	return &Set{_inner: res}
-}
+// TODO textcat_textset_text_common: unsupported param const int *
+// func TextcatTextsetTextCommon(...) { /* not yet handled by codegen */ }
 
 
 // TstzspanSetDatespan wraps MEOS C function tstzspan_set_datespan.
@@ -219,39 +241,24 @@ func LfnadjSpanSpan(s1 *Span, s2 *Span) bool {
 }
 
 
-// BboxType wraps MEOS C function bbox_type.
-func BboxType(bboxtype MeosType) bool {
-	res := C.bbox_type(C.meosType(bboxtype))
-	return bool(res)
-}
+// TODO bbox_type: unsupported param MeosType
+// func BboxType(...) { /* not yet handled by codegen */ }
 
 
-// BboxGetSize wraps MEOS C function bbox_get_size.
-func BboxGetSize(bboxtype MeosType) uint {
-	res := C.bbox_get_size(C.meosType(bboxtype))
-	return uint(res)
-}
+// TODO bbox_get_size: unsupported param MeosType
+// func BboxGetSize(...) { /* not yet handled by codegen */ }
 
 
-// BboxMaxDims wraps MEOS C function bbox_max_dims.
-func BboxMaxDims(bboxtype MeosType) int {
-	res := C.bbox_max_dims(C.meosType(bboxtype))
-	return int(res)
-}
+// TODO bbox_max_dims: unsupported param MeosType
+// func BboxMaxDims(...) { /* not yet handled by codegen */ }
 
 
-// TemporalBboxEq wraps MEOS C function temporal_bbox_eq.
-func TemporalBboxEq(box1 unsafe.Pointer, box2 unsafe.Pointer, temptype MeosType) bool {
-	res := C.temporal_bbox_eq(unsafe.Pointer(box1), unsafe.Pointer(box2), C.meosType(temptype))
-	return bool(res)
-}
+// TODO temporal_bbox_eq: unsupported param MeosType
+// func TemporalBboxEq(...) { /* not yet handled by codegen */ }
 
 
-// TemporalBboxCmp wraps MEOS C function temporal_bbox_cmp.
-func TemporalBboxCmp(box1 unsafe.Pointer, box2 unsafe.Pointer, temptype MeosType) int {
-	res := C.temporal_bbox_cmp(unsafe.Pointer(box1), unsafe.Pointer(box2), C.meosType(temptype))
-	return int(res)
-}
+// TODO temporal_bbox_cmp: unsupported param MeosType
+// func TemporalBboxCmp(...) { /* not yet handled by codegen */ }
 
 
 // BboxUnionSpanSpan wraps MEOS C function bbox_union_span_span.
@@ -282,6 +289,34 @@ func MiSpanSpan(s1 *Span, s2 *Span) (int, *Span) {
 func SuperUnionSpanSpan(s1 *Span, s2 *Span) *Span {
 	res := C.super_union_span_span(s1._inner, s2._inner)
 	return &Span{_inner: res}
+}
+
+
+// DistanceSetSet wraps MEOS C function distance_set_set.
+func DistanceSetSet(s1 *Set, s2 *Set) int {
+	res := C.distance_set_set(s1._inner, s2._inner)
+	return int(res)
+}
+
+
+// DistanceSpanSpan wraps MEOS C function distance_span_span.
+func DistanceSpanSpan(s1 *Span, s2 *Span) int {
+	res := C.distance_span_span(s1._inner, s2._inner)
+	return int(res)
+}
+
+
+// DistanceSpansetSpan wraps MEOS C function distance_spanset_span.
+func DistanceSpansetSpan(ss *SpanSet, s *Span) int {
+	res := C.distance_spanset_span(ss._inner, s._inner)
+	return int(res)
+}
+
+
+// DistanceSpansetSpanset wraps MEOS C function distance_spanset_spanset.
+func DistanceSpansetSpanset(ss1 *SpanSet, ss2 *SpanSet) int {
+	res := C.distance_spanset_spanset(ss1._inner, ss2._inner)
+	return int(res)
 }
 
 
@@ -316,8 +351,8 @@ func NumspanSetTBOX(span *Span, box *TBox) {
 
 
 // TimestamptzSetTBOX wraps MEOS C function timestamptz_set_tbox.
-func TimestamptzSetTBOX(t int64, box *TBox) {
-	C.timestamptz_set_tbox(C.TimestampTz(t), box._inner)
+func TimestamptzSetTBOX(t int, box *TBox) {
+	C.timestamptz_set_tbox(C.int(t), box._inner)
 }
 
 
@@ -374,13 +409,8 @@ func TboolseqsetIn(str string) TSequenceSet {
 }
 
 
-// TemporalIn wraps MEOS C function temporal_in.
-func TemporalIn(str string, temptype MeosType) Temporal {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.temporal_in(_c_str, C.meosType(temptype))
-	return CreateTemporal(res)
-}
+// TODO temporal_in: unsupported param MeosType
+// func TemporalIn(...) { /* not yet handled by codegen */ }
 
 
 // TemporalOut wraps MEOS C function temporal_out.
@@ -432,13 +462,8 @@ func TfloatseqsetIn(str string) TSequenceSet {
 }
 
 
-// TinstantIn wraps MEOS C function tinstant_in.
-func TinstantIn(str string, temptype MeosType) TInstant {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.tinstant_in(_c_str, C.meosType(temptype))
-	return TInstant{_inner: res}
-}
+// TODO tinstant_in: unsupported param MeosType
+// func TinstantIn(...) { /* not yet handled by codegen */ }
 
 
 // TinstantOut wraps MEOS C function tinstant_out.
@@ -475,13 +500,8 @@ func TintseqsetIn(str string) TSequenceSet {
 }
 
 
-// TsequenceIn wraps MEOS C function tsequence_in.
-func TsequenceIn(str string, temptype MeosType, interp Interpolation) TSequence {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.tsequence_in(_c_str, C.meosType(temptype), C.interpType(interp))
-	return TSequence{_inner: res}
-}
+// TODO tsequence_in: unsupported param MeosType
+// func TsequenceIn(...) { /* not yet handled by codegen */ }
 
 
 // TsequenceOut wraps MEOS C function tsequence_out.
@@ -491,13 +511,8 @@ func TsequenceOut(seq TSequence, maxdd int) string {
 }
 
 
-// TsequencesetIn wraps MEOS C function tsequenceset_in.
-func TsequencesetIn(str string, temptype MeosType, interp Interpolation) TSequenceSet {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.tsequenceset_in(_c_str, C.meosType(temptype), C.interpType(interp))
-	return TSequenceSet{_inner: res}
-}
+// TODO tsequenceset_in: unsupported param MeosType
+// func TsequencesetIn(...) { /* not yet handled by codegen */ }
 
 
 // TsequencesetOut wraps MEOS C function tsequenceset_out.
@@ -534,13 +549,8 @@ func TtextseqsetIn(str string) TSequenceSet {
 }
 
 
-// TemporalFromMFJSON wraps MEOS C function temporal_from_mfjson.
-func TemporalFromMFJSON(mfjson string, temptype MeosType) Temporal {
-	_c_mfjson := C.CString(mfjson)
-	defer C.free(unsafe.Pointer(_c_mfjson))
-	res := C.temporal_from_mfjson(_c_mfjson, C.meosType(temptype))
-	return CreateTemporal(res)
-}
+// TODO temporal_from_mfjson: unsupported param MeosType
+// func TemporalFromMFJSON(...) { /* not yet handled by codegen */ }
 
 
 // TinstantCopy wraps MEOS C function tinstant_copy.
@@ -664,6 +674,13 @@ func TemporalEndInst(temp Temporal) TInstant {
 }
 
 
+// TemporalEndValue wraps MEOS C function temporal_end_value.
+func TemporalEndValue(temp Temporal) int {
+	res := C.temporal_end_value(temp.Inner())
+	return int(res)
+}
+
+
 // TemporalInstN wraps MEOS C function temporal_inst_n.
 func TemporalInstN(temp Temporal, n int) TInstant {
 	res := C.temporal_inst_n(temp.Inner(), C.int(n))
@@ -692,6 +709,13 @@ func TemporalMaxInstP(temp Temporal) TInstant {
 }
 
 
+// TemporalMaxValue wraps MEOS C function temporal_max_value.
+func TemporalMaxValue(temp Temporal) int {
+	res := C.temporal_max_value(temp.Inner())
+	return int(res)
+}
+
+
 // TemporalMemSize wraps MEOS C function temporal_mem_size.
 func TemporalMemSize(temp Temporal) uint {
 	res := C.temporal_mem_size(temp.Inner())
@@ -703,6 +727,13 @@ func TemporalMemSize(temp Temporal) uint {
 func TemporalMinInstP(temp Temporal) TInstant {
 	res := C.temporal_min_inst_p(temp.Inner())
 	return TInstant{_inner: res}
+}
+
+
+// TemporalMinValue wraps MEOS C function temporal_min_value.
+func TemporalMinValue(temp Temporal) int {
+	res := C.temporal_min_value(temp.Inner())
+	return int(res)
 }
 
 
@@ -733,10 +764,17 @@ func TemporalStartInst(temp Temporal) TInstant {
 }
 
 
+// TemporalStartValue wraps MEOS C function temporal_start_value.
+func TemporalStartValue(temp Temporal) int {
+	res := C.temporal_start_value(temp.Inner())
+	return int(res)
+}
+
+
 // TinstantHash wraps MEOS C function tinstant_hash.
-func TinstantHash(inst TInstant) uint32 {
+func TinstantHash(inst TInstant) int {
 	res := C.tinstant_hash(inst.Inner())
-	return uint32(res)
+	return int(res)
 }
 
 
@@ -768,16 +806,30 @@ func TinstantTime(inst TInstant) *SpanSet {
 
 
 // TinstantTimestamps wraps MEOS C function tinstant_timestamps.
-func TinstantTimestamps(inst TInstant) []int64 {
+func TinstantTimestamps(inst TInstant) []int {
 	var _out_count C.int
 	res := C.tinstant_timestamps(inst.Inner(), &_out_count)
 	_n := int(_out_count)
-	_slice := unsafe.Slice((*C.TimestampTz)(unsafe.Pointer(res)), _n)
-	_out := make([]int64, _n)
+	_slice := unsafe.Slice((*C.int)(unsafe.Pointer(res)), _n)
+	_out := make([]int, _n)
 	for _i, _e := range _slice {
-		_out[_i] = int64(_e)
+		_out[_i] = int(_e)
 	}
 	return _out
+}
+
+
+// TinstantValueP wraps MEOS C function tinstant_value_p.
+func TinstantValueP(inst TInstant) int {
+	res := C.tinstant_value_p(inst.Inner())
+	return int(res)
+}
+
+
+// TinstantValue wraps MEOS C function tinstant_value.
+func TinstantValue(inst TInstant) int {
+	res := C.tinstant_value(inst.Inner())
+	return int(res)
 }
 
 
@@ -822,24 +874,21 @@ func TnumberseqsetValuespans(ss TSequenceSet) *SpanSet {
 }
 
 
-// TsequenceDuration wraps MEOS C function tsequence_duration.
-func TsequenceDuration(seq TSequence) timeutil.Timedelta {
-	res := C.tsequence_duration(seq.Inner())
-	return IntervalToTimeDelta(res)
-}
+// TODO tsequence_duration: unsupported return type int *
+// func TsequenceDuration(...) { /* not yet handled by codegen */ }
 
 
 // TsequenceEndTimestamptz wraps MEOS C function tsequence_end_timestamptz.
-func TsequenceEndTimestamptz(seq TSequence) int64 {
+func TsequenceEndTimestamptz(seq TSequence) int {
 	res := C.tsequence_end_timestamptz(seq.Inner())
-	return int64(res)
+	return int(res)
 }
 
 
 // TsequenceHash wraps MEOS C function tsequence_hash.
-func TsequenceHash(seq TSequence) uint32 {
+func TsequenceHash(seq TSequence) int {
 	res := C.tsequence_hash(seq.Inner())
-	return uint32(res)
+	return int(res)
 }
 
 
@@ -863,10 +912,24 @@ func TsequenceMaxInstP(seq TSequence) TInstant {
 }
 
 
+// TsequenceMaxVal wraps MEOS C function tsequence_max_val.
+func TsequenceMaxVal(seq TSequence) int {
+	res := C.tsequence_max_val(seq.Inner())
+	return int(res)
+}
+
+
 // TsequenceMinInstP wraps MEOS C function tsequence_min_inst_p.
 func TsequenceMinInstP(seq TSequence) TInstant {
 	res := C.tsequence_min_inst_p(seq.Inner())
 	return TInstant{_inner: res}
+}
+
+
+// TsequenceMinVal wraps MEOS C function tsequence_min_val.
+func TsequenceMinVal(seq TSequence) int {
+	res := C.tsequence_min_val(seq.Inner())
+	return int(res)
 }
 
 
@@ -899,9 +962,9 @@ func TsequenceSeqs(seq TSequence) []TSequence {
 
 
 // TsequenceStartTimestamptz wraps MEOS C function tsequence_start_timestamptz.
-func TsequenceStartTimestamptz(seq TSequence) int64 {
+func TsequenceStartTimestamptz(seq TSequence) int {
 	res := C.tsequence_start_timestamptz(seq.Inner())
-	return int64(res)
+	return int(res)
 }
 
 
@@ -913,37 +976,34 @@ func TsequenceTime(seq TSequence) *SpanSet {
 
 
 // TsequenceTimestamps wraps MEOS C function tsequence_timestamps.
-func TsequenceTimestamps(seq TSequence) []int64 {
+func TsequenceTimestamps(seq TSequence) []int {
 	var _out_count C.int
 	res := C.tsequence_timestamps(seq.Inner(), &_out_count)
 	_n := int(_out_count)
-	_slice := unsafe.Slice((*C.TimestampTz)(unsafe.Pointer(res)), _n)
-	_out := make([]int64, _n)
+	_slice := unsafe.Slice((*C.int)(unsafe.Pointer(res)), _n)
+	_out := make([]int, _n)
 	for _i, _e := range _slice {
-		_out[_i] = int64(_e)
+		_out[_i] = int(_e)
 	}
 	return _out
 }
 
 
-// TsequencesetDuration wraps MEOS C function tsequenceset_duration.
-func TsequencesetDuration(ss TSequenceSet, boundspan bool) timeutil.Timedelta {
-	res := C.tsequenceset_duration(ss.Inner(), C.bool(boundspan))
-	return IntervalToTimeDelta(res)
-}
+// TODO tsequenceset_duration: unsupported return type int *
+// func TsequencesetDuration(...) { /* not yet handled by codegen */ }
 
 
 // TsequencesetEndTimestamptz wraps MEOS C function tsequenceset_end_timestamptz.
-func TsequencesetEndTimestamptz(ss TSequenceSet) int64 {
+func TsequencesetEndTimestamptz(ss TSequenceSet) int {
 	res := C.tsequenceset_end_timestamptz(ss.Inner())
-	return int64(res)
+	return int(res)
 }
 
 
 // TsequencesetHash wraps MEOS C function tsequenceset_hash.
-func TsequencesetHash(ss TSequenceSet) uint32 {
+func TsequencesetHash(ss TSequenceSet) int {
 	res := C.tsequenceset_hash(ss.Inner())
-	return uint32(res)
+	return int(res)
 }
 
 
@@ -974,10 +1034,24 @@ func TsequencesetMaxInstP(ss TSequenceSet) TInstant {
 }
 
 
+// TsequencesetMaxVal wraps MEOS C function tsequenceset_max_val.
+func TsequencesetMaxVal(ss TSequenceSet) int {
+	res := C.tsequenceset_max_val(ss.Inner())
+	return int(res)
+}
+
+
 // TsequencesetMinInstP wraps MEOS C function tsequenceset_min_inst_p.
 func TsequencesetMinInstP(ss TSequenceSet) TInstant {
 	res := C.tsequenceset_min_inst_p(ss.Inner())
 	return TInstant{_inner: res}
+}
+
+
+// TsequencesetMinVal wraps MEOS C function tsequenceset_min_val.
+func TsequencesetMinVal(ss TSequenceSet) int {
+	res := C.tsequenceset_min_val(ss.Inner())
+	return int(res)
 }
 
 
@@ -1023,9 +1097,9 @@ func TsequencesetSequencesP(ss TSequenceSet) []TSequence {
 
 
 // TsequencesetStartTimestamptz wraps MEOS C function tsequenceset_start_timestamptz.
-func TsequencesetStartTimestamptz(ss TSequenceSet) int64 {
+func TsequencesetStartTimestamptz(ss TSequenceSet) int {
 	res := C.tsequenceset_start_timestamptz(ss.Inner())
-	return int64(res)
+	return int(res)
 }
 
 
@@ -1037,22 +1111,22 @@ func TsequencesetTime(ss TSequenceSet) *SpanSet {
 
 
 // TsequencesetTimestamptzN wraps MEOS C function tsequenceset_timestamptz_n.
-func TsequencesetTimestamptzN(ss TSequenceSet, n int) (bool, int64) {
-	var _out_result C.TimestampTz
+func TsequencesetTimestamptzN(ss TSequenceSet, n int) (bool, int) {
+	var _out_result C.int
 	res := C.tsequenceset_timestamptz_n(ss.Inner(), C.int(n), &_out_result)
-	return bool(res), int64(_out_result)
+	return bool(res), int(_out_result)
 }
 
 
 // TsequencesetTimestamps wraps MEOS C function tsequenceset_timestamps.
-func TsequencesetTimestamps(ss TSequenceSet) []int64 {
+func TsequencesetTimestamps(ss TSequenceSet) []int {
 	var _out_count C.int
 	res := C.tsequenceset_timestamps(ss.Inner(), &_out_count)
 	_n := int(_out_count)
-	_slice := unsafe.Slice((*C.TimestampTz)(unsafe.Pointer(res)), _n)
-	_out := make([]int64, _n)
+	_slice := unsafe.Slice((*C.int)(unsafe.Pointer(res)), _n)
+	_out := make([]int, _n)
 	for _i, _e := range _slice {
-		_out[_i] = int64(_e)
+		_out[_i] = int(_e)
 	}
 	return _out
 }
@@ -1078,11 +1152,8 @@ func TemporalTsequenceset(temp Temporal, interp Interpolation) TSequenceSet {
 }
 
 
-// TinstantShiftTime wraps MEOS C function tinstant_shift_time.
-func TinstantShiftTime(inst TInstant, interv timeutil.Timedelta) TInstant {
-	res := C.tinstant_shift_time(inst.Inner(), interv.Inner())
-	return TInstant{_inner: res}
-}
+// TODO tinstant_shift_time: unsupported param const int *
+// func TinstantShiftTime(...) { /* not yet handled by codegen */ }
 
 
 // TinstantToTsequence wraps MEOS C function tinstant_to_tsequence.
@@ -1119,11 +1190,8 @@ func TsequenceSetInterp(seq TSequence, interp Interpolation) Temporal {
 }
 
 
-// TsequenceShiftScaleTime wraps MEOS C function tsequence_shift_scale_time.
-func TsequenceShiftScaleTime(seq TSequence, shift timeutil.Timedelta, duration timeutil.Timedelta) TSequence {
-	res := C.tsequence_shift_scale_time(seq.Inner(), shift.Inner(), duration.Inner())
-	return TSequence{_inner: res}
-}
+// TODO tsequence_shift_scale_time: unsupported param const int *
+// func TsequenceShiftScaleTime(...) { /* not yet handled by codegen */ }
 
 
 // TsequenceSubseq wraps MEOS C function tsequence_subseq.
@@ -1174,11 +1242,8 @@ func TsequencesetSetInterp(ss TSequenceSet, interp Interpolation) Temporal {
 }
 
 
-// TsequencesetShiftScaleTime wraps MEOS C function tsequenceset_shift_scale_time.
-func TsequencesetShiftScaleTime(ss TSequenceSet, start timeutil.Timedelta, duration timeutil.Timedelta) TSequenceSet {
-	res := C.tsequenceset_shift_scale_time(ss.Inner(), start.Inner(), duration.Inner())
-	return TSequenceSet{_inner: res}
-}
+// TODO tsequenceset_shift_scale_time: unsupported param const int *
+// func TsequencesetShiftScaleTime(...) { /* not yet handled by codegen */ }
 
 
 // TsequencesetToDiscrete wraps MEOS C function tsequenceset_to_discrete.
@@ -1232,11 +1297,8 @@ func TinstantMergeArray(instants []TInstant) Temporal {
 }
 
 
-// TsequenceAppendTinstant wraps MEOS C function tsequence_append_tinstant.
-func TsequenceAppendTinstant(seq TSequence, inst TInstant, maxdist float64, maxt timeutil.Timedelta, expand bool) Temporal {
-	res := C.tsequence_append_tinstant(seq.Inner(), inst.Inner(), C.double(maxdist), maxt.Inner(), C.bool(expand))
-	return CreateTemporal(res)
-}
+// TODO tsequence_append_tinstant: unsupported param const int *
+// func TsequenceAppendTinstant(...) { /* not yet handled by codegen */ }
 
 
 // TsequenceAppendTsequence wraps MEOS C function tsequence_append_tsequence.
@@ -1247,8 +1309,8 @@ func TsequenceAppendTsequence(seq1 TSequence, seq2 TSequence, expand bool) Tempo
 
 
 // TsequenceDeleteTimestamptz wraps MEOS C function tsequence_delete_timestamptz.
-func TsequenceDeleteTimestamptz(seq TSequence, t int64, connect bool) Temporal {
-	res := C.tsequence_delete_timestamptz(seq.Inner(), C.TimestampTz(t), C.bool(connect))
+func TsequenceDeleteTimestamptz(seq TSequence, t int, connect bool) Temporal {
+	res := C.tsequence_delete_timestamptz(seq.Inner(), C.int(t), C.bool(connect))
 	return CreateTemporal(res)
 }
 
@@ -1297,11 +1359,8 @@ func TsequenceMergeArray(sequences []TSequence) Temporal {
 }
 
 
-// TsequencesetAppendTinstant wraps MEOS C function tsequenceset_append_tinstant.
-func TsequencesetAppendTinstant(ss TSequenceSet, inst TInstant, maxdist float64, maxt timeutil.Timedelta, expand bool) TSequenceSet {
-	res := C.tsequenceset_append_tinstant(ss.Inner(), inst.Inner(), C.double(maxdist), maxt.Inner(), C.bool(expand))
-	return TSequenceSet{_inner: res}
-}
+// TODO tsequenceset_append_tinstant: unsupported param const int *
+// func TsequencesetAppendTinstant(...) { /* not yet handled by codegen */ }
 
 
 // TsequencesetAppendTsequence wraps MEOS C function tsequenceset_append_tsequence.
@@ -1312,8 +1371,8 @@ func TsequencesetAppendTsequence(ss TSequenceSet, seq TSequence, expand bool) TS
 
 
 // TsequencesetDeleteTimestamptz wraps MEOS C function tsequenceset_delete_timestamptz.
-func TsequencesetDeleteTimestamptz(ss TSequenceSet, t int64) TSequenceSet {
-	res := C.tsequenceset_delete_timestamptz(ss.Inner(), C.TimestampTz(t))
+func TsequencesetDeleteTimestamptz(ss TSequenceSet, t int) TSequenceSet {
+	res := C.tsequenceset_delete_timestamptz(ss.Inner(), C.int(t))
 	return TSequenceSet{_inner: res}
 }
 
@@ -1387,15 +1446,15 @@ func TsequencesetSetBbox(ss TSequenceSet, box unsafe.Pointer) {
 
 
 // TcontseqAfterTimestamptz wraps MEOS C function tcontseq_after_timestamptz.
-func TcontseqAfterTimestamptz(seq TSequence, t int64, strict bool) TSequence {
-	res := C.tcontseq_after_timestamptz(seq.Inner(), C.TimestampTz(t), C.bool(strict))
+func TcontseqAfterTimestamptz(seq TSequence, t int, strict bool) TSequence {
+	res := C.tcontseq_after_timestamptz(seq.Inner(), C.int(t), C.bool(strict))
 	return TSequence{_inner: res}
 }
 
 
 // TcontseqBeforeTimestamptz wraps MEOS C function tcontseq_before_timestamptz.
-func TcontseqBeforeTimestamptz(seq TSequence, t int64, strict bool) TSequence {
-	res := C.tcontseq_before_timestamptz(seq.Inner(), C.TimestampTz(t), C.bool(strict))
+func TcontseqBeforeTimestamptz(seq TSequence, t int, strict bool) TSequence {
+	res := C.tcontseq_before_timestamptz(seq.Inner(), C.int(t), C.bool(strict))
 	return TSequence{_inner: res}
 }
 
@@ -1408,15 +1467,15 @@ func TcontseqRestrictMinmax(seq TSequence, min bool, atfunc bool) TSequenceSet {
 
 
 // TdiscseqAfterTimestamptz wraps MEOS C function tdiscseq_after_timestamptz.
-func TdiscseqAfterTimestamptz(seq TSequence, t int64, strict bool) TSequence {
-	res := C.tdiscseq_after_timestamptz(seq.Inner(), C.TimestampTz(t), C.bool(strict))
+func TdiscseqAfterTimestamptz(seq TSequence, t int, strict bool) TSequence {
+	res := C.tdiscseq_after_timestamptz(seq.Inner(), C.int(t), C.bool(strict))
 	return TSequence{_inner: res}
 }
 
 
 // TdiscseqBeforeTimestamptz wraps MEOS C function tdiscseq_before_timestamptz.
-func TdiscseqBeforeTimestamptz(seq TSequence, t int64, strict bool) TSequence {
-	res := C.tdiscseq_before_timestamptz(seq.Inner(), C.TimestampTz(t), C.bool(strict))
+func TdiscseqBeforeTimestamptz(seq TSequence, t int, strict bool) TSequence {
+	res := C.tdiscseq_before_timestamptz(seq.Inner(), C.int(t), C.bool(strict))
 	return TSequence{_inner: res}
 }
 
@@ -1443,8 +1502,8 @@ func TemporalRestrictMinmax(temp Temporal, min bool, atfunc bool) Temporal {
 
 
 // TemporalRestrictTimestamptz wraps MEOS C function temporal_restrict_timestamptz.
-func TemporalRestrictTimestamptz(temp Temporal, t int64, atfunc bool) Temporal {
-	res := C.temporal_restrict_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(atfunc))
+func TemporalRestrictTimestamptz(temp Temporal, t int, atfunc bool) Temporal {
+	res := C.temporal_restrict_timestamptz(temp.Inner(), C.int(t), C.bool(atfunc))
 	return CreateTemporal(res)
 }
 
@@ -1478,15 +1537,15 @@ func TemporalRestrictValues(temp Temporal, set *Set, atfunc bool) Temporal {
 
 
 // TinstantAfterTimestamptz wraps MEOS C function tinstant_after_timestamptz.
-func TinstantAfterTimestamptz(inst TInstant, t int64, strict bool) TInstant {
-	res := C.tinstant_after_timestamptz(inst.Inner(), C.TimestampTz(t), C.bool(strict))
+func TinstantAfterTimestamptz(inst TInstant, t int, strict bool) TInstant {
+	res := C.tinstant_after_timestamptz(inst.Inner(), C.int(t), C.bool(strict))
 	return TInstant{_inner: res}
 }
 
 
 // TinstantBeforeTimestamptz wraps MEOS C function tinstant_before_timestamptz.
-func TinstantBeforeTimestamptz(inst TInstant, t int64, strict bool) TInstant {
-	res := C.tinstant_before_timestamptz(inst.Inner(), C.TimestampTz(t), C.bool(strict))
+func TinstantBeforeTimestamptz(inst TInstant, t int, strict bool) TInstant {
+	res := C.tinstant_before_timestamptz(inst.Inner(), C.int(t), C.bool(strict))
 	return TInstant{_inner: res}
 }
 
@@ -1506,8 +1565,8 @@ func TinstantRestrictTstzspanset(inst TInstant, ss *SpanSet, atfunc bool) TInsta
 
 
 // TinstantRestrictTimestamptz wraps MEOS C function tinstant_restrict_timestamptz.
-func TinstantRestrictTimestamptz(inst TInstant, t int64, atfunc bool) TInstant {
-	res := C.tinstant_restrict_timestamptz(inst.Inner(), C.TimestampTz(t), C.bool(atfunc))
+func TinstantRestrictTimestamptz(inst TInstant, t int, atfunc bool) TInstant {
+	res := C.tinstant_restrict_timestamptz(inst.Inner(), C.int(t), C.bool(atfunc))
 	return TInstant{_inner: res}
 }
 
@@ -1569,8 +1628,8 @@ func TnumberseqsetRestrictSpanset(ss TSequenceSet, spanset *SpanSet, atfunc bool
 
 
 // TsequenceAtTimestamptz wraps MEOS C function tsequence_at_timestamptz.
-func TsequenceAtTimestamptz(seq TSequence, t int64) TInstant {
-	res := C.tsequence_at_timestamptz(seq.Inner(), C.TimestampTz(t))
+func TsequenceAtTimestamptz(seq TSequence, t int) TInstant {
+	res := C.tsequence_at_timestamptz(seq.Inner(), C.int(t))
 	return TInstant{_inner: res}
 }
 
@@ -1590,15 +1649,15 @@ func TsequenceRestrictTstzspanset(seq TSequence, ss *SpanSet, atfunc bool) Tempo
 
 
 // TsequencesetAfterTimestamptz wraps MEOS C function tsequenceset_after_timestamptz.
-func TsequencesetAfterTimestamptz(ss TSequenceSet, t int64, strict bool) TSequenceSet {
-	res := C.tsequenceset_after_timestamptz(ss.Inner(), C.TimestampTz(t), C.bool(strict))
+func TsequencesetAfterTimestamptz(ss TSequenceSet, t int, strict bool) TSequenceSet {
+	res := C.tsequenceset_after_timestamptz(ss.Inner(), C.int(t), C.bool(strict))
 	return TSequenceSet{_inner: res}
 }
 
 
 // TsequencesetBeforeTimestamptz wraps MEOS C function tsequenceset_before_timestamptz.
-func TsequencesetBeforeTimestamptz(ss TSequenceSet, t int64, strict bool) TSequenceSet {
-	res := C.tsequenceset_before_timestamptz(ss.Inner(), C.TimestampTz(t), C.bool(strict))
+func TsequencesetBeforeTimestamptz(ss TSequenceSet, t int, strict bool) TSequenceSet {
+	res := C.tsequenceset_before_timestamptz(ss.Inner(), C.int(t), C.bool(strict))
 	return TSequenceSet{_inner: res}
 }
 
@@ -1625,8 +1684,8 @@ func TsequencesetRestrictTstzspanset(ss TSequenceSet, ps *SpanSet, atfunc bool) 
 
 
 // TsequencesetRestrictTimestamptz wraps MEOS C function tsequenceset_restrict_timestamptz.
-func TsequencesetRestrictTimestamptz(ss TSequenceSet, t int64, atfunc bool) Temporal {
-	res := C.tsequenceset_restrict_timestamptz(ss.Inner(), C.TimestampTz(t), C.bool(atfunc))
+func TsequencesetRestrictTimestamptz(ss TSequenceSet, t int, atfunc bool) Temporal {
+	res := C.tsequenceset_restrict_timestamptz(ss.Inner(), C.int(t), C.bool(atfunc))
 	return CreateTemporal(res)
 }
 
@@ -1860,11 +1919,8 @@ func SkiplistKeysValues(list *SkipList, values unsafe.Pointer) unsafe.Pointer {
 }
 
 
-// TemporalAppTinstTransfn wraps MEOS C function temporal_app_tinst_transfn.
-func TemporalAppTinstTransfn(state Temporal, inst TInstant, interp Interpolation, maxdist float64, maxt timeutil.Timedelta) Temporal {
-	res := C.temporal_app_tinst_transfn(state.Inner(), inst.Inner(), C.interpType(interp), C.double(maxdist), maxt.Inner())
-	return CreateTemporal(res)
-}
+// TODO temporal_app_tinst_transfn: unsupported param const int *
+// func TemporalAppTinstTransfn(...) { /* not yet handled by codegen */ }
 
 
 // TemporalAppTseqTransfn wraps MEOS C function temporal_app_tseq_transfn.

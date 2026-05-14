@@ -18,32 +18,22 @@ func ProjGetContext() *PJContext {
 }
 
 
-// PointRound wraps MEOS C function point_round.
-func PointRound(gs *Geom, maxdd int) *Geom {
-	res := C.point_round(gs._inner, C.int(maxdd))
-	return &Geom{_inner: res}
-}
+// TODO point_round: unsupported return type int *
+// func PointRound(...) { /* not yet handled by codegen */ }
 
 
 // STBOXSet wraps MEOS C function stbox_set.
-func STBOXSet(hasx bool, hasz bool, geodetic bool, srid int32, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, s *Span, box *STBox) {
-	C.stbox_set(C.bool(hasx), C.bool(hasz), C.bool(geodetic), C.int32(srid), C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), s._inner, box._inner)
+func STBOXSet(hasx bool, hasz bool, geodetic bool, srid int, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, s *Span, box *STBox) {
+	C.stbox_set(C.bool(hasx), C.bool(hasz), C.bool(geodetic), C.int(srid), C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), s._inner, box._inner)
 }
 
 
-// GboxSetSTBOX wraps MEOS C function gbox_set_stbox.
-func GboxSetSTBOX(box *GBox, srid int32) *STBox {
-	var _out_result C.STBox
-	C.gbox_set_stbox(box._inner, C.int32_t(srid), &_out_result)
-	return &STBox{_inner: &_out_result}
-}
+// TODO gbox_set_stbox: unsupported param const int *
+// func GboxSetSTBOX(...) { /* not yet handled by codegen */ }
 
 
-// GeoSetSTBOX wraps MEOS C function geo_set_stbox.
-func GeoSetSTBOX(gs *Geom, box *STBox) bool {
-	res := C.geo_set_stbox(gs._inner, box._inner)
-	return bool(res)
-}
+// TODO geo_set_stbox: unsupported param const int *
+// func GeoSetSTBOX(...) { /* not yet handled by codegen */ }
 
 
 // SpatialsetSetSTBOX wraps MEOS C function spatialset_set_stbox.
@@ -52,16 +42,12 @@ func SpatialsetSetSTBOX(set *Set, box *STBox) {
 }
 
 
-// STBOXSetBox3d wraps MEOS C function stbox_set_box3d.
-func STBOXSetBox3d(box *STBox, box3d *Box3D) {
-	C.stbox_set_box3d(box._inner, box3d._inner)
-}
+// TODO stbox_set_box3d: unsupported param int *
+// func STBOXSetBox3d(...) { /* not yet handled by codegen */ }
 
 
-// STBOXSetGbox wraps MEOS C function stbox_set_gbox.
-func STBOXSetGbox(box *STBox, gbox *GBox) {
-	C.stbox_set_gbox(box._inner, gbox._inner)
-}
+// TODO stbox_set_gbox: unsupported param int *
+// func STBOXSetGbox(...) { /* not yet handled by codegen */ }
 
 
 // TstzsetSetSTBOX wraps MEOS C function tstzset_set_stbox.
@@ -93,13 +79,6 @@ func InterSTBOXSTBOX(box1 *STBox, box2 *STBox) (bool, *STBox) {
 	var _out_result C.STBox
 	res := C.inter_stbox_stbox(box1._inner, box2._inner, &_out_result)
 	return bool(res), &STBox{_inner: &_out_result}
-}
-
-
-// STBOXGeo wraps MEOS C function stbox_geo.
-func STBOXGeo(box *STBox) *Geom {
-	res := C.stbox_geo(box._inner)
-	return &Geom{_inner: res}
 }
 
 
@@ -217,12 +196,6 @@ func TspatialSetSTBOX(temp Temporal, box *STBox) {
 }
 
 
-// TgeoinstSetSTBOX wraps MEOS C function tgeoinst_set_stbox.
-func TgeoinstSetSTBOX(inst TInstant, box *STBox) {
-	C.tgeoinst_set_stbox(inst.Inner(), box._inner)
-}
-
-
 // TspatialseqSetSTBOX wraps MEOS C function tspatialseq_set_stbox.
 func TspatialseqSetSTBOX(seq TSequence, box *STBox) {
 	C.tspatialseq_set_stbox(seq.Inner(), box._inner)
@@ -235,11 +208,15 @@ func TspatialseqsetSetSTBOX(ss TSequenceSet, box *STBox) {
 }
 
 
-// TgeoRestrictGeom wraps MEOS C function tgeo_restrict_geom.
-func TgeoRestrictGeom(temp Temporal, gs *Geom, zspan *Span, atfunc bool) Temporal {
-	res := C.tgeo_restrict_geom(temp.Inner(), gs._inner, zspan._inner, C.bool(atfunc))
+// TgeoRestrictElevation wraps MEOS C function tgeo_restrict_elevation.
+func TgeoRestrictElevation(temp Temporal, s *Span, atfunc bool) Temporal {
+	res := C.tgeo_restrict_elevation(temp.Inner(), s._inner, C.bool(atfunc))
 	return CreateTemporal(res)
 }
+
+
+// TODO tgeo_restrict_geom: unsupported param const int *
+// func TgeoRestrictGeom(...) { /* not yet handled by codegen */ }
 
 
 // TgeoRestrictSTBOX wraps MEOS C function tgeo_restrict_stbox.
@@ -249,11 +226,8 @@ func TgeoRestrictSTBOX(temp Temporal, box *STBox, border_inc bool, atfunc bool) 
 }
 
 
-// TgeoinstRestrictGeom wraps MEOS C function tgeoinst_restrict_geom.
-func TgeoinstRestrictGeom(inst TInstant, gs *Geom, zspan *Span, atfunc bool) TInstant {
-	res := C.tgeoinst_restrict_geom(inst.Inner(), gs._inner, zspan._inner, C.bool(atfunc))
-	return TInstant{_inner: res}
-}
+// TODO tgeoinst_restrict_geom: unsupported param const int *
+// func TgeoinstRestrictGeom(...) { /* not yet handled by codegen */ }
 
 
 // TgeoinstRestrictSTBOX wraps MEOS C function tgeoinst_restrict_stbox.
@@ -263,11 +237,8 @@ func TgeoinstRestrictSTBOX(inst TInstant, box *STBox, border_inc bool, atfunc bo
 }
 
 
-// TgeoseqRestrictGeom wraps MEOS C function tgeoseq_restrict_geom.
-func TgeoseqRestrictGeom(seq TSequence, gs *Geom, zspan *Span, atfunc bool) Temporal {
-	res := C.tgeoseq_restrict_geom(seq.Inner(), gs._inner, zspan._inner, C.bool(atfunc))
-	return CreateTemporal(res)
-}
+// TODO tgeoseq_restrict_geom: unsupported param const int *
+// func TgeoseqRestrictGeom(...) { /* not yet handled by codegen */ }
 
 
 // TgeoseqRestrictSTBOX wraps MEOS C function tgeoseq_restrict_stbox.
@@ -277,11 +248,8 @@ func TgeoseqRestrictSTBOX(seq TSequence, box *STBox, border_inc bool, atfunc boo
 }
 
 
-// TgeoseqsetRestrictGeom wraps MEOS C function tgeoseqset_restrict_geom.
-func TgeoseqsetRestrictGeom(ss TSequenceSet, gs *Geom, zspan *Span, atfunc bool) TSequenceSet {
-	res := C.tgeoseqset_restrict_geom(ss.Inner(), gs._inner, zspan._inner, C.bool(atfunc))
-	return TSequenceSet{_inner: res}
-}
+// TODO tgeoseqset_restrict_geom: unsupported param const int *
+// func TgeoseqsetRestrictGeom(...) { /* not yet handled by codegen */ }
 
 
 // TgeoseqsetRestrictSTBOX wraps MEOS C function tgeoseqset_restrict_stbox.
@@ -326,11 +294,8 @@ func TpointseqLength(seq TSequence) float64 {
 }
 
 
-// TpointseqLinearTrajectory wraps MEOS C function tpointseq_linear_trajectory.
-func TpointseqLinearTrajectory(seq TSequence, unary_union bool) *Geom {
-	res := C.tpointseq_linear_trajectory(seq.Inner(), C.bool(unary_union))
-	return &Geom{_inner: res}
-}
+// TODO tpointseq_linear_trajectory: unsupported return type int *
+// func TpointseqLinearTrajectory(...) { /* not yet handled by codegen */ }
 
 
 // TgeoseqStboxes wraps MEOS C function tgeoseq_stboxes.
@@ -390,13 +355,6 @@ func TgeoseqsetSplitNStboxes(ss TSequenceSet, max_count int) (*STBox, int) {
 	var _out_count C.int
 	res := C.tgeoseqset_split_n_stboxes(ss.Inner(), C.int(max_count), &_out_count)
 	return &STBox{_inner: res}, int(_out_count)
-}
-
-
-// TpointGetCoord wraps MEOS C function tpoint_get_coord.
-func TpointGetCoord(temp Temporal, coord int) Temporal {
-	res := C.tpoint_get_coord(temp.Inner(), C.int(coord))
-	return CreateTemporal(res)
 }
 
 
@@ -481,16 +439,10 @@ func TspatialseqsetSetSRID(ss TSequenceSet, srid int32) {
 }
 
 
-// TpointseqTwcentroid wraps MEOS C function tpointseq_twcentroid.
-func TpointseqTwcentroid(seq TSequence) *Geom {
-	res := C.tpointseq_twcentroid(seq.Inner())
-	return &Geom{_inner: res}
-}
+// TODO tpointseq_twcentroid: unsupported return type int *
+// func TpointseqTwcentroid(...) { /* not yet handled by codegen */ }
 
 
-// TpointseqsetTwcentroid wraps MEOS C function tpointseqset_twcentroid.
-func TpointseqsetTwcentroid(ss TSequenceSet) *Geom {
-	res := C.tpointseqset_twcentroid(ss.Inner())
-	return &Geom{_inner: res}
-}
+// TODO tpointseqset_twcentroid: unsupported return type int *
+// func TpointseqsetTwcentroid(...) { /* not yet handled by codegen */ }
 

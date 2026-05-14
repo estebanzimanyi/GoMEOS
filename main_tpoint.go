@@ -219,7 +219,7 @@ func TPointAtValue[TP TPoint](tp TP, value *Geom) Temporal {
 
 // TPointAtGeomTime Return a temporal point restricted to a geometry
 func TpointAtGeomTime[T Temporal](temp T, new_temp T, geom *Geom) T {
-	c_temp := C.tpoint_at_geom(temp.Inner(), geom._inner, nil)
+	c_temp := C.tpoint_at_geom(temp.Inner(), geom._inner)
 	new_temp.Init(c_temp)
 	return new_temp
 }
@@ -238,7 +238,7 @@ func TPointMinusValue[TP TPoint](tp TP, value *Geom) Temporal {
 
 // TPointMinusGeomTime Return a temporal point minus a geometry
 func TpointMinusGeomTime[T Temporal](temp T, new_temp T, geom *Geom) T {
-	c_temp := C.tpoint_minus_geom(temp.Inner(), geom._inner, nil)
+	c_temp := C.tpoint_minus_geom(temp.Inner(), geom._inner)
 	new_temp.Init(c_temp)
 	return new_temp
 }
@@ -457,43 +457,43 @@ func EverNeTPointPoint(temp Temporal, gs *Geom) bool {
 	return int(C.ever_ne_tgeo_geo(temp.Inner(), gs._inner)) > 0
 }
 
-func TContainsGeoTPoint[TP TPoint](gs *Geom, temp TP, restr, atvalue bool) Temporal {
-	res := C.tcontains_geo_tgeo(gs._inner, temp.Inner(), C.bool(restr), C.bool(atvalue))
+func TContainsGeoTPoint[TP TPoint](gs *Geom, temp TP) Temporal {
+	res := C.tcontains_geo_tgeo(gs._inner, temp.Inner())
 	return CreateTemporal(res)
 }
 
-func TDisjointTPointGeo[TP TPoint](temp TP, gs *Geom, restr, atvalue bool) Temporal {
-	res := C.tdisjoint_tgeo_geo(temp.Inner(), gs._inner, C.bool(restr), C.bool(atvalue))
+func TDisjointTPointGeo[TP TPoint](temp TP, gs *Geom) Temporal {
+	res := C.tdisjoint_tgeo_geo(temp.Inner(), gs._inner)
 	return CreateTemporal(res)
 }
 
-func TDisjointTPointTPoint[TP1 TPoint, TP2 TPoint](temp1 TP1, temp2 TP2, restr, atvalue bool) Temporal {
-	res := C.tdisjoint_tgeo_tgeo(temp1.Inner(), temp2.Inner(), C.bool(restr), C.bool(atvalue))
+func TDisjointTPointTPoint[TP1 TPoint, TP2 TPoint](temp1 TP1, temp2 TP2) Temporal {
+	res := C.tdisjoint_tgeo_tgeo(temp1.Inner(), temp2.Inner())
 	return CreateTemporal(res)
 }
 
-func TDWithinTPointGeo[TP TPoint](temp TP, gs *Geom, dist float64, restr, atvalue bool) Temporal {
-	res := C.tdwithin_tgeo_geo(temp.Inner(), gs._inner, C.double(dist), C.bool(restr), C.bool(atvalue))
+func TDWithinTPointGeo[TP TPoint](temp TP, gs *Geom, dist float64) Temporal {
+	res := C.tdwithin_tgeo_geo(temp.Inner(), gs._inner, C.double(dist))
 	return CreateTemporal(res)
 }
 
-func TDWithinTPointTPoint[TP1 TPoint, TP2 TPoint](temp1 TP1, temp2 TP2, dist float64, restr, atvalue bool) Temporal {
-	res := C.tdwithin_tgeo_tgeo(temp1.Inner(), temp2.Inner(), C.double(dist), C.bool(restr), C.bool(atvalue))
+func TDWithinTPointTPoint[TP1 TPoint, TP2 TPoint](temp1 TP1, temp2 TP2, dist float64) Temporal {
+	res := C.tdwithin_tgeo_tgeo(temp1.Inner(), temp2.Inner(), C.double(dist))
 	return CreateTemporal(res)
 }
 
-func TIntersectsTPointGeo[TP TPoint](temp TP, gs *Geom, restr, atvalue bool) Temporal {
-	res := C.tintersects_tgeo_geo(temp.Inner(), gs._inner, C.bool(restr), C.bool(atvalue))
+func TIntersectsTPointGeo[TP TPoint](temp TP, gs *Geom) Temporal {
+	res := C.tintersects_tgeo_geo(temp.Inner(), gs._inner)
 	return CreateTemporal(res)
 }
 
-func TIntersectsTPointTPoint[TP1 TPoint, TP2 TPoint](temp1 TP1, temp2 TP2, restr, atvalue bool) Temporal {
-	res := C.tintersects_tgeo_tgeo(temp1.Inner(), temp2.Inner(), C.bool(restr), C.bool(atvalue))
+func TIntersectsTPointTPoint[TP1 TPoint, TP2 TPoint](temp1 TP1, temp2 TP2) Temporal {
+	res := C.tintersects_tgeo_tgeo(temp1.Inner(), temp2.Inner())
 	return CreateTemporal(res)
 }
 
-func TTouchesTPointGeo[TP TPoint](temp TP, gs *Geom, restr, atvalue bool) Temporal {
-	res := C.ttouches_tgeo_geo(temp.Inner(), gs._inner, C.bool(restr), C.bool(atvalue))
+func TTouchesTPointGeo[TP TPoint](temp TP, gs *Geom) Temporal {
+	res := C.ttouches_tgeo_geo(temp.Inner(), gs._inner)
 	return CreateTemporal(res)
 }
 
