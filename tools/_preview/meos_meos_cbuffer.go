@@ -403,8 +403,17 @@ func CbuffersetValueN(s *Set, n int) (bool, *Cbuffer) {
 }
 
 
-// TODO cbufferset_values: unsupported return type Cbuffer **
-// func CbuffersetValues(...) { /* not yet handled by codegen */ }
+// CbuffersetValues wraps MEOS C function cbufferset_values.
+func CbuffersetValues(s *Set) []*Cbuffer {
+	res := C.cbufferset_values(s._inner)
+	_n := int(C.set_num_values(s.Inner()))
+	_slice := unsafe.Slice((**C.Cbuffer)(unsafe.Pointer(res)), _n)
+	_out := make([]*Cbuffer, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Cbuffer{_inner: _e}
+	}
+	return _out
+}
 
 
 // CbufferUnionTransfn wraps MEOS C function cbuffer_union_transfn.

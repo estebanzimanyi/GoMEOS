@@ -356,8 +356,17 @@ func PosesetValueN(s *Set, n int) (bool, *Pose) {
 }
 
 
-// TODO poseset_values: unsupported return type Pose **
-// func PosesetValues(...) { /* not yet handled by codegen */ }
+// PosesetValues wraps MEOS C function poseset_values.
+func PosesetValues(s *Set) []*Pose {
+	res := C.poseset_values(s._inner)
+	_n := int(C.set_num_values(s.Inner()))
+	_slice := unsafe.Slice((**C.Pose)(unsafe.Pointer(res)), _n)
+	_out := make([]*Pose, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Pose{_inner: _e}
+	}
+	return _out
+}
 
 
 // ContainedPoseSet wraps MEOS C function contained_pose_set.
