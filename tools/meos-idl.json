@@ -486,7 +486,12 @@
           "cType": "int",
           "canonical": "int"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "extra"
+        ]
+      }
     },
     {
       "name": "meos_get_datestyle",
@@ -528,7 +533,12 @@
         "c": "void",
         "canonical": "void"
       },
-      "params": []
+      "params": [],
+      "shape": {
+        "nullable": [
+          "tz_str"
+        ]
+      }
     },
     {
       "name": "meos_finalize",
@@ -5105,7 +5115,13 @@
           "cType": "const Interval *",
           "canonical": "const Interval *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "shift",
+          "duration"
+        ]
+      }
     },
     {
       "name": "tstzset_tprecision",
@@ -5155,7 +5171,13 @@
           "cType": "const Interval *",
           "canonical": "const Interval *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "shift",
+          "duration"
+        ]
+      }
     },
     {
       "name": "tstzspan_tprecision",
@@ -5205,7 +5227,13 @@
           "cType": "const Interval *",
           "canonical": "const Interval *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "shift",
+          "duration"
+        ]
+      }
     },
     {
       "name": "tstzspanset_tprecision",
@@ -13030,7 +13058,12 @@
           "cType": "TimestampTz",
           "canonical": "long"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "p"
+        ]
+      }
     },
     {
       "name": "timestamptz_union_transfn",
@@ -13500,7 +13533,14 @@
           "cType": "size_t *",
           "canonical": "unsigned long *"
         }
-      ]
+      ],
+      "shape": {
+        "outputArrays": [
+          {
+            "param": "size"
+          }
+        ]
+      }
     },
     {
       "name": "tbox_as_wkb",
@@ -13750,7 +13790,13 @@
           "cType": "const Span *",
           "canonical": "const Span *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "p",
+          "s"
+        ]
+      }
     },
     {
       "name": "float_to_tbox",
@@ -14255,7 +14301,13 @@
           "cType": "const Interval *",
           "canonical": "const Interval *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "shift",
+          "duration"
+        ]
+      }
     },
     {
       "name": "tfloatbox_expand",
@@ -14915,7 +14967,12 @@
           "cType": "const char *",
           "canonical": "const char *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "srs"
+        ]
+      }
     },
     {
       "name": "temporal_as_wkb",
@@ -15540,7 +15597,12 @@
           "cType": "double",
           "canonical": "double"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "maxt"
+        ]
+      }
     },
     {
       "name": "ttext_from_base_temp",
@@ -16928,7 +16990,13 @@
           "cType": "const Interval *",
           "canonical": "const Interval *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "shift",
+          "duration"
+        ]
+      }
     },
     {
       "name": "temporal_shift_time",
@@ -17238,7 +17306,12 @@
           "cType": "bool",
           "canonical": "bool"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "maxt"
+        ]
+      }
     },
     {
       "name": "temporal_append_tsequence",
@@ -23807,7 +23880,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state"
+        ]
+      }
     },
     {
       "name": "tbool_tor_transfn",
@@ -23827,7 +23905,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state"
+        ]
+      }
     },
     {
       "name": "temporal_extent_transfn",
@@ -23847,7 +23930,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "p"
+        ]
+      }
     },
     {
       "name": "temporal_tagg_finalfn",
@@ -23882,7 +23970,13 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state",
+          "interval"
+        ]
+      }
     },
     {
       "name": "tfloat_tmax_transfn",
@@ -23902,7 +23996,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state"
+        ]
+      }
     },
     {
       "name": "tfloat_tmin_transfn",
@@ -23922,7 +24021,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state"
+        ]
+      }
     },
     {
       "name": "tfloat_tsum_transfn",
@@ -23942,7 +24046,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state"
+        ]
+      }
     },
     {
       "name": "tfloat_wmax_transfn",
@@ -24037,7 +24146,13 @@
           "cType": "TimestampTz",
           "canonical": "long"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state",
+          "interval"
+        ]
+      }
     },
     {
       "name": "tint_tmax_transfn",
@@ -24057,7 +24172,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state"
+        ]
+      }
     },
     {
       "name": "tint_tmin_transfn",
@@ -24077,7 +24197,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state"
+        ]
+      }
     },
     {
       "name": "tint_tsum_transfn",
@@ -24097,7 +24222,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state"
+        ]
+      }
     },
     {
       "name": "tint_wmax_transfn",
@@ -24192,7 +24322,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "box"
+        ]
+      }
     },
     {
       "name": "tnumber_tavg_finalfn",
@@ -24227,7 +24362,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state"
+        ]
+      }
     },
     {
       "name": "tnumber_wavg_transfn",
@@ -24272,7 +24412,13 @@
           "cType": "const Set *",
           "canonical": "const Set *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state",
+          "interval"
+        ]
+      }
     },
     {
       "name": "tstzspan_tcount_transfn",
@@ -24292,7 +24438,13 @@
           "cType": "const Span *",
           "canonical": "const Span *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state",
+          "interval"
+        ]
+      }
     },
     {
       "name": "tstzspanset_tcount_transfn",
@@ -24312,7 +24464,13 @@
           "cType": "const SpanSet *",
           "canonical": "const SpanSet *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state",
+          "interval"
+        ]
+      }
     },
     {
       "name": "ttext_tmax_transfn",
@@ -24332,7 +24490,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state"
+        ]
+      }
     },
     {
       "name": "ttext_tmin_transfn",
@@ -24352,7 +24515,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "state"
+        ]
+      }
     },
     {
       "name": "temporal_simplify_dp",
@@ -25029,7 +25197,18 @@
           "cType": "int *",
           "canonical": "int *"
         }
-      ]
+      ],
+      "shape": {
+        "outputArrays": [
+          {
+            "param": "count"
+          }
+        ],
+        "nullable": [
+          "xorigin",
+          "torigin"
+        ]
+      }
     },
     {
       "name": "tint_time_boxes",
@@ -25373,7 +25552,18 @@
           "cType": "int *",
           "canonical": "int *"
         }
-      ]
+      ],
+      "shape": {
+        "outputArrays": [
+          {
+            "param": "count"
+          }
+        ],
+        "nullable": [
+          "xorigin",
+          "torigin"
+        ]
+      }
     },
     {
       "name": "temptype_subtype",
@@ -26583,7 +26773,12 @@
           "cType": "const char *",
           "canonical": "const char *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "srs"
+        ]
+      }
     },
     {
       "name": "geo_as_hexewkb",
@@ -28727,7 +28922,14 @@
           "cType": "size_t *",
           "canonical": "unsigned long *"
         }
-      ]
+      ],
+      "shape": {
+        "outputArrays": [
+          {
+            "param": "size"
+          }
+        ]
+      }
     },
     {
       "name": "stbox_as_wkb",
@@ -28942,7 +29144,13 @@
           "cType": "const Span *",
           "canonical": "const Span *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "p",
+          "s"
+        ]
+      }
     },
     {
       "name": "geo_to_stbox",
@@ -29562,7 +29770,13 @@
           "cType": "const Interval *",
           "canonical": "const Interval *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "shift",
+          "duration"
+        ]
+      }
     },
     {
       "name": "stboxarr_round",
@@ -34949,7 +35163,12 @@
           "cType": "const Temporal *",
           "canonical": "const Temporal *"
         }
-      ]
+      ],
+      "shape": {
+        "nullable": [
+          "box"
+        ]
+      }
     },
     {
       "name": "stbox_get_space_tile",
@@ -35159,7 +35378,17 @@
           "cType": "int *",
           "canonical": "int *"
         }
-      ]
+      ],
+      "shape": {
+        "outputArrays": [
+          {
+            "param": "count"
+          }
+        ],
+        "nullable": [
+          "duration"
+        ]
+      }
     },
     {
       "name": "stbox_time_tiles",
