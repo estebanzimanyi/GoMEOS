@@ -18,8 +18,11 @@ func TrgeoOut(temp Temporal) string {
 }
 
 
-// TODO trgeoinst_make: unsupported param const Pose *
-// func TrgeoinstMake(...) { /* not yet handled by codegen */ }
+// TrgeoinstMake wraps MEOS C function trgeoinst_make.
+func TrgeoinstMake(geom *Geom, pose *Pose, t int64) TInstant {
+	res := C.trgeoinst_make(geom._inner, pose._inner, C.TimestampTz(t))
+	return TInstant{_inner: res}
+}
 
 
 // GeoTposeToTrgeo wraps MEOS C function geo_tpose_to_trgeo.
