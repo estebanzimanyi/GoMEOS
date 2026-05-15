@@ -1,11 +1,13 @@
 # GoMEOS
 
 [MEOS (Mobility Engine, Open Source)](https://www.libmeos.org/) is a C library which enables the manipulation of
-temporal and spatio-temporal data based on [MobilityDB](https://mobilitydb.com/)'s data types and functions.
+temporal and spatio-temporal data based on [MobilityDB](https://github.com/MobilityDB/MobilityDB)'s data types and functions.
 
-GoMEOS is a Go library that wraps the MEOS C library using [CGO](https://pkg.go.dev/cmd/cgo), providing a set of Go functions that allows to use MEOS functionality by directly accessing C structs and C functions.
+GoMEOS is a Go library that wraps the MEOS C library using [CGO](https://pkg.go.dev/cmd/cgo), providing a set of Go functions that allows to use MEOS functionality by directly accessing C structs and C functions. It tracks MEOS 1.4.
 
 GoMEOS exposes the functionality of MEOS and is meant to be used directly by the user.
+
+The wrappers are generated from the [MEOS-API](https://github.com/MobilityDB/MEOS-API) `meos-idl.json` catalog rather than written by hand. To regenerate them against a given MEOS version, see [`tools/README.md`](tools/README.md).
 
 # Usage
 
