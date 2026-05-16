@@ -24,7 +24,7 @@ func ExampleTPointValueSet() {
 
 func ExampleTPointSTBoxes() {
 	tf_seq := TGeomPointIn("{POINT(1 1)@2022-10-01 00:00:00+00, POINT(2 2)@2022-10-02 00:00:00+00}", &TGeomPointSeq{})
-	stboxes, _ := TPointSTBoxes(tf_seq, 100)
+	stboxes, _ := TPointSTBoxes(tf_seq)
 	for i := 0; i < len(stboxes); i++ {
 		fmt.Println(STBoxOut(stboxes[i], 10))
 	}

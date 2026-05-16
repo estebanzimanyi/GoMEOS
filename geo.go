@@ -54,15 +54,7 @@ func GeometryFromHexEwkb(input string) *Geom {
 	return g
 }
 
-func GeographyFromText(input string, srid int) *Geom {
-	c_geom_str := C.CString(input)
-	defer C.free(unsafe.Pointer(c_geom_str))
-	c_geom := C.geo_from_text(c_geom_str, C.int(srid))
-	g := &Geom{_inner: c_geom}
-	return g
-}
-
-func GeometryFromText(input string, srid int) *Geom {
+func GeoFromText(input string, srid int) *Geom {
 	c_geom_str := C.CString(input)
 	defer C.free(unsafe.Pointer(c_geom_str))
 	c_geom := C.geo_from_text(c_geom_str, C.int(srid))

@@ -129,9 +129,8 @@ func TPointGetZ[TP TPoint](tp TP) Temporal {
 }
 
 // TPointSTBoxes Return an array of spatiotemporal boxes from the segments of a temporal point
-func TPointSTBoxes[TP TPoint](tp TP, max_count int) ([]*STBox, error) {
+func TPointSTBoxes[TP TPoint](tp TP) ([]*STBox, error) {
 	var count C.int
-	_ = max_count
 
 	// Call the C function
 	cValues := C.tgeo_stboxes(tp.Inner(), &count)
@@ -206,6 +205,7 @@ func TPointRound[TP TPoint](tp TP, max_decimals int) Temporal {
 // TPointExpandSpace Return the bounding box of a temporal point expanded on the spatial dimension
 func TPointExpandSpace[TP TPoint](tp TP, other float64) *STBox {
 	box := C.tspatial_to_stbox(tp.Inner())
+	defer C.free(unsafe.Pointer(box))
 	return &STBox{
 		_inner: C.stbox_expand_space(box, C.double(other)),
 	}
