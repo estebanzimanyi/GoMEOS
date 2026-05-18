@@ -1,0 +1,40 @@
+name: portable-aliases parity
+
+# Gates the portable bare-name dialect (RFC #920; MEOS-API cross-repo
+# handoff PR #9): GoMEOS's exposed CGO symbol set — the hand-written root
+# package plus the IDL-driven generated surface (tools/_preview, emitted
+# by tools/codegen.py from tools/meos-idl.json, the MEOS-API parser's
+# JSON output) — must remain a superset of portableAliases.bareNames:
+# 29/29, 0 unbacked, and every one of the six in-scope user-facing type
+# families (temporal, geo, cbuffer, npoint, pose, rgeo) covered.
+# cbuffer/npoint/pose/rgeo are full temporal types and are never excluded
+# from the parity headline.
+#
+# Neither job needs libmeos/CGO: both audit the source statically, so the
+# gate is self-contained and cannot be flaked by the C toolchain.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Parity gate (script — exposed symbol set ⊇ bareNames)
+        run: python3 tools/portable_parity.py --check
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Parity gate (Go test — language-independent mirror)
+        env:
+          CGO_ENABLED: '0'
+        run: go test ./tools/parity/ -v
