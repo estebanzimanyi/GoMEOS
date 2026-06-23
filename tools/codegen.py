@@ -35,6 +35,11 @@ HEADER_FILES = [
     "meos_cbuffer.h",
     "meos_pose.h",
     "meos_rgeo.h",
+    "meos_h3.h",
+    "meos_quadbin.h",
+    "meos_json.h",
+    "meos_pointcloud.h",
+    "meos_arrow.h",
 ]
 
 # Forward-declared opaque types we never wrap (mirrors the cdef skip list
@@ -69,12 +74,15 @@ TYPE_MAP: dict[str, TypeMapping] = {
     "int32":             TypeMapping("int32",    "C.int32({})",                       "int32({})"),
     "int32_t":           TypeMapping("int32",    "C.int32_t({})",                     "int32({})"),
     "int64":             TypeMapping("int64",    "C.int64({})",                       "int64({})"),
+    "int64_t":           TypeMapping("int64",    "C.int64_t({})",                     "int64({})"),
     "uint8":             TypeMapping("uint8",    "C.uint8({})",                       "uint8({})"),
     "uint8_t":           TypeMapping("uint8",    "C.uint8_t({})",                     "uint8({})"),
     "uint16":            TypeMapping("uint16",   "C.uint16({})",                      "uint16({})"),
     "uint32":            TypeMapping("uint32",   "C.uint32({})",                      "uint32({})"),
     "uint32_t":          TypeMapping("uint32",   "C.uint32_t({})",                    "uint32({})"),
     "uint64":            TypeMapping("uint64",   "C.uint64({})",                      "uint64({})"),
+    "uint64_t":          TypeMapping("uint64",   "C.uint64_t({})",                    "uint64({})"),
+    "Quadbin":           TypeMapping("uint64",   "C.Quadbin({})",                     "uint64({})"),
     "double":            TypeMapping("float64",  "C.double({})",                      "float64({})"),
     "size_t":            TypeMapping("uint",     "C.size_t({})",                      "uint({})"),
     "DateADT":           TypeMapping("int32",    "C.DateADT({})",                     "int32({})"),
@@ -100,8 +108,10 @@ TYPE_MAP: dict[str, TypeMapping] = {
     "int (*)(void *, void *)": TypeMapping("unsafe.Pointer", "{}",                  "{}"),
     "void *(*)(void *, void *)": TypeMapping("unsafe.Pointer", "{}",                "{}"),
     "interpType":        TypeMapping("Interpolation", "C.interpType({})",             "Interpolation({})"),
-    "meosType":          TypeMapping("MeosType", "C.meosType({})",                    "MeosType({})"),
-    "meosOper":          TypeMapping("MeosOper", "C.meosOper({})",                    "MeosOper({})"),
+    "MeosType":          TypeMapping("MeosType", "C.MeosType({})",                    "MeosType({})"),
+    "MeosOper":          TypeMapping("MeosOper", "C.MeosOper({})",                    "MeosOper({})"),
+    "RTreeSearchOp":     TypeMapping("RTreeSearchOp", "C.RTreeSearchOp({})",          "RTreeSearchOp({})"),
+    "nullHandleType":    TypeMapping("NullHandleType", "C.nullHandleType({})",        "NullHandleType({})"),
     "tempSubtype":       TypeMapping("TempSubtype", "C.tempSubtype({})",              "TempSubtype({})"),
     "errorLevel":        TypeMapping("ErrorLevel", "C.errorLevel({})",                "ErrorLevel({})"),
     "SkipListType":      TypeMapping("SkipListType", "C.SkipListType({})",            "SkipListType({})"),
@@ -140,6 +150,13 @@ WRAPPER_TYPES: dict[str, tuple[str, str]] = {
     "Cbuffer":           ("*Cbuffer",          "&Cbuffer{_inner: $res}"),
     "Pose":              ("*Pose",             "&Pose{_inner: $res}"),
     "Rgeo":              ("*Rgeo",             "&Rgeo{_inner: $res}"),
+    "Jsonb":             ("*Jsonb",            "&Jsonb{_inner: $res}"),
+    "JsonPath":          ("*JsonPath",         "&JsonPath{_inner: $res}"),
+    "Pcpoint":           ("*Pcpoint",          "&Pcpoint{_inner: $res}"),
+    "Pcpatch":           ("*Pcpatch",          "&Pcpatch{_inner: $res}"),
+    "TPCBox":            ("*TPCBox",           "&TPCBox{_inner: $res}"),
+    "MeosArray":         ("*MeosArray",        "&MeosArray{_inner: $res}"),
+    "PCSCHEMA":          ("*PCSchema",         "&PCSchema{_inner: $res}"),
     "SkipList":          ("*SkipList",         "&SkipList{_inner: $res}"),
     "RTree":             ("*RTree",            "&RTree{_inner: $res}"),
     "Match":             ("*Match",            "&Match{_inner: $res}"),
@@ -833,6 +850,14 @@ _CGO_FILE = """package generated
 #include "meos_internal.h"
 #include "meos_internal_geo.h"
 #include "meos_npoint.h"
+#include "meos_cbuffer.h"
+#include "meos_pose.h"
+#include "meos_rgeo.h"
+#include "meos_h3.h"
+#include "meos_quadbin.h"
+#include "meos_json.h"
+#include "meos_pointcloud.h"
+#include "meos_arrow.h"
 */
 import "C"
 """

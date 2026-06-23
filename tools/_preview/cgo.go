@@ -14,5 +14,13 @@ package generated
 #include "meos_internal.h"
 #include "meos_internal_geo.h"
 #include "meos_npoint.h"
+#include "meos_cbuffer.h"
+#include "meos_pose.h"
+#include "meos_rgeo.h"
+#include "meos_h3.h"
+#include "meos_quadbin.h"
+#include "meos_json.h"
+#include "meos_pointcloud.h"
+#include "meos_arrow.h"
 */
 import "C"

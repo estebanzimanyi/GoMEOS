@@ -97,14 +97,14 @@ func NsegmentOut(ns *Nsegment, maxdd int) string {
 
 // NpointMake wraps MEOS C function npoint_make.
 func NpointMake(rid int64, pos float64) *Npoint {
-	res := C.npoint_make(C.int64(rid), C.double(pos))
+	res := C.npoint_make(C.int64_t(rid), C.double(pos))
 	return &Npoint{_inner: res}
 }
 
 
 // NsegmentMake wraps MEOS C function nsegment_make.
 func NsegmentMake(rid int64, pos1 float64, pos2 float64) *Nsegment {
-	res := C.nsegment_make(C.int64(rid), C.double(pos1), C.double(pos2))
+	res := C.nsegment_make(C.int64_t(rid), C.double(pos1), C.double(pos2))
 	return &Nsegment{_inner: res}
 }
 
@@ -152,23 +152,23 @@ func NsegmentToGeom(ns *Nsegment) *Geom {
 
 
 // NsegmentToSTBOX wraps MEOS C function nsegment_to_stbox.
-func NsegmentToSTBOX(np *Nsegment) *STBox {
-	res := C.nsegment_to_stbox(np._inner)
+func NsegmentToSTBOX(ns *Nsegment) *STBox {
+	res := C.nsegment_to_stbox(ns._inner)
 	return &STBox{_inner: res}
 }
 
 
 // NpointHash wraps MEOS C function npoint_hash.
-func NpointHash(np *Npoint) uint32 {
+func NpointHash(np *Npoint) int {
 	res := C.npoint_hash(np._inner)
-	return uint32(res)
+	return int(res)
 }
 
 
 // NpointHashExtended wraps MEOS C function npoint_hash_extended.
-func NpointHashExtended(np *Npoint, seed uint64) uint64 {
-	res := C.npoint_hash_extended(np._inner, C.uint64(seed))
-	return uint64(res)
+func NpointHashExtended(np *Npoint, seed int) int {
+	res := C.npoint_hash_extended(np._inner, C.int(seed))
+	return int(res)
 }
 
 
@@ -209,21 +209,21 @@ func NsegmentStartPosition(ns *Nsegment) float64 {
 
 // RouteExists wraps MEOS C function route_exists.
 func RouteExists(rid int64) bool {
-	res := C.route_exists(C.int64(rid))
+	res := C.route_exists(C.int64_t(rid))
 	return bool(res)
 }
 
 
 // RouteGeom wraps MEOS C function route_geom.
 func RouteGeom(rid int64) *Geom {
-	res := C.route_geom(C.int64(rid))
+	res := C.route_geom(C.int64_t(rid))
 	return &Geom{_inner: res}
 }
 
 
 // RouteLength wraps MEOS C function route_length.
 func RouteLength(rid int64) float64 {
-	res := C.route_length(C.int64(rid))
+	res := C.route_length(C.int64_t(rid))
 	return float64(res)
 }
 
@@ -445,8 +445,9 @@ func NpointsetValueN(s *Set, n int) (bool, *Npoint) {
 
 // NpointsetValues wraps MEOS C function npointset_values.
 func NpointsetValues(s *Set) []*Npoint {
-	res := C.npointset_values(s._inner)
-	_n := int(C.set_num_values(s.Inner()))
+	var _out_count C.int
+	res := C.npointset_values(s._inner, &_out_count)
+	_n := int(_out_count)
 	_slice := unsafe.Slice((**C.Npoint)(unsafe.Pointer(res)), _n)
 	_out := make([]*Npoint, _n)
 	for _i, _e := range _slice {
@@ -528,6 +529,15 @@ func TnpointIn(str string) Temporal {
 }
 
 
+// TnpointFromMFJSON wraps MEOS C function tnpoint_from_mfjson.
+func TnpointFromMFJSON(mfjson string) Temporal {
+	_c_mfjson := C.CString(mfjson)
+	defer C.free(unsafe.Pointer(_c_mfjson))
+	res := C.tnpoint_from_mfjson(_c_mfjson)
+	return CreateTemporal(res)
+}
+
+
 // TnpointOut wraps MEOS C function tnpoint_out.
 func TnpointOut(temp Temporal, maxdd int) string {
 	res := C.tnpoint_out(temp.Inner(), C.int(maxdd))
@@ -539,6 +549,34 @@ func TnpointOut(temp Temporal, maxdd int) string {
 func TnpointinstMake(np *Npoint, t int64) TInstant {
 	res := C.tnpointinst_make(np._inner, C.TimestampTz(t))
 	return TInstant{_inner: res}
+}
+
+
+// TnpointFromBaseTemp wraps MEOS C function tnpoint_from_base_temp.
+func TnpointFromBaseTemp(np *Npoint, temp Temporal) Temporal {
+	res := C.tnpoint_from_base_temp(np._inner, temp.Inner())
+	return CreateTemporal(res)
+}
+
+
+// TnpointseqFromBaseTstzset wraps MEOS C function tnpointseq_from_base_tstzset.
+func TnpointseqFromBaseTstzset(np *Npoint, s *Set) TSequence {
+	res := C.tnpointseq_from_base_tstzset(np._inner, s._inner)
+	return TSequence{_inner: res}
+}
+
+
+// TnpointseqFromBaseTstzspan wraps MEOS C function tnpointseq_from_base_tstzspan.
+func TnpointseqFromBaseTstzspan(np *Npoint, s *Span, interp Interpolation) TSequence {
+	res := C.tnpointseq_from_base_tstzspan(np._inner, s._inner, C.interpType(interp))
+	return TSequence{_inner: res}
+}
+
+
+// TnpointseqsetFromBaseTstzspanset wraps MEOS C function tnpointseqset_from_base_tstzspanset.
+func TnpointseqsetFromBaseTstzspanset(np *Npoint, ss *SpanSet, interp Interpolation) TSequenceSet {
+	res := C.tnpointseqset_from_base_tstzspanset(np._inner, ss._inner, C.interpType(interp))
+	return TSequenceSet{_inner: res}
 }
 
 
@@ -560,6 +598,13 @@ func TnpointToTgeompoint(temp Temporal) Temporal {
 func TnpointCumulativeLength(temp Temporal) Temporal {
 	res := C.tnpoint_cumulative_length(temp.Inner())
 	return CreateTemporal(res)
+}
+
+
+// TnpointEndValue wraps MEOS C function tnpoint_end_value.
+func TnpointEndValue(temp Temporal) *Npoint {
+	res := C.tnpoint_end_value(temp.Inner())
+	return &Npoint{_inner: res}
 }
 
 
@@ -605,10 +650,47 @@ func TnpointSpeed(temp Temporal) Temporal {
 }
 
 
+// TnpointStartValue wraps MEOS C function tnpoint_start_value.
+func TnpointStartValue(temp Temporal) *Npoint {
+	res := C.tnpoint_start_value(temp.Inner())
+	return &Npoint{_inner: res}
+}
+
+
 // TnpointTrajectory wraps MEOS C function tnpoint_trajectory.
 func TnpointTrajectory(temp Temporal) *Geom {
 	res := C.tnpoint_trajectory(temp.Inner())
 	return &Geom{_inner: res}
+}
+
+
+// TnpointValueAtTimestamptz wraps MEOS C function tnpoint_value_at_timestamptz.
+func TnpointValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, *Npoint) {
+	var _out_value *C.Npoint
+	res := C.tnpoint_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_value)
+	return bool(res), &Npoint{_inner: _out_value}
+}
+
+
+// TnpointValueN wraps MEOS C function tnpoint_value_n.
+func TnpointValueN(temp Temporal, n int) (bool, *Npoint) {
+	var _out_result *C.Npoint
+	res := C.tnpoint_value_n(temp.Inner(), C.int(n), &_out_result)
+	return bool(res), &Npoint{_inner: _out_result}
+}
+
+
+// TnpointValues wraps MEOS C function tnpoint_values.
+func TnpointValues(temp Temporal) []*Npoint {
+	var _out_count C.int
+	res := C.tnpoint_values(temp.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.Npoint)(unsafe.Pointer(res)), _n)
+	_out := make([]*Npoint, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Npoint{_inner: _e}
+	}
+	return _out
 }
 
 
@@ -682,9 +764,9 @@ func TdistanceTnpointNpoint(temp Temporal, np *Npoint) Temporal {
 }
 
 
-// TdistanceTnpointPoint wraps MEOS C function tdistance_tnpoint_point.
-func TdistanceTnpointPoint(temp Temporal, gs *Geom) Temporal {
-	res := C.tdistance_tnpoint_point(temp.Inner(), gs._inner)
+// TdistanceTnpointGeo wraps MEOS C function tdistance_tnpoint_geo.
+func TdistanceTnpointGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.tdistance_tnpoint_geo(temp.Inner(), gs._inner)
 	return CreateTemporal(res)
 }
 

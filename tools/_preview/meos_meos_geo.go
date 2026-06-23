@@ -11,10 +11,56 @@ import (
 var _ = unsafe.Pointer(nil)
 var _ = timeutil.Timedelta{}
 
-// GeoGetSRID wraps MEOS C function geo_get_srid.
-func GeoGetSRID(g *Geom) int32 {
-	res := C.geo_get_srid(g._inner)
-	return int32(res)
+// Box3dFromGbox wraps MEOS C function box3d_from_gbox.
+func Box3dFromGbox(box *GBox) *Box3D {
+	res := C.box3d_from_gbox(box._inner)
+	return &Box3D{_inner: res}
+}
+
+
+// Box3dMake wraps MEOS C function box3d_make.
+func Box3dMake(xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, srid int32) *Box3D {
+	res := C.box3d_make(C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), C.int32_t(srid))
+	return &Box3D{_inner: res}
+}
+
+
+// Box3dIn wraps MEOS C function box3d_in.
+func Box3dIn(str string) *Box3D {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	res := C.box3d_in(_c_str)
+	return &Box3D{_inner: res}
+}
+
+
+// Box3dOut wraps MEOS C function box3d_out.
+func Box3dOut(box *Box3D, maxdd int) string {
+	res := C.box3d_out(box._inner, C.int(maxdd))
+	return C.GoString(res)
+}
+
+
+// GboxMake wraps MEOS C function gbox_make.
+func GboxMake(hasz bool, hasm bool, geodetic bool, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, mmin float64, mmax float64) *GBox {
+	res := C.gbox_make(C.bool(hasz), C.bool(hasm), C.bool(geodetic), C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), C.double(mmin), C.double(mmax))
+	return &GBox{_inner: res}
+}
+
+
+// GboxIn wraps MEOS C function gbox_in.
+func GboxIn(str string) *GBox {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	res := C.gbox_in(_c_str)
+	return &GBox{_inner: res}
+}
+
+
+// GboxOut wraps MEOS C function gbox_out.
+func GboxOut(box *GBox, maxdd int) string {
+	res := C.gbox_out(box._inner, C.int(maxdd))
+	return C.GoString(res)
 }
 
 
@@ -68,7 +114,7 @@ func GeoAsText(gs *Geom, precision int) string {
 
 // GeoFromEWKB wraps MEOS C function geo_from_ewkb.
 func GeoFromEWKB(wkb []byte, srid int32) *Geom {
-	res := C.geo_from_ewkb((*C.uint8_t)(unsafe.Pointer(&wkb[0])), C.size_t(len(wkb)), C.int32(srid))
+	res := C.geo_from_ewkb((*C.uint8_t)(unsafe.Pointer(&wkb[0])), C.size_t(len(wkb)), C.int32_t(srid))
 	return &Geom{_inner: res}
 }
 
@@ -98,15 +144,6 @@ func GeoOut(gs *Geom) string {
 }
 
 
-// GeogFromBinary wraps MEOS C function geog_from_binary.
-func GeogFromBinary(wkb_bytea string) *Geom {
-	_c_wkb_bytea := C.CString(wkb_bytea)
-	defer C.free(unsafe.Pointer(_c_wkb_bytea))
-	res := C.geog_from_binary(_c_wkb_bytea)
-	return &Geom{_inner: res}
-}
-
-
 // GeogFromHexewkb wraps MEOS C function geog_from_hexewkb.
 func GeogFromHexewkb(wkt string) *Geom {
 	_c_wkt := C.CString(wkt)
@@ -117,10 +154,10 @@ func GeogFromHexewkb(wkt string) *Geom {
 
 
 // GeogIn wraps MEOS C function geog_in.
-func GeogIn(str string, typmod int32) *Geom {
+func GeogIn(str string, typmod int) *Geom {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
-	res := C.geog_in(_c_str, C.int32(typmod))
+	res := C.geog_in(_c_str, C.int(typmod))
 	return &Geom{_inner: res}
 }
 
@@ -135,45 +172,17 @@ func GeomFromHexewkb(wkt string) *Geom {
 
 
 // GeomIn wraps MEOS C function geom_in.
-func GeomIn(str string, typmod int32) *Geom {
+func GeomIn(str string, typmod int) *Geom {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
-	res := C.geom_in(_c_str, C.int32(typmod))
+	res := C.geom_in(_c_str, C.int(typmod))
 	return &Geom{_inner: res}
 }
 
 
-// Box3dMake wraps MEOS C function box3d_make.
-func Box3dMake(xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, srid int32) *Box3D {
-	res := C.box3d_make(C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), C.int32_t(srid))
-	return &Box3D{_inner: res}
-}
-
-
-// Box3dOut wraps MEOS C function box3d_out.
-func Box3dOut(box *Box3D, maxdd int) string {
-	res := C.box3d_out(box._inner, C.int(maxdd))
-	return C.GoString(res)
-}
-
-
-// GboxMake wraps MEOS C function gbox_make.
-func GboxMake(hasz bool, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64) *GBox {
-	res := C.gbox_make(C.bool(hasz), C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax))
-	return &GBox{_inner: res}
-}
-
-
-// GboxOut wraps MEOS C function gbox_out.
-func GboxOut(box *GBox, maxdd int) string {
-	res := C.gbox_out(box._inner, C.int(maxdd))
-	return C.GoString(res)
-}
-
-
 // GeoCopy wraps MEOS C function geo_copy.
-func GeoCopy(g *Geom) *Geom {
-	res := C.geo_copy(g._inner)
+func GeoCopy(gs *Geom) *Geom {
+	res := C.geo_copy(gs._inner)
 	return &Geom{_inner: res}
 }
 
@@ -221,8 +230,8 @@ func GeogToGeom(geog *Geom) *Geom {
 
 
 // GeoIsEmpty wraps MEOS C function geo_is_empty.
-func GeoIsEmpty(g *Geom) bool {
-	res := C.geo_is_empty(g._inner)
+func GeoIsEmpty(gs *Geom) bool {
+	res := C.geo_is_empty(gs._inner)
 	return bool(res)
 }
 
@@ -242,29 +251,29 @@ func GeoTypename(type_ int) string {
 
 
 // GeogArea wraps MEOS C function geog_area.
-func GeogArea(g *Geom, use_spheroid bool) float64 {
-	res := C.geog_area(g._inner, C.bool(use_spheroid))
+func GeogArea(gs *Geom, use_spheroid bool) float64 {
+	res := C.geog_area(gs._inner, C.bool(use_spheroid))
 	return float64(res)
 }
 
 
 // GeogCentroid wraps MEOS C function geog_centroid.
-func GeogCentroid(g *Geom, use_spheroid bool) *Geom {
-	res := C.geog_centroid(g._inner, C.bool(use_spheroid))
+func GeogCentroid(gs *Geom, use_spheroid bool) *Geom {
+	res := C.geog_centroid(gs._inner, C.bool(use_spheroid))
 	return &Geom{_inner: res}
 }
 
 
 // GeogLength wraps MEOS C function geog_length.
-func GeogLength(g *Geom, use_spheroid bool) float64 {
-	res := C.geog_length(g._inner, C.bool(use_spheroid))
+func GeogLength(gs *Geom, use_spheroid bool) float64 {
+	res := C.geog_length(gs._inner, C.bool(use_spheroid))
 	return float64(res)
 }
 
 
 // GeogPerimeter wraps MEOS C function geog_perimeter.
-func GeogPerimeter(g *Geom, use_spheroid bool) float64 {
-	res := C.geog_perimeter(g._inner, C.bool(use_spheroid))
+func GeogPerimeter(gs *Geom, use_spheroid bool) float64 {
+	res := C.geog_perimeter(gs._inner, C.bool(use_spheroid))
 	return float64(res)
 }
 
@@ -303,6 +312,10 @@ func LinePointN(geom *Geom, n int) *Geom {
 	res := C.line_point_n(geom._inner, C.int(n))
 	return &Geom{_inner: res}
 }
+
+
+// TODO geo_wlof: unsupported param uint32_t *
+// func GeoWlof(...) { /* not yet handled by codegen */ }
 
 
 // GeoReverse wraps MEOS C function geo_reverse.
@@ -469,24 +482,20 @@ func GeomIntersection2dColl(gs1 *Geom, gs2 *Geom) *Geom {
 }
 
 
-// GeomMinBoundingRadius wraps MEOS C function geom_min_bounding_radius.
-func GeomMinBoundingRadius(geom *Geom) (*Geom, float64) {
-	var _out_radius C.double
-	res := C.geom_min_bounding_radius(geom._inner, &_out_radius)
-	return &Geom{_inner: res}, float64(_out_radius)
-}
+// TODO geom_min_bounding_radius: unsupported param double *
+// func GeomMinBoundingRadius(...) { /* not yet handled by codegen */ }
 
 
 // GeomShortestline2d wraps MEOS C function geom_shortestline2d.
-func GeomShortestline2d(gs1 *Geom, s2 *Geom) *Geom {
-	res := C.geom_shortestline2d(gs1._inner, s2._inner)
+func GeomShortestline2d(gs1 *Geom, gs2 *Geom) *Geom {
+	res := C.geom_shortestline2d(gs1._inner, gs2._inner)
 	return &Geom{_inner: res}
 }
 
 
 // GeomShortestline3d wraps MEOS C function geom_shortestline3d.
-func GeomShortestline3d(gs1 *Geom, s2 *Geom) *Geom {
-	res := C.geom_shortestline3d(gs1._inner, s2._inner)
+func GeomShortestline3d(gs1 *Geom, gs2 *Geom) *Geom {
+	res := C.geom_shortestline3d(gs1._inner, gs2._inner)
 	return &Geom{_inner: res}
 }
 
@@ -554,6 +563,13 @@ func GeomDisjoint2d(gs1 *Geom, gs2 *Geom) bool {
 }
 
 
+// GeomDwithin wraps MEOS C function geom_dwithin.
+func GeomDwithin(gs1 *Geom, gs2 *Geom, tolerance float64) bool {
+	res := C.geom_dwithin(gs1._inner, gs2._inner, C.double(tolerance))
+	return bool(res)
+}
+
+
 // GeomDwithin2d wraps MEOS C function geom_dwithin2d.
 func GeomDwithin2d(gs1 *Geom, gs2 *Geom, tolerance float64) bool {
 	res := C.geom_dwithin2d(gs1._inner, gs2._inner, C.double(tolerance))
@@ -564,6 +580,13 @@ func GeomDwithin2d(gs1 *Geom, gs2 *Geom, tolerance float64) bool {
 // GeomDwithin3d wraps MEOS C function geom_dwithin3d.
 func GeomDwithin3d(gs1 *Geom, gs2 *Geom, tolerance float64) bool {
 	res := C.geom_dwithin3d(gs1._inner, gs2._inner, C.double(tolerance))
+	return bool(res)
+}
+
+
+// GeomIntersects wraps MEOS C function geom_intersects.
+func GeomIntersects(gs1 *Geom, gs2 *Geom) bool {
+	res := C.geom_intersects(gs1._inner, gs2._inner)
 	return bool(res)
 }
 
@@ -675,6 +698,13 @@ func GeomsetIn(str string) *Set {
 }
 
 
+// SpatialsetOut wraps MEOS C function spatialset_out.
+func SpatialsetOut(s *Set, maxdd int) string {
+	res := C.spatialset_out(s._inner, C.int(maxdd))
+	return C.GoString(res)
+}
+
+
 // SpatialsetAsText wraps MEOS C function spatialset_as_text.
 func SpatialsetAsText(set *Set, maxdd int) string {
 	res := C.spatialset_as_text(set._inner, C.int(maxdd))
@@ -729,8 +759,9 @@ func GeosetValueN(s *Set, n int) (bool, *Geom) {
 
 // GeosetValues wraps MEOS C function geoset_values.
 func GeosetValues(s *Set) []*Geom {
-	res := C.geoset_values(s._inner)
-	_n := int(C.set_num_values(s.Inner()))
+	var _out_count C.int
+	res := C.geoset_values(s._inner, &_out_count)
+	_n := int(_out_count)
 	_slice := unsafe.Slice((**C.GSERIALIZED)(unsafe.Pointer(res)), _n)
 	_out := make([]*Geom, _n)
 	for _i, _e := range _slice {
@@ -910,7 +941,7 @@ func STBOXCopy(box *STBox) *STBox {
 
 // STBOXMake wraps MEOS C function stbox_make.
 func STBOXMake(hasx bool, hasz bool, geodetic bool, srid int32, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, s *Span) *STBox {
-	res := C.stbox_make(C.bool(hasx), C.bool(hasz), C.bool(geodetic), C.int32(srid), C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), s._inner)
+	res := C.stbox_make(C.bool(hasx), C.bool(hasz), C.bool(geodetic), C.int32_t(srid), C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), s._inner)
 	return &STBox{_inner: res}
 }
 
@@ -993,16 +1024,16 @@ func STBOXArea(box *STBox, spheroid bool) float64 {
 
 
 // STBOXHash wraps MEOS C function stbox_hash.
-func STBOXHash(box *STBox) uint32 {
+func STBOXHash(box *STBox) int {
 	res := C.stbox_hash(box._inner)
-	return uint32(res)
+	return int(res)
 }
 
 
 // STBOXHashExtended wraps MEOS C function stbox_hash_extended.
-func STBOXHashExtended(box *STBox, seed uint64) uint64 {
-	res := C.stbox_hash_extended(box._inner, C.uint64(seed))
-	return uint64(res)
+func STBOXHashExtended(box *STBox, seed int) int {
+	res := C.stbox_hash_extended(box._inner, C.int(seed))
+	return int(res)
 }
 
 
@@ -1418,6 +1449,13 @@ func STBOXNe(box1 *STBox, box2 *STBox) bool {
 }
 
 
+// TspatialOut wraps MEOS C function tspatial_out.
+func TspatialOut(temp Temporal, maxdd int) string {
+	res := C.tspatial_out(temp.Inner(), C.int(maxdd))
+	return C.GoString(res)
+}
+
+
 // TgeogpointFromMFJSON wraps MEOS C function tgeogpoint_from_mfjson.
 func TgeogpointFromMFJSON(str string) Temporal {
 	_c_str := C.CString(str)
@@ -1504,13 +1542,6 @@ func TspatialAsText(temp Temporal, maxdd int) string {
 }
 
 
-// TspatialOut wraps MEOS C function tspatial_out.
-func TspatialOut(temp Temporal, maxdd int) string {
-	res := C.tspatial_out(temp.Inner(), C.int(maxdd))
-	return C.GoString(res)
-}
-
-
 // TgeoFromBaseTemp wraps MEOS C function tgeo_from_base_temp.
 func TgeoFromBaseTemp(gs *Geom, temp Temporal) Temporal {
 	res := C.tgeo_from_base_temp(gs._inner, temp.Inner())
@@ -1574,25 +1605,8 @@ func TpointseqFromBaseTstzspan(gs *Geom, s *Span, interp Interpolation) TSequenc
 }
 
 
-// TpointseqMakeCoords wraps MEOS C function tpointseq_make_coords.
-func TpointseqMakeCoords(xcoords []float64, ycoords []float64, zcoords []float64, times []int64, srid int32, geodetic bool, lower_inc bool, upper_inc bool, interp Interpolation, normalize bool) TSequence {
-	_c_xcoords := make([]C.double, len(xcoords))
-	for _i, _v := range xcoords { _c_xcoords[_i] = C.double(_v) }
-	_c_ycoords := make([]C.double, len(ycoords))
-	for _i, _v := range ycoords { _c_ycoords[_i] = C.double(_v) }
-	var _c_zcoords []C.double
-	if zcoords != nil {
-		_c_zcoords = make([]C.double, len(zcoords))
-		for _i, _v := range zcoords { _c_zcoords[_i] = C.double(_v) }
-	}
-	var _c_times []C.TimestampTz
-	if times != nil {
-		_c_times = make([]C.TimestampTz, len(times))
-		for _i, _v := range times { _c_times[_i] = C.TimestampTz(_v) }
-	}
-	res := C.tpointseq_make_coords(&_c_xcoords[0], &_c_ycoords[0], _ptr_or_nil_double(_c_zcoords), _ptr_or_nil_TimestampTz(_c_times), C.int(len(xcoords)), C.int32(srid), C.bool(geodetic), C.bool(lower_inc), C.bool(upper_inc), C.interpType(interp), C.bool(normalize))
-	return TSequence{_inner: res}
-}
+// TODO tpointseq_make_coords: unsupported param const double *
+// func TpointseqMakeCoords(...) { /* not yet handled by codegen */ }
 
 
 // TpointseqsetFromBaseTstzspanset wraps MEOS C function tpointseqset_from_base_tstzspanset.
@@ -1665,20 +1679,8 @@ func TgeompointToTgeometry(temp Temporal) Temporal {
 }
 
 
-// TpointAsMvtgeom wraps MEOS C function tpoint_as_mvtgeom.
-func TpointAsMvtgeom(temp Temporal, bounds *STBox, extent int32, buffer int32, clip_geom bool) (bool, []*Geom, []int64, int) {
-	var _out_gsarr *C.GSERIALIZED
-	var _out_timesarr *C.int64
-	var _out_count C.int
-	res := C.tpoint_as_mvtgeom(temp.Inner(), bounds._inner, C.int32_t(extent), C.int32_t(buffer), C.bool(clip_geom), &_out_gsarr, &_out_timesarr, &_out_count)
-	_slice__out_gsarr := unsafe.Slice(_out_gsarr, None)
-	_out_gsarr_go := make([]*Geom, None)
-	for _i, _e := range _slice__out_gsarr { _out_gsarr_go[_i] = &Geom{_inner: _e} }
-	_slice__out_timesarr := unsafe.Slice(_out_timesarr, None)
-	_out_timesarr_go := make([]int64, None)
-	for _i, _e := range _slice__out_timesarr { _out_timesarr_go[_i] = int64(_e) }
-	return bool(res), _out_gsarr_go, _out_timesarr_go, int(_out_count)
-}
+// TODO tpoint_as_mvtgeom: unsupported return type MvtGeom
+// func TpointAsMvtgeom(...) { /* not yet handled by codegen */ }
 
 
 // TpointTfloatToGeomeas wraps MEOS C function tpoint_tfloat_to_geomeas.
@@ -1755,9 +1757,9 @@ func TgeoTraversedArea(temp Temporal, unary_union bool) *Geom {
 
 // TgeoValueAtTimestamptz wraps MEOS C function tgeo_value_at_timestamptz.
 func TgeoValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, *Geom) {
-	var _out_value *C.GSERIALIZED
-	res := C.tgeo_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_value)
-	return bool(res), &Geom{_inner: _out_value}
+	var _out_result *C.GSERIALIZED
+	res := C.tgeo_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_result)
+	return bool(res), &Geom{_inner: _out_result}
 }
 
 
@@ -2624,6 +2626,27 @@ func AcontainsTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
 }
 
 
+// AcoversGeoTgeo wraps MEOS C function acovers_geo_tgeo.
+func AcoversGeoTgeo(gs *Geom, temp Temporal) int {
+	res := C.acovers_geo_tgeo(gs._inner, temp.Inner())
+	return int(res)
+}
+
+
+// AcoversTgeoGeo wraps MEOS C function acovers_tgeo_geo.
+func AcoversTgeoGeo(temp Temporal, gs *Geom) int {
+	res := C.acovers_tgeo_geo(temp.Inner(), gs._inner)
+	return int(res)
+}
+
+
+// AcoversTgeoTgeo wraps MEOS C function acovers_tgeo_tgeo.
+func AcoversTgeoTgeo(temp1 Temporal, temp2 Temporal) int {
+	res := C.acovers_tgeo_tgeo(temp1.Inner(), temp2.Inner())
+	return int(res)
+}
+
+
 // AdisjointTgeoGeo wraps MEOS C function adisjoint_tgeo_geo.
 func AdisjointTgeoGeo(temp Temporal, gs *Geom) int {
 	res := C.adisjoint_tgeo_geo(temp.Inner(), gs._inner)
@@ -2918,6 +2941,54 @@ func TtouchesTgeoTgeo(temp1 Temporal, temp2 Temporal) Temporal {
 }
 
 
+// TODO edwithin_tgeoarr_tgeoarr: unsupported param const Temporal **
+// func EdwithinTgeoarrTgeoarr(...) { /* not yet handled by codegen */ }
+
+
+// TODO adwithin_tgeoarr_tgeoarr: unsupported param const Temporal **
+// func AdwithinTgeoarrTgeoarr(...) { /* not yet handled by codegen */ }
+
+
+// TODO eintersects_tgeoarr_tgeoarr: unsupported param const Temporal **
+// func EintersectsTgeoarrTgeoarr(...) { /* not yet handled by codegen */ }
+
+
+// TODO aintersects_tgeoarr_tgeoarr: unsupported param const Temporal **
+// func AintersectsTgeoarrTgeoarr(...) { /* not yet handled by codegen */ }
+
+
+// TODO etouches_tgeoarr_tgeoarr: unsupported param const Temporal **
+// func EtouchesTgeoarrTgeoarr(...) { /* not yet handled by codegen */ }
+
+
+// TODO atouches_tgeoarr_tgeoarr: unsupported param const Temporal **
+// func AtouchesTgeoarrTgeoarr(...) { /* not yet handled by codegen */ }
+
+
+// TODO edisjoint_tgeoarr_tgeoarr: unsupported param const Temporal **
+// func EdisjointTgeoarrTgeoarr(...) { /* not yet handled by codegen */ }
+
+
+// TODO adisjoint_tgeoarr_tgeoarr: unsupported param const Temporal **
+// func AdisjointTgeoarrTgeoarr(...) { /* not yet handled by codegen */ }
+
+
+// TODO tdwithin_tgeoarr_tgeoarr: unsupported param const Temporal **
+// func TdwithinTgeoarrTgeoarr(...) { /* not yet handled by codegen */ }
+
+
+// TODO tintersects_tgeoarr_tgeoarr: unsupported param const Temporal **
+// func TintersectsTgeoarrTgeoarr(...) { /* not yet handled by codegen */ }
+
+
+// TODO ttouches_tgeoarr_tgeoarr: unsupported param const Temporal **
+// func TtouchesTgeoarrTgeoarr(...) { /* not yet handled by codegen */ }
+
+
+// TODO tdisjoint_tgeoarr_tgeoarr: unsupported param const Temporal **
+// func TdisjointTgeoarrTgeoarr(...) { /* not yet handled by codegen */ }
+
+
 // TdistanceTgeoGeo wraps MEOS C function tdistance_tgeo_geo.
 func TdistanceTgeoGeo(temp Temporal, gs *Geom) Temporal {
 	res := C.tdistance_tgeo_geo(temp.Inner(), gs._inner)
@@ -2995,6 +3066,17 @@ func ShortestlineTgeoTgeo(temp1 Temporal, temp2 Temporal) *Geom {
 }
 
 
+// TODO tgeoarr_tgeoarr_mindist: unsupported param const Temporal **
+// func TgeoarrTgeoarrMindist(...) { /* not yet handled by codegen */ }
+
+
+// MindistanceTgeoTgeo wraps MEOS C function mindistance_tgeo_tgeo.
+func MindistanceTgeoTgeo(temp1 Temporal, temp2 Temporal, threshold float64) float64 {
+	res := C.mindistance_tgeo_tgeo(temp1.Inner(), temp2.Inner(), C.double(threshold))
+	return float64(res)
+}
+
+
 // TpointTcentroidFinalfn wraps MEOS C function tpoint_tcentroid_finalfn.
 func TpointTcentroidFinalfn(state *SkipList) Temporal {
 	res := C.tpoint_tcentroid_finalfn(state._inner)
@@ -3061,43 +3143,21 @@ func STBOXTimeTiles(bounds *STBox, duration timeutil.Timedelta, torigin int64, b
 }
 
 
-// TgeoSpaceSplit wraps MEOS C function tgeo_space_split.
-func TgeoSpaceSplit(temp Temporal, xsize float64, ysize float64, zsize float64, sorigin *Geom, bitmatrix bool, border_inc bool) ([]Temporal, []*Geom) {
-	var _out_space_bins **C.GSERIALIZED
-	var _out_count C.int
-	res := C.tgeo_space_split(temp.Inner(), C.double(xsize), C.double(ysize), C.double(zsize), sorigin._inner, C.bool(bitmatrix), C.bool(border_inc), &_out_space_bins, &_out_count)
-	_n := int(_out_count)
-	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
-	_out := make([]Temporal, _n)
-	for _i, _e := range _slice {
-		_out[_i] = CreateTemporal(_e)
-	}
-	return _out
-}
+// TODO tgeo_space_split: unsupported return type SpaceSplit
+// func TgeoSpaceSplit(...) { /* not yet handled by codegen */ }
 
 
-// TgeoSpaceTimeSplit wraps MEOS C function tgeo_space_time_split.
-func TgeoSpaceTimeSplit(temp Temporal, xsize float64, ysize float64, zsize float64, duration timeutil.Timedelta, sorigin *Geom, torigin int64, bitmatrix bool, border_inc bool) ([]Temporal, []*Geom, []int64) {
-	var _out_space_bins **C.GSERIALIZED
-	var _out_time_bins *C.TimestampTz
-	var _out_count C.int
-	res := C.tgeo_space_time_split(temp.Inner(), C.double(xsize), C.double(ysize), C.double(zsize), duration.Inner(), sorigin._inner, C.TimestampTz(torigin), C.bool(bitmatrix), C.bool(border_inc), &_out_space_bins, &_out_time_bins, &_out_count)
-	_n := int(_out_count)
-	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
-	_out := make([]Temporal, _n)
-	for _i, _e := range _slice {
-		_out[_i] = CreateTemporal(_e)
-	}
-	return _out
-}
+// TODO tgeo_space_time_split: unsupported return type SpaceTimeSplit
+// func TgeoSpaceTimeSplit(...) { /* not yet handled by codegen */ }
 
 
 // GeoClusterKmeans wraps MEOS C function geo_cluster_kmeans.
 func GeoClusterKmeans(geoms []*Geom, k uint32) []int {
 	_c_geoms := make([]*C.GSERIALIZED, len(geoms))
 	for _i, _v := range geoms { _c_geoms[_i] = _v._inner }
-	res := C.geo_cluster_kmeans((**C.GSERIALIZED)(unsafe.Pointer(&_c_geoms[0])), C.uint32_t(len(geoms)), C.uint32_t(k))
-	_n := len(geoms)
+	var _out_count C.int
+	res := C.geo_cluster_kmeans((**C.GSERIALIZED)(unsafe.Pointer(&_c_geoms[0])), C.uint32_t(len(geoms)), C.uint32_t(k), &_out_count)
+	_n := int(_out_count)
 	_slice := unsafe.Slice((*C.int)(unsafe.Pointer(res)), _n)
 	_out := make([]int, _n)
 	for _i, _e := range _slice {

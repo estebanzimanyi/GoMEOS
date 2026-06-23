@@ -26,8 +26,8 @@ func PointRound(gs *Geom, maxdd int) *Geom {
 
 
 // STBOXSet wraps MEOS C function stbox_set.
-func STBOXSet(hasx bool, hasz bool, geodetic bool, srid int32, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, s *Span, box *STBox) {
-	C.stbox_set(C.bool(hasx), C.bool(hasz), C.bool(geodetic), C.int32(srid), C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), s._inner, box._inner)
+func STBOXSet(hasx bool, hasz bool, geodetic bool, srid int, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, s *Span, box *STBox) {
+	C.stbox_set(C.bool(hasx), C.bool(hasz), C.bool(geodetic), C.int(srid), C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), s._inner, box._inner)
 }
 
 
@@ -93,13 +93,6 @@ func InterSTBOXSTBOX(box1 *STBox, box2 *STBox) (bool, *STBox) {
 	var _out_result C.STBox
 	res := C.inter_stbox_stbox(box1._inner, box2._inner, &_out_result)
 	return bool(res), &STBox{_inner: &_out_result}
-}
-
-
-// STBOXGeo wraps MEOS C function stbox_geo.
-func STBOXGeo(box *STBox) *Geom {
-	res := C.stbox_geo(box._inner)
-	return &Geom{_inner: res}
 }
 
 
@@ -214,12 +207,6 @@ func TgeometryseqsetIn(str string) TSequenceSet {
 // TspatialSetSTBOX wraps MEOS C function tspatial_set_stbox.
 func TspatialSetSTBOX(temp Temporal, box *STBox) {
 	C.tspatial_set_stbox(temp.Inner(), box._inner)
-}
-
-
-// TgeoinstSetSTBOX wraps MEOS C function tgeoinst_set_stbox.
-func TgeoinstSetSTBOX(inst TInstant, box *STBox) {
-	C.tgeoinst_set_stbox(inst.Inner(), box._inner)
 }
 
 
@@ -397,13 +384,6 @@ func TgeoseqsetSplitNStboxes(ss TSequenceSet, max_count int) (*STBox, int) {
 	var _out_count C.int
 	res := C.tgeoseqset_split_n_stboxes(ss.Inner(), C.int(max_count), &_out_count)
 	return &STBox{_inner: res}, int(_out_count)
-}
-
-
-// TpointGetCoord wraps MEOS C function tpoint_get_coord.
-func TpointGetCoord(temp Temporal, coord int) Temporal {
-	res := C.tpoint_get_coord(temp.Inner(), C.int(coord))
-	return CreateTemporal(res)
 }
 
 

@@ -79,6 +79,52 @@ func PoseOut(pose *Pose, maxdd int) string {
 }
 
 
+// PoseFromGeopose wraps MEOS C function pose_from_geopose.
+func PoseFromGeopose(json string) *Pose {
+	_c_json := C.CString(json)
+	defer C.free(unsafe.Pointer(_c_json))
+	res := C.pose_from_geopose(_c_json)
+	return &Pose{_inner: res}
+}
+
+
+// PoseAsGeopose wraps MEOS C function pose_as_geopose.
+func PoseAsGeopose(pose *Pose, conformance int, precision int) string {
+	res := C.pose_as_geopose(pose._inner, C.int(conformance), C.int(precision))
+	return C.GoString(res)
+}
+
+
+// TposeFromGeopose wraps MEOS C function tpose_from_geopose.
+func TposeFromGeopose(json string) Temporal {
+	_c_json := C.CString(json)
+	defer C.free(unsafe.Pointer(_c_json))
+	res := C.tpose_from_geopose(_c_json)
+	return CreateTemporal(res)
+}
+
+
+// TposeAsGeopose wraps MEOS C function tpose_as_geopose.
+func TposeAsGeopose(temp Temporal, conformance int, precision int) string {
+	res := C.tpose_as_geopose(temp.Inner(), C.int(conformance), C.int(precision))
+	return C.GoString(res)
+}
+
+
+// PoseApplyGeo wraps MEOS C function pose_apply_geo.
+func PoseApplyGeo(pose *Pose, body *Geom) *Geom {
+	res := C.pose_apply_geo(pose._inner, body._inner)
+	return &Geom{_inner: res}
+}
+
+
+// TposeApplyGeo wraps MEOS C function tpose_apply_geo.
+func TposeApplyGeo(temp Temporal, body *Geom) Temporal {
+	res := C.tpose_apply_geo(temp.Inner(), body._inner)
+	return CreateTemporal(res)
+}
+
+
 // PoseCopy wraps MEOS C function pose_copy.
 func PoseCopy(pose *Pose) *Pose {
 	res := C.pose_copy(pose._inner)
@@ -87,15 +133,15 @@ func PoseCopy(pose *Pose) *Pose {
 
 
 // PoseMake2d wraps MEOS C function pose_make_2d.
-func PoseMake2d(x float64, y float64, theta float64, srid int32) *Pose {
-	res := C.pose_make_2d(C.double(x), C.double(y), C.double(theta), C.int32_t(srid))
+func PoseMake2d(x float64, y float64, theta float64, geodetic bool, srid int32) *Pose {
+	res := C.pose_make_2d(C.double(x), C.double(y), C.double(theta), C.bool(geodetic), C.int32_t(srid))
 	return &Pose{_inner: res}
 }
 
 
 // PoseMake3d wraps MEOS C function pose_make_3d.
-func PoseMake3d(x float64, y float64, z float64, W float64, X float64, Y float64, Z float64, srid int32) *Pose {
-	res := C.pose_make_3d(C.double(x), C.double(y), C.double(z), C.double(W), C.double(X), C.double(Y), C.double(Z), C.int32_t(srid))
+func PoseMake3d(x float64, y float64, z float64, W float64, X float64, Y float64, Z float64, geodetic bool, srid int32) *Pose {
+	res := C.pose_make_3d(C.double(x), C.double(y), C.double(z), C.double(W), C.double(X), C.double(Y), C.double(Z), C.bool(geodetic), C.int32_t(srid))
 	return &Pose{_inner: res}
 }
 
@@ -129,27 +175,72 @@ func PoseToSTBOX(pose *Pose) *STBox {
 
 
 // PoseHash wraps MEOS C function pose_hash.
-func PoseHash(pose *Pose) uint32 {
+func PoseHash(pose *Pose) int {
 	res := C.pose_hash(pose._inner)
-	return uint32(res)
+	return int(res)
 }
 
 
 // PoseHashExtended wraps MEOS C function pose_hash_extended.
-func PoseHashExtended(pose *Pose, seed uint64) uint64 {
-	res := C.pose_hash_extended(pose._inner, C.uint64(seed))
-	return uint64(res)
+func PoseHashExtended(pose *Pose, seed int) int {
+	res := C.pose_hash_extended(pose._inner, C.int(seed))
+	return int(res)
 }
 
 
-// TODO pose_orientation: unsupported return type double *
-// func PoseOrientation(...) { /* not yet handled by codegen */ }
+// PoseOrientation wraps MEOS C function pose_orientation.
+func PoseOrientation(pose *Pose) []float64 {
+	var _out_count C.int
+	res := C.pose_orientation(pose._inner, &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((*C.double)(unsafe.Pointer(res)), _n)
+	_out := make([]float64, _n)
+	for _i, _e := range _slice {
+		_out[_i] = float64(_e)
+	}
+	return _out
+}
 
 
 // PoseRotation wraps MEOS C function pose_rotation.
 func PoseRotation(pose *Pose) float64 {
 	res := C.pose_rotation(pose._inner)
 	return float64(res)
+}
+
+
+// PoseYaw wraps MEOS C function pose_yaw.
+func PoseYaw(pose *Pose) float64 {
+	res := C.pose_yaw(pose._inner)
+	return float64(res)
+}
+
+
+// PosePitch wraps MEOS C function pose_pitch.
+func PosePitch(pose *Pose) float64 {
+	res := C.pose_pitch(pose._inner)
+	return float64(res)
+}
+
+
+// PoseRoll wraps MEOS C function pose_roll.
+func PoseRoll(pose *Pose) float64 {
+	res := C.pose_roll(pose._inner)
+	return float64(res)
+}
+
+
+// PoseAngularDistance wraps MEOS C function pose_angular_distance.
+func PoseAngularDistance(pose1 *Pose, pose2 *Pose) float64 {
+	res := C.pose_angular_distance(pose1._inner, pose2._inner)
+	return float64(res)
+}
+
+
+// PoseNormalise wraps MEOS C function pose_normalise.
+func PoseNormalise(pose *Pose) *Pose {
+	res := C.pose_normalise(pose._inner)
+	return &Pose{_inner: res}
 }
 
 
@@ -358,8 +449,9 @@ func PosesetValueN(s *Set, n int) (bool, *Pose) {
 
 // PosesetValues wraps MEOS C function poseset_values.
 func PosesetValues(s *Set) []*Pose {
-	res := C.poseset_values(s._inner)
-	_n := int(C.set_num_values(s.Inner()))
+	var _out_count C.int
+	res := C.poseset_values(s._inner, &_out_count)
+	_n := int(_out_count)
 	_slice := unsafe.Slice((**C.Pose)(unsafe.Pointer(res)), _n)
 	_out := make([]*Pose, _n)
 	for _i, _e := range _slice {
@@ -432,12 +524,56 @@ func UnionSetPose(s *Set, pose *Pose) *Set {
 }
 
 
+// TposeFromMFJSON wraps MEOS C function tpose_from_mfjson.
+func TposeFromMFJSON(str string) Temporal {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	res := C.tpose_from_mfjson(_c_str)
+	return CreateTemporal(res)
+}
+
+
 // TposeIn wraps MEOS C function tpose_in.
 func TposeIn(str string) Temporal {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
 	res := C.tpose_in(_c_str)
 	return CreateTemporal(res)
+}
+
+
+// TposeinstMake wraps MEOS C function tposeinst_make.
+func TposeinstMake(pose *Pose, t int64) TInstant {
+	res := C.tposeinst_make(pose._inner, C.TimestampTz(t))
+	return TInstant{_inner: res}
+}
+
+
+// TposeFromBaseTemp wraps MEOS C function tpose_from_base_temp.
+func TposeFromBaseTemp(pose *Pose, temp Temporal) Temporal {
+	res := C.tpose_from_base_temp(pose._inner, temp.Inner())
+	return CreateTemporal(res)
+}
+
+
+// TposeseqFromBaseTstzset wraps MEOS C function tposeseq_from_base_tstzset.
+func TposeseqFromBaseTstzset(pose *Pose, s *Set) TSequence {
+	res := C.tposeseq_from_base_tstzset(pose._inner, s._inner)
+	return TSequence{_inner: res}
+}
+
+
+// TposeseqFromBaseTstzspan wraps MEOS C function tposeseq_from_base_tstzspan.
+func TposeseqFromBaseTstzspan(pose *Pose, s *Span, interp Interpolation) TSequence {
+	res := C.tposeseq_from_base_tstzspan(pose._inner, s._inner, C.interpType(interp))
+	return TSequence{_inner: res}
+}
+
+
+// TposeseqsetFromBaseTstzspanset wraps MEOS C function tposeseqset_from_base_tstzspanset.
+func TposeseqsetFromBaseTstzspanset(pose *Pose, ss *SpanSet, interp Interpolation) TSequenceSet {
+	res := C.tposeseqset_from_base_tstzspanset(pose._inner, ss._inner, C.interpType(interp))
+	return TSequenceSet{_inner: res}
 }
 
 
@@ -476,6 +612,41 @@ func TposeRotation(temp Temporal) Temporal {
 }
 
 
+// TposeYaw wraps MEOS C function tpose_yaw.
+func TposeYaw(temp Temporal) Temporal {
+	res := C.tpose_yaw(temp.Inner())
+	return CreateTemporal(res)
+}
+
+
+// TposePitch wraps MEOS C function tpose_pitch.
+func TposePitch(temp Temporal) Temporal {
+	res := C.tpose_pitch(temp.Inner())
+	return CreateTemporal(res)
+}
+
+
+// TposeRoll wraps MEOS C function tpose_roll.
+func TposeRoll(temp Temporal) Temporal {
+	res := C.tpose_roll(temp.Inner())
+	return CreateTemporal(res)
+}
+
+
+// TposeSpeed wraps MEOS C function tpose_speed.
+func TposeSpeed(temp Temporal) Temporal {
+	res := C.tpose_speed(temp.Inner())
+	return CreateTemporal(res)
+}
+
+
+// TposeAngularSpeed wraps MEOS C function tpose_angular_speed.
+func TposeAngularSpeed(temp Temporal) Temporal {
+	res := C.tpose_angular_speed(temp.Inner())
+	return CreateTemporal(res)
+}
+
+
 // TposeStartValue wraps MEOS C function tpose_start_value.
 func TposeStartValue(temp Temporal) *Pose {
 	res := C.tpose_start_value(temp.Inner())
@@ -492,9 +663,9 @@ func TposeTrajectory(temp Temporal) *Geom {
 
 // TposeValueAtTimestamptz wraps MEOS C function tpose_value_at_timestamptz.
 func TposeValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, *Pose) {
-	var _out_value *C.Pose
-	res := C.tpose_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_value)
-	return bool(res), &Pose{_inner: _out_value}
+	var _out_result *C.Pose
+	res := C.tpose_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_result)
+	return bool(res), &Pose{_inner: _out_result}
 }
 
 
@@ -569,9 +740,9 @@ func TdistanceTposePose(temp Temporal, pose *Pose) Temporal {
 }
 
 
-// TdistanceTposePoint wraps MEOS C function tdistance_tpose_point.
-func TdistanceTposePoint(temp Temporal, gs *Geom) Temporal {
-	res := C.tdistance_tpose_point(temp.Inner(), gs._inner)
+// TdistanceTposeGeo wraps MEOS C function tdistance_tpose_geo.
+func TdistanceTposeGeo(temp Temporal, gs *Geom) Temporal {
+	res := C.tdistance_tpose_geo(temp.Inner(), gs._inner)
 	return CreateTemporal(res)
 }
 

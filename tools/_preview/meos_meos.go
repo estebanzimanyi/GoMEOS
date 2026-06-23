@@ -11,123 +11,57 @@ import (
 var _ = unsafe.Pointer(nil)
 var _ = timeutil.Timedelta{}
 
-// DateIn wraps MEOS C function date_in.
-func DateIn(str string) int32 {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.date_in(_c_str)
-	return int32(res)
+// MeosArrayCreate wraps MEOS C function meos_array_create.
+func MeosArrayCreate(elem_size int) *MeosArray {
+	res := C.meos_array_create(C.int(elem_size))
+	return &MeosArray{_inner: res}
 }
 
 
-// DateOut wraps MEOS C function date_out.
-func DateOut(d int32) string {
-	res := C.date_out(C.DateADT(d))
-	return C.GoString(res)
+// MeosArrayAdd wraps MEOS C function meos_array_add.
+func MeosArrayAdd(array *MeosArray)  {
+	var _out_value C.void
+	C.meos_array_add(array._inner, &_out_value)
+	return _out_value
 }
 
 
-// IntervalCmp wraps MEOS C function interval_cmp.
-func IntervalCmp(interv1 timeutil.Timedelta, interv2 timeutil.Timedelta) int {
-	res := C.interval_cmp(interv1.Inner(), interv2.Inner())
+// MeosArrayGet wraps MEOS C function meos_array_get.
+func MeosArrayGet(array *MeosArray, n int) unsafe.Pointer {
+	res := C.meos_array_get(array._inner, C.int(n))
+	return unsafe.Pointer(res)
+}
+
+
+// MeosArrayCount wraps MEOS C function meos_array_count.
+func MeosArrayCount(array *MeosArray) int {
+	res := C.meos_array_count(array._inner)
 	return int(res)
 }
 
 
-// IntervalIn wraps MEOS C function interval_in.
-func IntervalIn(str string, typmod int32) timeutil.Timedelta {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.interval_in(_c_str, C.int32(typmod))
-	return IntervalToTimeDelta(res)
+// MeosArrayReset wraps MEOS C function meos_array_reset.
+func MeosArrayReset(array *MeosArray) {
+	C.meos_array_reset(array._inner)
 }
 
 
-// IntervalOut wraps MEOS C function interval_out.
-func IntervalOut(interv timeutil.Timedelta) string {
-	res := C.interval_out(interv.Inner())
-	return C.GoString(res)
+// MeosArrayResetFree wraps MEOS C function meos_array_reset_free.
+func MeosArrayResetFree(array *MeosArray) {
+	C.meos_array_reset_free(array._inner)
 }
 
 
-// TimeIn wraps MEOS C function time_in.
-func TimeIn(str string, typmod int32) int64 {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.time_in(_c_str, C.int32(typmod))
-	return int64(res)
+// MeosArrayDestroy wraps MEOS C function meos_array_destroy.
+func MeosArrayDestroy(array *MeosArray) {
+	C.meos_array_destroy(array._inner)
 }
 
 
-// TimeOut wraps MEOS C function time_out.
-func TimeOut(t int64) string {
-	res := C.time_out(C.TimeADT(t))
-	return C.GoString(res)
+// MeosArrayDestroyFree wraps MEOS C function meos_array_destroy_free.
+func MeosArrayDestroyFree(array *MeosArray) {
+	C.meos_array_destroy_free(array._inner)
 }
-
-
-// TimestampIn wraps MEOS C function timestamp_in.
-func TimestampIn(str string, typmod int32) int64 {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.timestamp_in(_c_str, C.int32(typmod))
-	return int64(res)
-}
-
-
-// TimestampOut wraps MEOS C function timestamp_out.
-func TimestampOut(t int64) string {
-	res := C.timestamp_out(C.Timestamp(t))
-	return C.GoString(res)
-}
-
-
-// TimestamptzIn wraps MEOS C function timestamptz_in.
-func TimestamptzIn(str string, typmod int32) int64 {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.timestamptz_in(_c_str, C.int32(typmod))
-	return int64(res)
-}
-
-
-// TimestamptzOut wraps MEOS C function timestamptz_out.
-func TimestamptzOut(t int64) string {
-	res := C.timestamptz_out(C.TimestampTz(t))
-	return C.GoString(res)
-}
-
-
-// TODO meos_array_create: unsupported return type MeosArray *
-// func MeosArrayCreate(...) { /* not yet handled by codegen */ }
-
-
-// TODO meos_array_add: unsupported param MeosArray *
-// func MeosArrayAdd(...) { /* not yet handled by codegen */ }
-
-
-// TODO meos_array_get: unsupported param const MeosArray *
-// func MeosArrayGet(...) { /* not yet handled by codegen */ }
-
-
-// TODO meos_array_count: unsupported param const MeosArray *
-// func MeosArrayCount(...) { /* not yet handled by codegen */ }
-
-
-// TODO meos_array_reset: unsupported param MeosArray *
-// func MeosArrayReset(...) { /* not yet handled by codegen */ }
-
-
-// TODO meos_array_reset_free: unsupported param MeosArray *
-// func MeosArrayResetFree(...) { /* not yet handled by codegen */ }
-
-
-// TODO meos_array_destroy: unsupported param MeosArray *
-// func MeosArrayDestroy(...) { /* not yet handled by codegen */ }
-
-
-// TODO meos_array_destroy_free: unsupported param MeosArray *
-// func MeosArrayDestroyFree(...) { /* not yet handled by codegen */ }
 
 
 // RtreeCreateIntspan wraps MEOS C function rtree_create_intspan.
@@ -197,47 +131,39 @@ func RtreeInsertTemporal(rtree *RTree, temp Temporal, id int) {
 }
 
 
-// TODO rtree_search: unsupported param RTreeSearchOp
-// func RtreeSearch(...) { /* not yet handled by codegen */ }
-
-
-// TODO rtree_search_temporal: unsupported param RTreeSearchOp
-// func RtreeSearchTemporal(...) { /* not yet handled by codegen */ }
-
-
-// MeosError wraps MEOS C function meos_error.
-func MeosError(errlevel int, errcode int, format string) {
-	_c_format := C.CString(format)
-	defer C.free(unsafe.Pointer(_c_format))
-	C.meos_error(C.int(errlevel), C.int(errcode), _c_format)
+// RtreeInsertTemporalSplit wraps MEOS C function rtree_insert_temporal_split.
+func RtreeInsertTemporalSplit(rtree *RTree, temp Temporal, id int, maxboxes int) {
+	C.rtree_insert_temporal_split(rtree._inner, temp.Inner(), C.int(id), C.int(maxboxes))
 }
 
 
-// MeosErrno wraps MEOS C function meos_errno.
-func MeosErrno() int {
-	res := C.meos_errno()
-	return int(res)
+// RtreeSearch wraps MEOS C function rtree_search.
+func RtreeSearch(rtree *RTree, op RTreeSearchOp, query unsafe.Pointer) (int, *MeosArray) {
+	var _out_result C.MeosArray
+	res := C.rtree_search(rtree._inner, C.RTreeSearchOp(op), unsafe.Pointer(query), &_out_result)
+	return int(res), &MeosArray{_inner: &_out_result}
 }
 
 
-// MeosErrnoSet wraps MEOS C function meos_errno_set.
-func MeosErrnoSet(err int) int {
-	res := C.meos_errno_set(C.int(err))
-	return int(res)
+// RtreeSearchTemporal wraps MEOS C function rtree_search_temporal.
+func RtreeSearchTemporal(rtree *RTree, op RTreeSearchOp, temp Temporal) (int, *MeosArray) {
+	var _out_result C.MeosArray
+	res := C.rtree_search_temporal(rtree._inner, C.RTreeSearchOp(op), temp.Inner(), &_out_result)
+	return int(res), &MeosArray{_inner: &_out_result}
 }
 
 
-// MeosErrnoRestore wraps MEOS C function meos_errno_restore.
-func MeosErrnoRestore(err int) int {
-	res := C.meos_errno_restore(C.int(err))
-	return int(res)
+// RtreeSearchTemporalDedup wraps MEOS C function rtree_search_temporal_dedup.
+func RtreeSearchTemporalDedup(rtree *RTree, op RTreeSearchOp, temp Temporal, maxboxes int) (int, *MeosArray) {
+	var _out_result C.MeosArray
+	res := C.rtree_search_temporal_dedup(rtree._inner, C.RTreeSearchOp(op), temp.Inner(), C.int(maxboxes), &_out_result)
+	return int(res), &MeosArray{_inner: &_out_result}
 }
 
 
-// MeosErrnoReset wraps MEOS C function meos_errno_reset.
-func MeosErrnoReset() int {
-	res := C.meos_errno_reset()
-	return int(res)
+// MeosInitializeNoexitErrorHandler wraps MEOS C function meos_initialize_noexit_error_handler.
+func MeosInitializeNoexitErrorHandler() {
+	C.meos_initialize_noexit_error_handler()
 }
 
 
@@ -249,9 +175,21 @@ func MeosInitializeTimezone(name string) {
 }
 
 
+// MeosInitializeCollation wraps MEOS C function meos_initialize_collation.
+func MeosInitializeCollation() {
+	C.meos_initialize_collation()
+}
+
+
 // MeosFinalizeTimezone wraps MEOS C function meos_finalize_timezone.
 func MeosFinalizeTimezone() {
 	C.meos_finalize_timezone()
+}
+
+
+// MeosFinalizeCollation wraps MEOS C function meos_finalize_collation.
+func MeosFinalizeCollation() {
+	C.meos_finalize_collation()
 }
 
 
@@ -307,6 +245,14 @@ func MeosSetSpatialRefSysCsv(path string) {
 }
 
 
+// MeosSetWaysCsv wraps MEOS C function meos_set_ways_csv.
+func MeosSetWaysCsv(path string) {
+	_c_path := C.CString(path)
+	defer C.free(unsafe.Pointer(_c_path))
+	C.meos_set_ways_csv(_c_path)
+}
+
+
 // MeosInitialize wraps MEOS C function meos_initialize.
 func MeosInitialize() {
 	C.meos_initialize()
@@ -316,334 +262,6 @@ func MeosInitialize() {
 // MeosFinalize wraps MEOS C function meos_finalize.
 func MeosFinalize() {
 	C.meos_finalize()
-}
-
-
-// AddDateInt wraps MEOS C function add_date_int.
-func AddDateInt(d int32, days int32) int32 {
-	res := C.add_date_int(C.DateADT(d), C.int32(days))
-	return int32(res)
-}
-
-
-// AddIntervalInterval wraps MEOS C function add_interval_interval.
-func AddIntervalInterval(interv1 timeutil.Timedelta, interv2 timeutil.Timedelta) timeutil.Timedelta {
-	res := C.add_interval_interval(interv1.Inner(), interv2.Inner())
-	return IntervalToTimeDelta(res)
-}
-
-
-// AddTimestamptzInterval wraps MEOS C function add_timestamptz_interval.
-func AddTimestamptzInterval(t int64, interv timeutil.Timedelta) int64 {
-	res := C.add_timestamptz_interval(C.TimestampTz(t), interv.Inner())
-	return int64(res)
-}
-
-
-// BoolIn wraps MEOS C function bool_in.
-func BoolIn(str string) bool {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.bool_in(_c_str)
-	return bool(res)
-}
-
-
-// BoolOut wraps MEOS C function bool_out.
-func BoolOut(b bool) string {
-	res := C.bool_out(C.bool(b))
-	return C.GoString(res)
-}
-
-
-// Cstring2text wraps MEOS C function cstring2text.
-func Cstring2text(str string) string {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.cstring2text(_c_str)
-	return text2cstring(res)
-}
-
-
-// DateToTimestamp wraps MEOS C function date_to_timestamp.
-func DateToTimestamp(dateVal int32) int64 {
-	res := C.date_to_timestamp(C.DateADT(dateVal))
-	return int64(res)
-}
-
-
-// DateToTimestamptz wraps MEOS C function date_to_timestamptz.
-func DateToTimestamptz(d int32) int64 {
-	res := C.date_to_timestamptz(C.DateADT(d))
-	return int64(res)
-}
-
-
-// FloatExp wraps MEOS C function float_exp.
-func FloatExp(d float64) float64 {
-	res := C.float_exp(C.double(d))
-	return float64(res)
-}
-
-
-// FloatLn wraps MEOS C function float_ln.
-func FloatLn(d float64) float64 {
-	res := C.float_ln(C.double(d))
-	return float64(res)
-}
-
-
-// FloatLog10 wraps MEOS C function float_log10.
-func FloatLog10(d float64) float64 {
-	res := C.float_log10(C.double(d))
-	return float64(res)
-}
-
-
-// Float8Out wraps MEOS C function float8_out.
-func Float8Out(d float64, maxdd int) string {
-	res := C.float8_out(C.double(d), C.int(maxdd))
-	return C.GoString(res)
-}
-
-
-// FloatRound wraps MEOS C function float_round.
-func FloatRound(d float64, maxdd int) float64 {
-	res := C.float_round(C.double(d), C.int(maxdd))
-	return float64(res)
-}
-
-
-// Int32Cmp wraps MEOS C function int32_cmp.
-func Int32Cmp(l int32, r int32) int {
-	res := C.int32_cmp(C.int32(l), C.int32(r))
-	return int(res)
-}
-
-
-// Int64Cmp wraps MEOS C function int64_cmp.
-func Int64Cmp(l int64, r int64) int {
-	res := C.int64_cmp(C.int64(l), C.int64(r))
-	return int(res)
-}
-
-
-// IntervalMake wraps MEOS C function interval_make.
-func IntervalMake(years int32, months int32, weeks int32, days int32, hours int32, mins int32, secs float64) timeutil.Timedelta {
-	res := C.interval_make(C.int32(years), C.int32(months), C.int32(weeks), C.int32(days), C.int32(hours), C.int32(mins), C.double(secs))
-	return IntervalToTimeDelta(res)
-}
-
-
-// MinusDateDate wraps MEOS C function minus_date_date.
-func MinusDateDate(d1 int32, d2 int32) int {
-	res := C.minus_date_date(C.DateADT(d1), C.DateADT(d2))
-	return int(res)
-}
-
-
-// MinusDateInt wraps MEOS C function minus_date_int.
-func MinusDateInt(d int32, days int32) int32 {
-	res := C.minus_date_int(C.DateADT(d), C.int32(days))
-	return int32(res)
-}
-
-
-// MinusTimestamptzInterval wraps MEOS C function minus_timestamptz_interval.
-func MinusTimestamptzInterval(t int64, interv timeutil.Timedelta) int64 {
-	res := C.minus_timestamptz_interval(C.TimestampTz(t), interv.Inner())
-	return int64(res)
-}
-
-
-// MinusTimestamptzTimestamptz wraps MEOS C function minus_timestamptz_timestamptz.
-func MinusTimestamptzTimestamptz(t1 int64, t2 int64) timeutil.Timedelta {
-	res := C.minus_timestamptz_timestamptz(C.TimestampTz(t1), C.TimestampTz(t2))
-	return IntervalToTimeDelta(res)
-}
-
-
-// MulIntervalDouble wraps MEOS C function mul_interval_double.
-func MulIntervalDouble(interv timeutil.Timedelta, factor float64) timeutil.Timedelta {
-	res := C.mul_interval_double(interv.Inner(), C.double(factor))
-	return IntervalToTimeDelta(res)
-}
-
-
-// PgDateIn wraps MEOS C function pg_date_in.
-func PgDateIn(str string) int32 {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.pg_date_in(_c_str)
-	return int32(res)
-}
-
-
-// PgDateOut wraps MEOS C function pg_date_out.
-func PgDateOut(d int32) string {
-	res := C.pg_date_out(C.DateADT(d))
-	return C.GoString(res)
-}
-
-
-// PgIntervalCmp wraps MEOS C function pg_interval_cmp.
-func PgIntervalCmp(interv1 timeutil.Timedelta, interv2 timeutil.Timedelta) int {
-	res := C.pg_interval_cmp(interv1.Inner(), interv2.Inner())
-	return int(res)
-}
-
-
-// PgIntervalIn wraps MEOS C function pg_interval_in.
-func PgIntervalIn(str string, typmod int32) timeutil.Timedelta {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.pg_interval_in(_c_str, C.int32(typmod))
-	return IntervalToTimeDelta(res)
-}
-
-
-// PgIntervalOut wraps MEOS C function pg_interval_out.
-func PgIntervalOut(interv timeutil.Timedelta) string {
-	res := C.pg_interval_out(interv.Inner())
-	return C.GoString(res)
-}
-
-
-// PgTimestampIn wraps MEOS C function pg_timestamp_in.
-func PgTimestampIn(str string, typmod int32) int64 {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.pg_timestamp_in(_c_str, C.int32(typmod))
-	return int64(res)
-}
-
-
-// PgTimestampOut wraps MEOS C function pg_timestamp_out.
-func PgTimestampOut(t int64) string {
-	res := C.pg_timestamp_out(C.Timestamp(t))
-	return C.GoString(res)
-}
-
-
-// PgTimestamptzIn wraps MEOS C function pg_timestamptz_in.
-func PgTimestamptzIn(str string, typmod int32) int64 {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.pg_timestamptz_in(_c_str, C.int32(typmod))
-	return int64(res)
-}
-
-
-// PgTimestamptzOut wraps MEOS C function pg_timestamptz_out.
-func PgTimestamptzOut(t int64) string {
-	res := C.pg_timestamptz_out(C.TimestampTz(t))
-	return C.GoString(res)
-}
-
-
-// Text2cstring wraps MEOS C function text2cstring.
-func Text2cstring(txt string) string {
-	_c_txt := cstring2text(txt)
-	defer C.free(unsafe.Pointer(_c_txt))
-	res := C.text2cstring(_c_txt)
-	return C.GoString(res)
-}
-
-
-// TextCmp wraps MEOS C function text_cmp.
-func TextCmp(txt1 string, txt2 string) int {
-	_c_txt1 := cstring2text(txt1)
-	defer C.free(unsafe.Pointer(_c_txt1))
-	_c_txt2 := cstring2text(txt2)
-	defer C.free(unsafe.Pointer(_c_txt2))
-	res := C.text_cmp(_c_txt1, _c_txt2)
-	return int(res)
-}
-
-
-// TextCopy wraps MEOS C function text_copy.
-func TextCopy(txt string) string {
-	_c_txt := cstring2text(txt)
-	defer C.free(unsafe.Pointer(_c_txt))
-	res := C.text_copy(_c_txt)
-	return text2cstring(res)
-}
-
-
-// TextIn wraps MEOS C function text_in.
-func TextIn(str string) string {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	res := C.text_in(_c_str)
-	return text2cstring(res)
-}
-
-
-// TextInitcap wraps MEOS C function text_initcap.
-func TextInitcap(txt string) string {
-	_c_txt := cstring2text(txt)
-	defer C.free(unsafe.Pointer(_c_txt))
-	res := C.text_initcap(_c_txt)
-	return text2cstring(res)
-}
-
-
-// TextLower wraps MEOS C function text_lower.
-func TextLower(txt string) string {
-	_c_txt := cstring2text(txt)
-	defer C.free(unsafe.Pointer(_c_txt))
-	res := C.text_lower(_c_txt)
-	return text2cstring(res)
-}
-
-
-// TextOut wraps MEOS C function text_out.
-func TextOut(txt string) string {
-	_c_txt := cstring2text(txt)
-	defer C.free(unsafe.Pointer(_c_txt))
-	res := C.text_out(_c_txt)
-	return C.GoString(res)
-}
-
-
-// TextUpper wraps MEOS C function text_upper.
-func TextUpper(txt string) string {
-	_c_txt := cstring2text(txt)
-	defer C.free(unsafe.Pointer(_c_txt))
-	res := C.text_upper(_c_txt)
-	return text2cstring(res)
-}
-
-
-// TextcatTextText wraps MEOS C function textcat_text_text.
-func TextcatTextText(txt1 string, txt2 string) string {
-	_c_txt1 := cstring2text(txt1)
-	defer C.free(unsafe.Pointer(_c_txt1))
-	_c_txt2 := cstring2text(txt2)
-	defer C.free(unsafe.Pointer(_c_txt2))
-	res := C.textcat_text_text(_c_txt1, _c_txt2)
-	return text2cstring(res)
-}
-
-
-// TimestamptzShift wraps MEOS C function timestamptz_shift.
-func TimestamptzShift(t int64, interv timeutil.Timedelta) int64 {
-	res := C.timestamptz_shift(C.TimestampTz(t), interv.Inner())
-	return int64(res)
-}
-
-
-// TimestampToDate wraps MEOS C function timestamp_to_date.
-func TimestampToDate(t int64) int32 {
-	res := C.timestamp_to_date(C.Timestamp(t))
-	return int32(res)
-}
-
-
-// TimestamptzToDate wraps MEOS C function timestamptz_to_date.
-func TimestamptzToDate(t int64) int32 {
-	res := C.timestamptz_to_date(C.TimestampTz(t))
-	return int32(res)
 }
 
 
@@ -665,7 +283,7 @@ func BigintsetOut(set *Set) string {
 
 // BigintspanExpand wraps MEOS C function bigintspan_expand.
 func BigintspanExpand(s *Span, value int64) *Span {
-	res := C.bigintspan_expand(s._inner, C.int64(value))
+	res := C.bigintspan_expand(s._inner, C.int64_t(value))
 	return &Span{_inner: res}
 }
 
@@ -822,8 +440,8 @@ func IntsetOut(set *Set) string {
 
 
 // IntspanExpand wraps MEOS C function intspan_expand.
-func IntspanExpand(s *Span, value int32) *Span {
-	res := C.intspan_expand(s._inner, C.int32(value))
+func IntspanExpand(s *Span, value int) *Span {
+	res := C.intspan_expand(s._inner, C.int(value))
 	return &Span{_inner: res}
 }
 
@@ -1038,18 +656,13 @@ func TstzspansetOut(ss *SpanSet) string {
 }
 
 
-// BigintsetMake wraps MEOS C function bigintset_make.
-func BigintsetMake(values []int64) *Set {
-	_c_values := make([]C.int64, len(values))
-	for _i, _v := range values { _c_values[_i] = C.int64(_v) }
-	res := C.bigintset_make(&_c_values[0], C.int(len(values)))
-	return &Set{_inner: res}
-}
+// TODO bigintset_make: unsupported param const int64_t *
+// func BigintsetMake(...) { /* not yet handled by codegen */ }
 
 
 // BigintspanMake wraps MEOS C function bigintspan_make.
 func BigintspanMake(lower int64, upper int64, lower_inc bool, upper_inc bool) *Span {
-	res := C.bigintspan_make(C.int64(lower), C.int64(upper), C.bool(lower_inc), C.bool(upper_inc))
+	res := C.bigintspan_make(C.int64_t(lower), C.int64_t(upper), C.bool(lower_inc), C.bool(upper_inc))
 	return &Span{_inner: res}
 }
 
@@ -1157,7 +770,7 @@ func TstzspanMake(lower int64, upper int64, lower_inc bool, upper_inc bool) *Spa
 
 // BigintToSet wraps MEOS C function bigint_to_set.
 func BigintToSet(i int64) *Set {
-	res := C.bigint_to_set(C.int64(i))
+	res := C.bigint_to_set(C.int64_t(i))
 	return &Set{_inner: res}
 }
 
@@ -1253,6 +866,13 @@ func FloatspanToIntspan(s *Span) *Span {
 }
 
 
+// FloatspanToBigintspan wraps MEOS C function floatspan_to_bigintspan.
+func FloatspanToBigintspan(s *Span) *Span {
+	res := C.floatspan_to_bigintspan(s._inner)
+	return &Span{_inner: res}
+}
+
+
 // FloatspansetToIntspanset wraps MEOS C function floatspanset_to_intspanset.
 func FloatspansetToIntspanset(ss *SpanSet) *SpanSet {
 	res := C.floatspanset_to_intspanset(ss._inner)
@@ -1291,6 +911,27 @@ func IntsetToFloatset(s *Set) *Set {
 // IntspanToFloatspan wraps MEOS C function intspan_to_floatspan.
 func IntspanToFloatspan(s *Span) *Span {
 	res := C.intspan_to_floatspan(s._inner)
+	return &Span{_inner: res}
+}
+
+
+// IntspanToBigintspan wraps MEOS C function intspan_to_bigintspan.
+func IntspanToBigintspan(s *Span) *Span {
+	res := C.intspan_to_bigintspan(s._inner)
+	return &Span{_inner: res}
+}
+
+
+// BigintspanToIntspan wraps MEOS C function bigintspan_to_intspan.
+func BigintspanToIntspan(s *Span) *Span {
+	res := C.bigintspan_to_intspan(s._inner)
+	return &Span{_inner: res}
+}
+
+
+// BigintspanToFloatspan wraps MEOS C function bigintspan_to_floatspan.
+func BigintspanToFloatspan(s *Span) *Span {
+	res := C.bigintspan_to_floatspan(s._inner)
 	return &Span{_inner: res}
 }
 
@@ -1390,7 +1031,7 @@ func BigintsetStartValue(s *Set) int64 {
 
 // BigintsetValueN wraps MEOS C function bigintset_value_n.
 func BigintsetValueN(s *Set, n int) (bool, int64) {
-	var _out_result C.int64
+	var _out_result C.int64_t
 	res := C.bigintset_value_n(s._inner, C.int(n), &_out_result)
 	return bool(res), int64(_out_result)
 }
@@ -1398,9 +1039,10 @@ func BigintsetValueN(s *Set, n int) (bool, int64) {
 
 // BigintsetValues wraps MEOS C function bigintset_values.
 func BigintsetValues(s *Set) []int64 {
-	res := C.bigintset_values(s._inner)
-	_n := int(C.set_num_values(s.Inner()))
-	_slice := unsafe.Slice((*C.int64)(unsafe.Pointer(res)), _n)
+	var _out_count C.int
+	res := C.bigintset_values(s._inner, &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((*C.int64_t)(unsafe.Pointer(res)), _n)
 	_out := make([]int64, _n)
 	for _i, _e := range _slice {
 		_out[_i] = int64(_e)
@@ -1475,8 +1117,9 @@ func DatesetValueN(s *Set, n int) (bool, int32) {
 
 // DatesetValues wraps MEOS C function dateset_values.
 func DatesetValues(s *Set) []int32 {
-	res := C.dateset_values(s._inner)
-	_n := int(C.set_num_values(s.Inner()))
+	var _out_count C.int
+	res := C.dateset_values(s._inner, &_out_count)
+	_n := int(_out_count)
 	_slice := unsafe.Slice((*C.DateADT)(unsafe.Pointer(res)), _n)
 	_out := make([]int32, _n)
 	for _i, _e := range _slice {
@@ -1574,8 +1217,9 @@ func FloatsetValueN(s *Set, n int) (bool, float64) {
 
 // FloatsetValues wraps MEOS C function floatset_values.
 func FloatsetValues(s *Set) []float64 {
-	res := C.floatset_values(s._inner)
-	_n := int(C.set_num_values(s.Inner()))
+	var _out_count C.int
+	res := C.floatset_values(s._inner, &_out_count)
+	_n := int(_out_count)
 	_slice := unsafe.Slice((*C.double)(unsafe.Pointer(res)), _n)
 	_out := make([]float64, _n)
 	for _i, _e := range _slice {
@@ -1651,8 +1295,9 @@ func IntsetValueN(s *Set, n int) (bool, int) {
 
 // IntsetValues wraps MEOS C function intset_values.
 func IntsetValues(s *Set) []int {
-	res := C.intset_values(s._inner)
-	_n := int(C.set_num_values(s.Inner()))
+	var _out_count C.int
+	res := C.intset_values(s._inner, &_out_count)
+	_n := int(_out_count)
 	_slice := unsafe.Slice((*C.int)(unsafe.Pointer(res)), _n)
 	_out := make([]int, _n)
 	for _i, _e := range _slice {
@@ -1705,16 +1350,16 @@ func IntspansetWidth(ss *SpanSet, boundspan bool) int {
 
 
 // SetHash wraps MEOS C function set_hash.
-func SetHash(s *Set) uint32 {
+func SetHash(s *Set) int {
 	res := C.set_hash(s._inner)
-	return uint32(res)
+	return int(res)
 }
 
 
 // SetHashExtended wraps MEOS C function set_hash_extended.
-func SetHashExtended(s *Set, seed uint64) uint64 {
-	res := C.set_hash_extended(s._inner, C.uint64(seed))
-	return uint64(res)
+func SetHashExtended(s *Set, seed int) int {
+	res := C.set_hash_extended(s._inner, C.int(seed))
+	return int(res)
 }
 
 
@@ -1726,16 +1371,16 @@ func SetNumValues(s *Set) int {
 
 
 // SpanHash wraps MEOS C function span_hash.
-func SpanHash(s *Span) uint32 {
+func SpanHash(s *Span) int {
 	res := C.span_hash(s._inner)
-	return uint32(res)
+	return int(res)
 }
 
 
 // SpanHashExtended wraps MEOS C function span_hash_extended.
-func SpanHashExtended(s *Span, seed uint64) uint64 {
-	res := C.span_hash_extended(s._inner, C.uint64(seed))
-	return uint64(res)
+func SpanHashExtended(s *Span, seed int) int {
+	res := C.span_hash_extended(s._inner, C.int(seed))
+	return int(res)
 }
 
 
@@ -1761,16 +1406,16 @@ func SpansetEndSpan(ss *SpanSet) *Span {
 
 
 // SpansetHash wraps MEOS C function spanset_hash.
-func SpansetHash(ss *SpanSet) uint32 {
+func SpansetHash(ss *SpanSet) int {
 	res := C.spanset_hash(ss._inner)
-	return uint32(res)
+	return int(res)
 }
 
 
 // SpansetHashExtended wraps MEOS C function spanset_hash_extended.
-func SpansetHashExtended(ss *SpanSet, seed uint64) uint64 {
-	res := C.spanset_hash_extended(ss._inner, C.uint64(seed))
-	return uint64(res)
+func SpansetHashExtended(ss *SpanSet, seed int) int {
+	res := C.spanset_hash_extended(ss._inner, C.int(seed))
+	return int(res)
 }
 
 
@@ -1802,17 +1447,8 @@ func SpansetSpanN(ss *SpanSet, i int) *Span {
 }
 
 
-// SpansetSpanarr wraps MEOS C function spanset_spanarr.
-func SpansetSpanarr(ss *SpanSet) []*Span {
-	res := C.spanset_spanarr(ss._inner)
-	_n := int(C.spanset_num_spans(ss.Inner()))
-	_slice := unsafe.Slice((**C.Span)(unsafe.Pointer(res)), _n)
-	_out := make([]*Span, _n)
-	for _i, _e := range _slice {
-		_out[_i] = &Span{_inner: _e}
-	}
-	return _out
-}
+// TODO spanset_spanarr: unsupported return type Span **
+// func SpansetSpanarr(...) { /* not yet handled by codegen */ }
 
 
 // SpansetStartSpan wraps MEOS C function spanset_start_span.
@@ -1853,8 +1489,9 @@ func TextsetValueN(s *Set, n int) (bool, string) {
 
 // TextsetValues wraps MEOS C function textset_values.
 func TextsetValues(s *Set) []string {
-	res := C.textset_values(s._inner)
-	_n := int(C.set_num_values(s.Inner()))
+	var _out_count C.int
+	res := C.textset_values(s._inner, &_out_count)
+	_n := int(_out_count)
 	_slice := unsafe.Slice((**C.text)(unsafe.Pointer(res)), _n)
 	_out := make([]string, _n)
 	for _i, _e := range _slice {
@@ -1888,8 +1525,9 @@ func TstzsetValueN(s *Set, n int) (bool, int64) {
 
 // TstzsetValues wraps MEOS C function tstzset_values.
 func TstzsetValues(s *Set) []int64 {
-	res := C.tstzset_values(s._inner)
-	_n := int(C.set_num_values(s.Inner()))
+	var _out_count C.int
+	res := C.tstzset_values(s._inner, &_out_count)
+	_n := int(_out_count)
 	_slice := unsafe.Slice((*C.TimestampTz)(unsafe.Pointer(res)), _n)
 	_out := make([]int64, _n)
 	for _i, _e := range _slice {
@@ -1979,21 +1617,21 @@ func TstzspansetUpper(ss *SpanSet) int64 {
 
 // BigintsetShiftScale wraps MEOS C function bigintset_shift_scale.
 func BigintsetShiftScale(s *Set, shift int64, width int64, hasshift bool, haswidth bool) *Set {
-	res := C.bigintset_shift_scale(s._inner, C.int64(shift), C.int64(width), C.bool(hasshift), C.bool(haswidth))
+	res := C.bigintset_shift_scale(s._inner, C.int64_t(shift), C.int64_t(width), C.bool(hasshift), C.bool(haswidth))
 	return &Set{_inner: res}
 }
 
 
 // BigintspanShiftScale wraps MEOS C function bigintspan_shift_scale.
 func BigintspanShiftScale(s *Span, shift int64, width int64, hasshift bool, haswidth bool) *Span {
-	res := C.bigintspan_shift_scale(s._inner, C.int64(shift), C.int64(width), C.bool(hasshift), C.bool(haswidth))
+	res := C.bigintspan_shift_scale(s._inner, C.int64_t(shift), C.int64_t(width), C.bool(hasshift), C.bool(haswidth))
 	return &Span{_inner: res}
 }
 
 
 // BigintspansetShiftScale wraps MEOS C function bigintspanset_shift_scale.
 func BigintspansetShiftScale(ss *SpanSet, shift int64, width int64, hasshift bool, haswidth bool) *SpanSet {
-	res := C.bigintspanset_shift_scale(ss._inner, C.int64(shift), C.int64(width), C.bool(hasshift), C.bool(haswidth))
+	res := C.bigintspanset_shift_scale(ss._inner, C.int64_t(shift), C.int64_t(width), C.bool(hasshift), C.bool(haswidth))
 	return &SpanSet{_inner: res}
 }
 
@@ -2456,7 +2094,7 @@ func SpansetSplitNSpans(ss *SpanSet, span_count int) (*Span, int) {
 
 // AdjacentSpanBigint wraps MEOS C function adjacent_span_bigint.
 func AdjacentSpanBigint(s *Span, i int64) bool {
-	res := C.adjacent_span_bigint(s._inner, C.int64(i))
+	res := C.adjacent_span_bigint(s._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -2505,7 +2143,7 @@ func AdjacentSpanTimestamptz(s *Span, t int64) bool {
 
 // AdjacentSpansetBigint wraps MEOS C function adjacent_spanset_bigint.
 func AdjacentSpansetBigint(ss *SpanSet, i int64) bool {
-	res := C.adjacent_spanset_bigint(ss._inner, C.int64(i))
+	res := C.adjacent_spanset_bigint(ss._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -2554,21 +2192,21 @@ func AdjacentSpansetSpanset(ss1 *SpanSet, ss2 *SpanSet) bool {
 
 // ContainedBigintSet wraps MEOS C function contained_bigint_set.
 func ContainedBigintSet(i int64, s *Set) bool {
-	res := C.contained_bigint_set(C.int64(i), s._inner)
+	res := C.contained_bigint_set(C.int64_t(i), s._inner)
 	return bool(res)
 }
 
 
 // ContainedBigintSpan wraps MEOS C function contained_bigint_span.
 func ContainedBigintSpan(i int64, s *Span) bool {
-	res := C.contained_bigint_span(C.int64(i), s._inner)
+	res := C.contained_bigint_span(C.int64_t(i), s._inner)
 	return bool(res)
 }
 
 
 // ContainedBigintSpanset wraps MEOS C function contained_bigint_spanset.
 func ContainedBigintSpanset(i int64, ss *SpanSet) bool {
-	res := C.contained_bigint_spanset(C.int64(i), ss._inner)
+	res := C.contained_bigint_spanset(C.int64_t(i), ss._inner)
 	return bool(res)
 }
 
@@ -2703,7 +2341,7 @@ func ContainedTimestamptzSpanset(t int64, ss *SpanSet) bool {
 
 // ContainsSetBigint wraps MEOS C function contains_set_bigint.
 func ContainsSetBigint(s *Set, i int64) bool {
-	res := C.contains_set_bigint(s._inner, C.int64(i))
+	res := C.contains_set_bigint(s._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -2754,7 +2392,7 @@ func ContainsSetTimestamptz(s *Set, t int64) bool {
 
 // ContainsSpanBigint wraps MEOS C function contains_span_bigint.
 func ContainsSpanBigint(s *Span, i int64) bool {
-	res := C.contains_span_bigint(s._inner, C.int64(i))
+	res := C.contains_span_bigint(s._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -2803,7 +2441,7 @@ func ContainsSpanTimestamptz(s *Span, t int64) bool {
 
 // ContainsSpansetBigint wraps MEOS C function contains_spanset_bigint.
 func ContainsSpansetBigint(ss *SpanSet, i int64) bool {
-	res := C.contains_spanset_bigint(ss._inner, C.int64(i))
+	res := C.contains_spanset_bigint(ss._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -3055,21 +2693,21 @@ func BeforeTimestamptzSpanset(t int64, ss *SpanSet) bool {
 
 // LeftBigintSet wraps MEOS C function left_bigint_set.
 func LeftBigintSet(i int64, s *Set) bool {
-	res := C.left_bigint_set(C.int64(i), s._inner)
+	res := C.left_bigint_set(C.int64_t(i), s._inner)
 	return bool(res)
 }
 
 
 // LeftBigintSpan wraps MEOS C function left_bigint_span.
 func LeftBigintSpan(i int64, s *Span) bool {
-	res := C.left_bigint_span(C.int64(i), s._inner)
+	res := C.left_bigint_span(C.int64_t(i), s._inner)
 	return bool(res)
 }
 
 
 // LeftBigintSpanset wraps MEOS C function left_bigint_spanset.
 func LeftBigintSpanset(i int64, ss *SpanSet) bool {
-	res := C.left_bigint_spanset(C.int64(i), ss._inner)
+	res := C.left_bigint_spanset(C.int64_t(i), ss._inner)
 	return bool(res)
 }
 
@@ -3118,7 +2756,7 @@ func LeftIntSpanset(i int, ss *SpanSet) bool {
 
 // LeftSetBigint wraps MEOS C function left_set_bigint.
 func LeftSetBigint(s *Set, i int64) bool {
-	res := C.left_set_bigint(s._inner, C.int64(i))
+	res := C.left_set_bigint(s._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -3155,7 +2793,7 @@ func LeftSetText(s *Set, txt string) bool {
 
 // LeftSpanBigint wraps MEOS C function left_span_bigint.
 func LeftSpanBigint(s *Span, i int64) bool {
-	res := C.left_span_bigint(s._inner, C.int64(i))
+	res := C.left_span_bigint(s._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -3190,7 +2828,7 @@ func LeftSpanSpanset(s *Span, ss *SpanSet) bool {
 
 // LeftSpansetBigint wraps MEOS C function left_spanset_bigint.
 func LeftSpansetBigint(ss *SpanSet, i int64) bool {
-	res := C.left_spanset_bigint(ss._inner, C.int64(i))
+	res := C.left_spanset_bigint(ss._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -3402,21 +3040,21 @@ func OverbeforeTimestamptzSpanset(t int64, ss *SpanSet) bool {
 
 // OverleftBigintSet wraps MEOS C function overleft_bigint_set.
 func OverleftBigintSet(i int64, s *Set) bool {
-	res := C.overleft_bigint_set(C.int64(i), s._inner)
+	res := C.overleft_bigint_set(C.int64_t(i), s._inner)
 	return bool(res)
 }
 
 
 // OverleftBigintSpan wraps MEOS C function overleft_bigint_span.
 func OverleftBigintSpan(i int64, s *Span) bool {
-	res := C.overleft_bigint_span(C.int64(i), s._inner)
+	res := C.overleft_bigint_span(C.int64_t(i), s._inner)
 	return bool(res)
 }
 
 
 // OverleftBigintSpanset wraps MEOS C function overleft_bigint_spanset.
 func OverleftBigintSpanset(i int64, ss *SpanSet) bool {
-	res := C.overleft_bigint_spanset(C.int64(i), ss._inner)
+	res := C.overleft_bigint_spanset(C.int64_t(i), ss._inner)
 	return bool(res)
 }
 
@@ -3465,7 +3103,7 @@ func OverleftIntSpanset(i int, ss *SpanSet) bool {
 
 // OverleftSetBigint wraps MEOS C function overleft_set_bigint.
 func OverleftSetBigint(s *Set, i int64) bool {
-	res := C.overleft_set_bigint(s._inner, C.int64(i))
+	res := C.overleft_set_bigint(s._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -3502,7 +3140,7 @@ func OverleftSetText(s *Set, txt string) bool {
 
 // OverleftSpanBigint wraps MEOS C function overleft_span_bigint.
 func OverleftSpanBigint(s *Span, i int64) bool {
-	res := C.overleft_span_bigint(s._inner, C.int64(i))
+	res := C.overleft_span_bigint(s._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -3537,7 +3175,7 @@ func OverleftSpanSpanset(s *Span, ss *SpanSet) bool {
 
 // OverleftSpansetBigint wraps MEOS C function overleft_spanset_bigint.
 func OverleftSpansetBigint(ss *SpanSet, i int64) bool {
-	res := C.overleft_spanset_bigint(ss._inner, C.int64(i))
+	res := C.overleft_spanset_bigint(ss._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -3581,21 +3219,21 @@ func OverleftTextSet(txt string, s *Set) bool {
 
 // OverrightBigintSet wraps MEOS C function overright_bigint_set.
 func OverrightBigintSet(i int64, s *Set) bool {
-	res := C.overright_bigint_set(C.int64(i), s._inner)
+	res := C.overright_bigint_set(C.int64_t(i), s._inner)
 	return bool(res)
 }
 
 
 // OverrightBigintSpan wraps MEOS C function overright_bigint_span.
 func OverrightBigintSpan(i int64, s *Span) bool {
-	res := C.overright_bigint_span(C.int64(i), s._inner)
+	res := C.overright_bigint_span(C.int64_t(i), s._inner)
 	return bool(res)
 }
 
 
 // OverrightBigintSpanset wraps MEOS C function overright_bigint_spanset.
 func OverrightBigintSpanset(i int64, ss *SpanSet) bool {
-	res := C.overright_bigint_spanset(C.int64(i), ss._inner)
+	res := C.overright_bigint_spanset(C.int64_t(i), ss._inner)
 	return bool(res)
 }
 
@@ -3644,7 +3282,7 @@ func OverrightIntSpanset(i int, ss *SpanSet) bool {
 
 // OverrightSetBigint wraps MEOS C function overright_set_bigint.
 func OverrightSetBigint(s *Set, i int64) bool {
-	res := C.overright_set_bigint(s._inner, C.int64(i))
+	res := C.overright_set_bigint(s._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -3681,7 +3319,7 @@ func OverrightSetText(s *Set, txt string) bool {
 
 // OverrightSpanBigint wraps MEOS C function overright_span_bigint.
 func OverrightSpanBigint(s *Span, i int64) bool {
-	res := C.overright_span_bigint(s._inner, C.int64(i))
+	res := C.overright_span_bigint(s._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -3716,7 +3354,7 @@ func OverrightSpanSpanset(s *Span, ss *SpanSet) bool {
 
 // OverrightSpansetBigint wraps MEOS C function overright_spanset_bigint.
 func OverrightSpansetBigint(ss *SpanSet, i int64) bool {
-	res := C.overright_spanset_bigint(ss._inner, C.int64(i))
+	res := C.overright_spanset_bigint(ss._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -3760,21 +3398,21 @@ func OverrightTextSet(txt string, s *Set) bool {
 
 // RightBigintSet wraps MEOS C function right_bigint_set.
 func RightBigintSet(i int64, s *Set) bool {
-	res := C.right_bigint_set(C.int64(i), s._inner)
+	res := C.right_bigint_set(C.int64_t(i), s._inner)
 	return bool(res)
 }
 
 
 // RightBigintSpan wraps MEOS C function right_bigint_span.
 func RightBigintSpan(i int64, s *Span) bool {
-	res := C.right_bigint_span(C.int64(i), s._inner)
+	res := C.right_bigint_span(C.int64_t(i), s._inner)
 	return bool(res)
 }
 
 
 // RightBigintSpanset wraps MEOS C function right_bigint_spanset.
 func RightBigintSpanset(i int64, ss *SpanSet) bool {
-	res := C.right_bigint_spanset(C.int64(i), ss._inner)
+	res := C.right_bigint_spanset(C.int64_t(i), ss._inner)
 	return bool(res)
 }
 
@@ -3823,7 +3461,7 @@ func RightIntSpanset(i int, ss *SpanSet) bool {
 
 // RightSetBigint wraps MEOS C function right_set_bigint.
 func RightSetBigint(s *Set, i int64) bool {
-	res := C.right_set_bigint(s._inner, C.int64(i))
+	res := C.right_set_bigint(s._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -3860,7 +3498,7 @@ func RightSetText(s *Set, txt string) bool {
 
 // RightSpanBigint wraps MEOS C function right_span_bigint.
 func RightSpanBigint(s *Span, i int64) bool {
-	res := C.right_span_bigint(s._inner, C.int64(i))
+	res := C.right_span_bigint(s._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -3895,7 +3533,7 @@ func RightSpanSpanset(s *Span, ss *SpanSet) bool {
 
 // RightSpansetBigint wraps MEOS C function right_spanset_bigint.
 func RightSpansetBigint(ss *SpanSet, i int64) bool {
-	res := C.right_spanset_bigint(ss._inner, C.int64(i))
+	res := C.right_spanset_bigint(ss._inner, C.int64_t(i))
 	return bool(res)
 }
 
@@ -3939,7 +3577,7 @@ func RightTextSet(txt string, s *Set) bool {
 
 // IntersectionBigintSet wraps MEOS C function intersection_bigint_set.
 func IntersectionBigintSet(i int64, s *Set) *Set {
-	res := C.intersection_bigint_set(C.int64(i), s._inner)
+	res := C.intersection_bigint_set(C.int64_t(i), s._inner)
 	return &Set{_inner: res}
 }
 
@@ -3967,7 +3605,7 @@ func IntersectionIntSet(i int, s *Set) *Set {
 
 // IntersectionSetBigint wraps MEOS C function intersection_set_bigint.
 func IntersectionSetBigint(s *Set, i int64) *Set {
-	res := C.intersection_set_bigint(s._inner, C.int64(i))
+	res := C.intersection_set_bigint(s._inner, C.int64_t(i))
 	return &Set{_inner: res}
 }
 
@@ -4018,7 +3656,7 @@ func IntersectionSetTimestamptz(s *Set, t int64) *Set {
 
 // IntersectionSpanBigint wraps MEOS C function intersection_span_bigint.
 func IntersectionSpanBigint(s *Span, i int64) *Span {
-	res := C.intersection_span_bigint(s._inner, C.int64(i))
+	res := C.intersection_span_bigint(s._inner, C.int64_t(i))
 	return &Span{_inner: res}
 }
 
@@ -4067,7 +3705,7 @@ func IntersectionSpanTimestamptz(s *Span, t int64) *Span {
 
 // IntersectionSpansetBigint wraps MEOS C function intersection_spanset_bigint.
 func IntersectionSpansetBigint(ss *SpanSet, i int64) *SpanSet {
-	res := C.intersection_spanset_bigint(ss._inner, C.int64(i))
+	res := C.intersection_spanset_bigint(ss._inner, C.int64_t(i))
 	return &SpanSet{_inner: res}
 }
 
@@ -4132,21 +3770,21 @@ func IntersectionTimestamptzSet(t int64, s *Set) *Set {
 
 // MinusBigintSet wraps MEOS C function minus_bigint_set.
 func MinusBigintSet(i int64, s *Set) *Set {
-	res := C.minus_bigint_set(C.int64(i), s._inner)
+	res := C.minus_bigint_set(C.int64_t(i), s._inner)
 	return &Set{_inner: res}
 }
 
 
 // MinusBigintSpan wraps MEOS C function minus_bigint_span.
 func MinusBigintSpan(i int64, s *Span) *SpanSet {
-	res := C.minus_bigint_span(C.int64(i), s._inner)
+	res := C.minus_bigint_span(C.int64_t(i), s._inner)
 	return &SpanSet{_inner: res}
 }
 
 
 // MinusBigintSpanset wraps MEOS C function minus_bigint_spanset.
 func MinusBigintSpanset(i int64, ss *SpanSet) *SpanSet {
-	res := C.minus_bigint_spanset(C.int64(i), ss._inner)
+	res := C.minus_bigint_spanset(C.int64_t(i), ss._inner)
 	return &SpanSet{_inner: res}
 }
 
@@ -4216,7 +3854,7 @@ func MinusIntSpanset(i int, ss *SpanSet) *SpanSet {
 
 // MinusSetBigint wraps MEOS C function minus_set_bigint.
 func MinusSetBigint(s *Set, i int64) *Set {
-	res := C.minus_set_bigint(s._inner, C.int64(i))
+	res := C.minus_set_bigint(s._inner, C.int64_t(i))
 	return &Set{_inner: res}
 }
 
@@ -4267,7 +3905,7 @@ func MinusSetTimestamptz(s *Set, t int64) *Set {
 
 // MinusSpanBigint wraps MEOS C function minus_span_bigint.
 func MinusSpanBigint(s *Span, i int64) *SpanSet {
-	res := C.minus_span_bigint(s._inner, C.int64(i))
+	res := C.minus_span_bigint(s._inner, C.int64_t(i))
 	return &SpanSet{_inner: res}
 }
 
@@ -4316,7 +3954,7 @@ func MinusSpanTimestamptz(s *Span, t int64) *SpanSet {
 
 // MinusSpansetBigint wraps MEOS C function minus_spanset_bigint.
 func MinusSpansetBigint(ss *SpanSet, i int64) *SpanSet {
-	res := C.minus_spanset_bigint(ss._inner, C.int64(i))
+	res := C.minus_spanset_bigint(ss._inner, C.int64_t(i))
 	return &SpanSet{_inner: res}
 }
 
@@ -4395,21 +4033,21 @@ func MinusTimestamptzSpanset(t int64, ss *SpanSet) *SpanSet {
 
 // UnionBigintSet wraps MEOS C function union_bigint_set.
 func UnionBigintSet(i int64, s *Set) *Set {
-	res := C.union_bigint_set(C.int64(i), s._inner)
+	res := C.union_bigint_set(C.int64_t(i), s._inner)
 	return &Set{_inner: res}
 }
 
 
 // UnionBigintSpan wraps MEOS C function union_bigint_span.
 func UnionBigintSpan(s *Span, i int64) *SpanSet {
-	res := C.union_bigint_span(s._inner, C.int64(i))
+	res := C.union_bigint_span(s._inner, C.int64_t(i))
 	return &SpanSet{_inner: res}
 }
 
 
 // UnionBigintSpanset wraps MEOS C function union_bigint_spanset.
 func UnionBigintSpanset(i int64, ss *SpanSet) *SpanSet {
-	res := C.union_bigint_spanset(C.int64(i), ss._inner)
+	res := C.union_bigint_spanset(C.int64_t(i), ss._inner)
 	return &SpanSet{_inner: res}
 }
 
@@ -4479,7 +4117,7 @@ func UnionIntSpanset(i int, ss *SpanSet) *SpanSet {
 
 // UnionSetBigint wraps MEOS C function union_set_bigint.
 func UnionSetBigint(s *Set, i int64) *Set {
-	res := C.union_set_bigint(s._inner, C.int64(i))
+	res := C.union_set_bigint(s._inner, C.int64_t(i))
 	return &Set{_inner: res}
 }
 
@@ -4530,7 +4168,7 @@ func UnionSetTimestamptz(s *Set, t int64) *Set {
 
 // UnionSpanBigint wraps MEOS C function union_span_bigint.
 func UnionSpanBigint(s *Span, i int64) *SpanSet {
-	res := C.union_span_bigint(s._inner, C.int64(i))
+	res := C.union_span_bigint(s._inner, C.int64_t(i))
 	return &SpanSet{_inner: res}
 }
 
@@ -4563,6 +4201,13 @@ func UnionSpanSpan(s1 *Span, s2 *Span) *SpanSet {
 }
 
 
+// SuperUnionSpanSpan wraps MEOS C function super_union_span_span.
+func SuperUnionSpanSpan(s1 *Span, s2 *Span) *Span {
+	res := C.super_union_span_span(s1._inner, s2._inner)
+	return &Span{_inner: res}
+}
+
+
 // UnionSpanSpanset wraps MEOS C function union_span_spanset.
 func UnionSpanSpanset(s *Span, ss *SpanSet) *SpanSet {
 	res := C.union_span_spanset(s._inner, ss._inner)
@@ -4579,7 +4224,7 @@ func UnionSpanTimestamptz(s *Span, t int64) *SpanSet {
 
 // UnionSpansetBigint wraps MEOS C function union_spanset_bigint.
 func UnionSpansetBigint(ss *SpanSet, i int64) *SpanSet {
-	res := C.union_spanset_bigint(ss._inner, C.int64(i))
+	res := C.union_spanset_bigint(ss._inner, C.int64_t(i))
 	return &SpanSet{_inner: res}
 }
 
@@ -4770,7 +4415,7 @@ func DistanceIntspansetIntspanset(ss1 *SpanSet, ss2 *SpanSet) int {
 
 // DistanceSetBigint wraps MEOS C function distance_set_bigint.
 func DistanceSetBigint(s *Set, i int64) int64 {
-	res := C.distance_set_bigint(s._inner, C.int64(i))
+	res := C.distance_set_bigint(s._inner, C.int64_t(i))
 	return int64(res)
 }
 
@@ -4805,7 +4450,7 @@ func DistanceSetTimestamptz(s *Set, t int64) float64 {
 
 // DistanceSpanBigint wraps MEOS C function distance_span_bigint.
 func DistanceSpanBigint(s *Span, i int64) int64 {
-	res := C.distance_span_bigint(s._inner, C.int64(i))
+	res := C.distance_span_bigint(s._inner, C.int64_t(i))
 	return int64(res)
 }
 
@@ -4840,7 +4485,7 @@ func DistanceSpanTimestamptz(s *Span, t int64) float64 {
 
 // DistanceSpansetBigint wraps MEOS C function distance_spanset_bigint.
 func DistanceSpansetBigint(ss *SpanSet, i int64) int64 {
-	res := C.distance_spanset_bigint(ss._inner, C.int64(i))
+	res := C.distance_spanset_bigint(ss._inner, C.int64_t(i))
 	return int64(res)
 }
 
@@ -4903,14 +4548,14 @@ func DistanceTstzspansetTstzspanset(ss1 *SpanSet, ss2 *SpanSet) float64 {
 
 // BigintExtentTransfn wraps MEOS C function bigint_extent_transfn.
 func BigintExtentTransfn(state *Span, i int64) *Span {
-	res := C.bigint_extent_transfn(state._inner, C.int64(i))
+	res := C.bigint_extent_transfn(state._inner, C.int64_t(i))
 	return &Span{_inner: res}
 }
 
 
 // BigintUnionTransfn wraps MEOS C function bigint_union_transfn.
 func BigintUnionTransfn(state *Set, i int64) *Set {
-	res := C.bigint_union_transfn(state._inner, C.int64(i))
+	res := C.bigint_union_transfn(state._inner, C.int64_t(i))
 	return &Set{_inner: res}
 }
 
@@ -4951,8 +4596,8 @@ func IntExtentTransfn(state *Span, i int) *Span {
 
 
 // IntUnionTransfn wraps MEOS C function int_union_transfn.
-func IntUnionTransfn(state *Set, i int32) *Set {
-	res := C.int_union_transfn(state._inner, C.int32(i))
+func IntUnionTransfn(state *Set, i int) *Set {
+	res := C.int_union_transfn(state._inner, C.int(i))
 	return &Set{_inner: res}
 }
 
@@ -5038,7 +4683,7 @@ func TimestamptzUnionTransfn(state *Set, t int64) *Set {
 
 // BigintGetBin wraps MEOS C function bigint_get_bin.
 func BigintGetBin(value int64, vsize int64, vorigin int64) int64 {
-	res := C.bigint_get_bin(C.int64(value), C.int64(vsize), C.int64(vorigin))
+	res := C.bigint_get_bin(C.int64_t(value), C.int64_t(vsize), C.int64_t(vorigin))
 	return int64(res)
 }
 
@@ -5046,7 +4691,7 @@ func BigintGetBin(value int64, vsize int64, vorigin int64) int64 {
 // BigintspanBins wraps MEOS C function bigintspan_bins.
 func BigintspanBins(s *Span, vsize int64, vorigin int64) (*Span, int) {
 	var _out_count C.int
-	res := C.bigintspan_bins(s._inner, C.int64(vsize), C.int64(vorigin), &_out_count)
+	res := C.bigintspan_bins(s._inner, C.int64_t(vsize), C.int64_t(vorigin), &_out_count)
 	return &Span{_inner: res}, int(_out_count)
 }
 
@@ -5054,7 +4699,7 @@ func BigintspanBins(s *Span, vsize int64, vorigin int64) (*Span, int) {
 // BigintspansetBins wraps MEOS C function bigintspanset_bins.
 func BigintspansetBins(ss *SpanSet, vsize int64, vorigin int64) (*Span, int) {
 	var _out_count C.int
-	res := C.bigintspanset_bins(ss._inner, C.int64(vsize), C.int64(vorigin), &_out_count)
+	res := C.bigintspanset_bins(ss._inner, C.int64_t(vsize), C.int64_t(vorigin), &_out_count)
 	return &Span{_inner: res}, int(_out_count)
 }
 
@@ -5226,9 +4871,23 @@ func IntTimestamptzToTBOX(i int, t int64) *TBox {
 }
 
 
+// BigintTimestamptzToTBOX wraps MEOS C function bigint_timestamptz_to_tbox.
+func BigintTimestamptzToTBOX(i int64, t int64) *TBox {
+	res := C.bigint_timestamptz_to_tbox(C.int64_t(i), C.TimestampTz(t))
+	return &TBox{_inner: res}
+}
+
+
 // IntTstzspanToTBOX wraps MEOS C function int_tstzspan_to_tbox.
 func IntTstzspanToTBOX(i int, s *Span) *TBox {
 	res := C.int_tstzspan_to_tbox(C.int(i), s._inner)
+	return &TBox{_inner: res}
+}
+
+
+// BigintTstzspanToTBOX wraps MEOS C function bigint_tstzspan_to_tbox.
+func BigintTstzspanToTBOX(i int64, s *Span) *TBox {
+	res := C.bigint_tstzspan_to_tbox(C.int64_t(i), s._inner)
 	return &TBox{_inner: res}
 }
 
@@ -5275,6 +4934,13 @@ func IntToTBOX(i int) *TBox {
 }
 
 
+// BigintToTBOX wraps MEOS C function bigint_to_tbox.
+func BigintToTBOX(i int64) *TBox {
+	res := C.bigint_to_tbox(C.int64_t(i))
+	return &TBox{_inner: res}
+}
+
+
 // SetToTBOX wraps MEOS C function set_to_tbox.
 func SetToTBOX(s *Set) *TBox {
 	res := C.set_to_tbox(s._inner)
@@ -5303,6 +4969,13 @@ func TBOXToIntspan(box *TBox) *Span {
 }
 
 
+// TBOXToBigintspan wraps MEOS C function tbox_to_bigintspan.
+func TBOXToBigintspan(box *TBox) *Span {
+	res := C.tbox_to_bigintspan(box._inner)
+	return &Span{_inner: res}
+}
+
+
 // TBOXToFloatspan wraps MEOS C function tbox_to_floatspan.
 func TBOXToFloatspan(box *TBox) *Span {
 	res := C.tbox_to_floatspan(box._inner)
@@ -5325,16 +4998,16 @@ func TimestamptzToTBOX(t int64) *TBox {
 
 
 // TBOXHash wraps MEOS C function tbox_hash.
-func TBOXHash(box *TBox) uint32 {
+func TBOXHash(box *TBox) int {
 	res := C.tbox_hash(box._inner)
-	return uint32(res)
+	return int(res)
 }
 
 
 // TBOXHashExtended wraps MEOS C function tbox_hash_extended.
-func TBOXHashExtended(box *TBox, seed uint64) uint64 {
-	res := C.tbox_hash_extended(box._inner, C.uint64(seed))
-	return uint64(res)
+func TBOXHashExtended(box *TBox, seed int) int {
+	res := C.tbox_hash_extended(box._inner, C.int(seed))
+	return int(res)
 }
 
 
@@ -5440,11 +5113,41 @@ func TboxintXmax(box *TBox) (bool, int) {
 }
 
 
+// TboxbigintXmax wraps MEOS C function tboxbigint_xmax.
+func TboxbigintXmax(box *TBox) (bool, int64) {
+	var _out_result C.int64_t
+	res := C.tboxbigint_xmax(box._inner, &_out_result)
+	return bool(res), int64(_out_result)
+}
+
+
 // TboxintXmin wraps MEOS C function tboxint_xmin.
 func TboxintXmin(box *TBox) (bool, int) {
 	var _out_result C.int
 	res := C.tboxint_xmin(box._inner, &_out_result)
 	return bool(res), int(_out_result)
+}
+
+
+// TboxbigintXmin wraps MEOS C function tboxbigint_xmin.
+func TboxbigintXmin(box *TBox) (bool, int64) {
+	var _out_result C.int64_t
+	res := C.tboxbigint_xmin(box._inner, &_out_result)
+	return bool(res), int64(_out_result)
+}
+
+
+// TfloatboxExpand wraps MEOS C function tfloatbox_expand.
+func TfloatboxExpand(box *TBox, d float64) *TBox {
+	res := C.tfloatbox_expand(box._inner, C.double(d))
+	return &TBox{_inner: res}
+}
+
+
+// TintboxExpand wraps MEOS C function tintbox_expand.
+func TintboxExpand(box *TBox, i int) *TBox {
+	res := C.tintbox_expand(box._inner, C.int(i))
+	return &TBox{_inner: res}
 }
 
 
@@ -5462,20 +5165,6 @@ func TBOXRound(box *TBox, maxdd int) *TBox {
 }
 
 
-// TBOXShiftScaleTime wraps MEOS C function tbox_shift_scale_time.
-func TBOXShiftScaleTime(box *TBox, shift timeutil.Timedelta, duration timeutil.Timedelta) *TBox {
-	res := C.tbox_shift_scale_time(box._inner, shift.Inner(), duration.Inner())
-	return &TBox{_inner: res}
-}
-
-
-// TfloatboxExpand wraps MEOS C function tfloatbox_expand.
-func TfloatboxExpand(box *TBox, d float64) *TBox {
-	res := C.tfloatbox_expand(box._inner, C.double(d))
-	return &TBox{_inner: res}
-}
-
-
 // TfloatboxShiftScale wraps MEOS C function tfloatbox_shift_scale.
 func TfloatboxShiftScale(box *TBox, shift float64, width float64, hasshift bool, haswidth bool) *TBox {
 	res := C.tfloatbox_shift_scale(box._inner, C.double(shift), C.double(width), C.bool(hasshift), C.bool(haswidth))
@@ -5483,16 +5172,30 @@ func TfloatboxShiftScale(box *TBox, shift float64, width float64, hasshift bool,
 }
 
 
-// TintboxExpand wraps MEOS C function tintbox_expand.
-func TintboxExpand(box *TBox, i int) *TBox {
-	res := C.tintbox_expand(box._inner, C.int(i))
+// TintboxShiftScale wraps MEOS C function tintbox_shift_scale.
+func TintboxShiftScale(box *TBox, shift int, width int, hasshift bool, haswidth bool) *TBox {
+	res := C.tintbox_shift_scale(box._inner, C.int(shift), C.int(width), C.bool(hasshift), C.bool(haswidth))
 	return &TBox{_inner: res}
 }
 
 
-// TintboxShiftScale wraps MEOS C function tintbox_shift_scale.
-func TintboxShiftScale(box *TBox, shift int, width int, hasshift bool, haswidth bool) *TBox {
-	res := C.tintbox_shift_scale(box._inner, C.int(shift), C.int(width), C.bool(hasshift), C.bool(haswidth))
+// TBOXShiftScaleTime wraps MEOS C function tbox_shift_scale_time.
+func TBOXShiftScaleTime(box *TBox, shift timeutil.Timedelta, duration timeutil.Timedelta) *TBox {
+	res := C.tbox_shift_scale_time(box._inner, shift.Inner(), duration.Inner())
+	return &TBox{_inner: res}
+}
+
+
+// TbigintboxExpand wraps MEOS C function tbigintbox_expand.
+func TbigintboxExpand(box *TBox, i int64) *TBox {
+	res := C.tbigintbox_expand(box._inner, C.int64_t(i))
+	return &TBox{_inner: res}
+}
+
+
+// TbigintboxShiftScale wraps MEOS C function tbigintbox_shift_scale.
+func TbigintboxShiftScale(box *TBox, shift int64, width int64, hasshift bool, haswidth bool) *TBox {
+	res := C.tbigintbox_shift_scale(box._inner, C.int64_t(shift), C.int64_t(width), C.bool(hasshift), C.bool(haswidth))
 	return &TBox{_inner: res}
 }
 
@@ -5757,6 +5460,15 @@ func TintFromMFJSON(str string) Temporal {
 }
 
 
+// TbigintFromMFJSON wraps MEOS C function tbigint_from_mfjson.
+func TbigintFromMFJSON(str string) Temporal {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	res := C.tbigint_from_mfjson(_c_str)
+	return CreateTemporal(res)
+}
+
+
 // TintIn wraps MEOS C function tint_in.
 func TintIn(str string) Temporal {
 	_c_str := C.CString(str)
@@ -5766,9 +5478,25 @@ func TintIn(str string) Temporal {
 }
 
 
+// TbigintIn wraps MEOS C function tbigint_in.
+func TbigintIn(str string) Temporal {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	res := C.tbigint_in(_c_str)
+	return CreateTemporal(res)
+}
+
+
 // TintOut wraps MEOS C function tint_out.
 func TintOut(temp Temporal) string {
 	res := C.tint_out(temp.Inner())
+	return C.GoString(res)
+}
+
+
+// TbigintOut wraps MEOS C function tbigint_out.
+func TbigintOut(temp Temporal) string {
+	res := C.tbigint_out(temp.Inner())
 	return C.GoString(res)
 }
 
@@ -5882,9 +5610,23 @@ func TintFromBaseTemp(i int, temp Temporal) Temporal {
 }
 
 
+// TbigintFromBaseTemp wraps MEOS C function tbigint_from_base_temp.
+func TbigintFromBaseTemp(i int64, temp Temporal) Temporal {
+	res := C.tbigint_from_base_temp(C.int64_t(i), temp.Inner())
+	return CreateTemporal(res)
+}
+
+
 // TintinstMake wraps MEOS C function tintinst_make.
 func TintinstMake(i int, t int64) TInstant {
 	res := C.tintinst_make(C.int(i), C.TimestampTz(t))
+	return TInstant{_inner: res}
+}
+
+
+// TbigintinstMake wraps MEOS C function tbigintinst_make.
+func TbigintinstMake(i int64, t int64) TInstant {
+	res := C.tbigintinst_make(C.int64_t(i), C.TimestampTz(t))
 	return TInstant{_inner: res}
 }
 
@@ -5896,6 +5638,13 @@ func TintseqFromBaseTstzset(i int, s *Set) TSequence {
 }
 
 
+// TbigintseqFromBaseTstzset wraps MEOS C function tbigintseq_from_base_tstzset.
+func TbigintseqFromBaseTstzset(i int64, s *Set) TSequence {
+	res := C.tbigintseq_from_base_tstzset(C.int64_t(i), s._inner)
+	return TSequence{_inner: res}
+}
+
+
 // TintseqFromBaseTstzspan wraps MEOS C function tintseq_from_base_tstzspan.
 func TintseqFromBaseTstzspan(i int, s *Span) TSequence {
 	res := C.tintseq_from_base_tstzspan(C.int(i), s._inner)
@@ -5903,9 +5652,23 @@ func TintseqFromBaseTstzspan(i int, s *Span) TSequence {
 }
 
 
+// TbigintseqFromBaseTstzspan wraps MEOS C function tbigintseq_from_base_tstzspan.
+func TbigintseqFromBaseTstzspan(i int64, s *Span) TSequence {
+	res := C.tbigintseq_from_base_tstzspan(C.int64_t(i), s._inner)
+	return TSequence{_inner: res}
+}
+
+
 // TintseqsetFromBaseTstzspanset wraps MEOS C function tintseqset_from_base_tstzspanset.
 func TintseqsetFromBaseTstzspanset(i int, ss *SpanSet) TSequenceSet {
 	res := C.tintseqset_from_base_tstzspanset(C.int(i), ss._inner)
+	return TSequenceSet{_inner: res}
+}
+
+
+// TbigintseqsetFromBaseTstzspanset wraps MEOS C function tbigintseqset_from_base_tstzspanset.
+func TbigintseqsetFromBaseTstzspanset(i int64, ss *SpanSet) TSequenceSet {
+	res := C.tbigintseqset_from_base_tstzspanset(C.int64_t(i), ss._inner)
 	return TSequenceSet{_inner: res}
 }
 
@@ -6003,9 +5766,37 @@ func TfloatToTint(temp Temporal) Temporal {
 }
 
 
+// TfloatToTbigint wraps MEOS C function tfloat_to_tbigint.
+func TfloatToTbigint(temp Temporal) Temporal {
+	res := C.tfloat_to_tbigint(temp.Inner())
+	return CreateTemporal(res)
+}
+
+
 // TintToTfloat wraps MEOS C function tint_to_tfloat.
 func TintToTfloat(temp Temporal) Temporal {
 	res := C.tint_to_tfloat(temp.Inner())
+	return CreateTemporal(res)
+}
+
+
+// TintToTbigint wraps MEOS C function tint_to_tbigint.
+func TintToTbigint(temp Temporal) Temporal {
+	res := C.tint_to_tbigint(temp.Inner())
+	return CreateTemporal(res)
+}
+
+
+// TbigintToTint wraps MEOS C function tbigint_to_tint.
+func TbigintToTint(temp Temporal) Temporal {
+	res := C.tbigint_to_tint(temp.Inner())
+	return CreateTemporal(res)
+}
+
+
+// TbigintToTfloat wraps MEOS C function tbigint_to_tfloat.
+func TbigintToTfloat(temp Temporal) Temporal {
+	res := C.tbigint_to_tfloat(temp.Inner())
 	return CreateTemporal(res)
 }
 
@@ -6097,9 +5888,9 @@ func TemporalEndTimestamptz(temp Temporal) int64 {
 
 
 // TemporalHash wraps MEOS C function temporal_hash.
-func TemporalHash(temp Temporal) uint32 {
+func TemporalHash(temp Temporal) int {
 	res := C.temporal_hash(temp.Inner())
-	return uint32(res)
+	return int(res)
 }
 
 
@@ -6250,6 +6041,13 @@ func TemporalSubtype(temp Temporal) string {
 }
 
 
+// TemporalBasetypeName wraps MEOS C function temporal_basetype_name.
+func TemporalBasetypeName(temp Temporal) string {
+	res := C.temporal_basetype_name(temp.Inner())
+	return C.GoString(res)
+}
+
+
 // TemporalTime wraps MEOS C function temporal_time.
 func TemporalTime(temp Temporal) *SpanSet {
 	res := C.temporal_time(temp.Inner())
@@ -6283,13 +6081,6 @@ func TemporalTimestamptzN(temp Temporal, n int) (bool, int64) {
 func TemporalUpperInc(temp Temporal) bool {
 	res := C.temporal_upper_inc(temp.Inner())
 	return bool(res)
-}
-
-
-// TfloatAvgValue wraps MEOS C function tfloat_avg_value.
-func TfloatAvgValue(temp Temporal) float64 {
-	res := C.tfloat_avg_value(temp.Inner())
-	return float64(res)
 }
 
 
@@ -6358,10 +6149,24 @@ func TintEndValue(temp Temporal) int {
 }
 
 
+// TbigintEndValue wraps MEOS C function tbigint_end_value.
+func TbigintEndValue(temp Temporal) int64 {
+	res := C.tbigint_end_value(temp.Inner())
+	return int64(res)
+}
+
+
 // TintMaxValue wraps MEOS C function tint_max_value.
 func TintMaxValue(temp Temporal) int {
 	res := C.tint_max_value(temp.Inner())
 	return int(res)
+}
+
+
+// TbigintMaxValue wraps MEOS C function tbigint_max_value.
+func TbigintMaxValue(temp Temporal) int64 {
+	res := C.tbigint_max_value(temp.Inner())
+	return int64(res)
 }
 
 
@@ -6372,10 +6177,32 @@ func TintMinValue(temp Temporal) int {
 }
 
 
+// TbigintMinValue wraps MEOS C function tbigint_min_value.
+func TbigintMinValue(temp Temporal) int64 {
+	res := C.tbigint_min_value(temp.Inner())
+	return int64(res)
+}
+
+
 // TintStartValue wraps MEOS C function tint_start_value.
 func TintStartValue(temp Temporal) int {
 	res := C.tint_start_value(temp.Inner())
 	return int(res)
+}
+
+
+// TbigintStartValue wraps MEOS C function tbigint_start_value.
+func TbigintStartValue(temp Temporal) int64 {
+	res := C.tbigint_start_value(temp.Inner())
+	return int64(res)
+}
+
+
+// TbigintValueAtTimestamptz wraps MEOS C function tbigint_value_at_timestamptz.
+func TbigintValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, int64) {
+	var _out_value C.int64_t
+	res := C.tbigint_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_value)
+	return bool(res), int64(_out_value)
 }
 
 
@@ -6395,6 +6222,14 @@ func TintValueN(temp Temporal, n int) (bool, int) {
 }
 
 
+// TbigintValueN wraps MEOS C function tbigint_value_n.
+func TbigintValueN(temp Temporal, n int64) (bool, int64) {
+	var _out_result C.int64_t
+	res := C.tbigint_value_n(temp.Inner(), C.int64_t(n), &_out_result)
+	return bool(res), int64(_out_result)
+}
+
+
 // TintValues wraps MEOS C function tint_values.
 func TintValues(temp Temporal) []int {
 	var _out_count C.int
@@ -6404,6 +6239,20 @@ func TintValues(temp Temporal) []int {
 	_out := make([]int, _n)
 	for _i, _e := range _slice {
 		_out[_i] = int(_e)
+	}
+	return _out
+}
+
+
+// TbigintValues wraps MEOS C function tbigint_values.
+func TbigintValues(temp Temporal) []int64 {
+	var _out_count C.int
+	res := C.tbigint_values(temp.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((*C.int64_t)(unsafe.Pointer(res)), _n)
+	_out := make([]int64, _n)
+	for _i, _e := range _slice {
+		_out[_i] = int64(_e)
 	}
 	return _out
 }
@@ -6629,6 +6478,13 @@ func TintScaleValue(temp Temporal, width int) Temporal {
 }
 
 
+// TbigintScaleValue wraps MEOS C function tbigint_scale_value.
+func TbigintScaleValue(temp Temporal, width int64) Temporal {
+	res := C.tbigint_scale_value(temp.Inner(), C.int64_t(width))
+	return CreateTemporal(res)
+}
+
+
 // TintShiftScaleValue wraps MEOS C function tint_shift_scale_value.
 func TintShiftScaleValue(temp Temporal, shift int, width int) Temporal {
 	res := C.tint_shift_scale_value(temp.Inner(), C.int(shift), C.int(width))
@@ -6636,9 +6492,23 @@ func TintShiftScaleValue(temp Temporal, shift int, width int) Temporal {
 }
 
 
+// TbigintShiftScaleValue wraps MEOS C function tbigint_shift_scale_value.
+func TbigintShiftScaleValue(temp Temporal, shift int64, width int64) Temporal {
+	res := C.tbigint_shift_scale_value(temp.Inner(), C.int64_t(shift), C.int64_t(width))
+	return CreateTemporal(res)
+}
+
+
 // TintShiftValue wraps MEOS C function tint_shift_value.
 func TintShiftValue(temp Temporal, shift int) Temporal {
 	res := C.tint_shift_value(temp.Inner(), C.int(shift))
+	return CreateTemporal(res)
+}
+
+
+// TbigintShiftValue wraps MEOS C function tbigint_shift_value.
+func TbigintShiftValue(temp Temporal, shift int64) Temporal {
+	res := C.tbigint_shift_value(temp.Inner(), C.int64_t(shift))
 	return CreateTemporal(res)
 }
 
@@ -7036,6 +6906,20 @@ func AlwaysEqTintInt(temp Temporal, i int) int {
 }
 
 
+// AlwaysEqBigintTbigint wraps MEOS C function always_eq_bigint_tbigint.
+func AlwaysEqBigintTbigint(i int64, temp Temporal) int {
+	res := C.always_eq_bigint_tbigint(C.int64_t(i), temp.Inner())
+	return int(res)
+}
+
+
+// AlwaysEqTbigintBigint wraps MEOS C function always_eq_tbigint_bigint.
+func AlwaysEqTbigintBigint(temp Temporal, i int64) int {
+	res := C.always_eq_tbigint_bigint(temp.Inner(), C.int64_t(i))
+	return int(res)
+}
+
+
 // AlwaysEqTtextText wraps MEOS C function always_eq_ttext_text.
 func AlwaysEqTtextText(temp Temporal, txt string) int {
 	_c_txt := cstring2text(txt)
@@ -7085,6 +6969,20 @@ func AlwaysGeTfloatFloat(temp Temporal, d float64) int {
 // AlwaysGeTintInt wraps MEOS C function always_ge_tint_int.
 func AlwaysGeTintInt(temp Temporal, i int) int {
 	res := C.always_ge_tint_int(temp.Inner(), C.int(i))
+	return int(res)
+}
+
+
+// AlwaysGeBigintTbigint wraps MEOS C function always_ge_bigint_tbigint.
+func AlwaysGeBigintTbigint(i int64, temp Temporal) int {
+	res := C.always_ge_bigint_tbigint(C.int64_t(i), temp.Inner())
+	return int(res)
+}
+
+
+// AlwaysGeTbigintBigint wraps MEOS C function always_ge_tbigint_bigint.
+func AlwaysGeTbigintBigint(temp Temporal, i int64) int {
+	res := C.always_ge_tbigint_bigint(temp.Inner(), C.int64_t(i))
 	return int(res)
 }
 
@@ -7142,6 +7040,20 @@ func AlwaysGtTintInt(temp Temporal, i int) int {
 }
 
 
+// AlwaysGtBigintTbigint wraps MEOS C function always_gt_bigint_tbigint.
+func AlwaysGtBigintTbigint(i int64, temp Temporal) int {
+	res := C.always_gt_bigint_tbigint(C.int64_t(i), temp.Inner())
+	return int(res)
+}
+
+
+// AlwaysGtTbigintBigint wraps MEOS C function always_gt_tbigint_bigint.
+func AlwaysGtTbigintBigint(temp Temporal, i int64) int {
+	res := C.always_gt_tbigint_bigint(temp.Inner(), C.int64_t(i))
+	return int(res)
+}
+
+
 // AlwaysGtTtextText wraps MEOS C function always_gt_ttext_text.
 func AlwaysGtTtextText(temp Temporal, txt string) int {
 	_c_txt := cstring2text(txt)
@@ -7195,6 +7107,20 @@ func AlwaysLeTintInt(temp Temporal, i int) int {
 }
 
 
+// AlwaysLeBigintTbigint wraps MEOS C function always_le_bigint_tbigint.
+func AlwaysLeBigintTbigint(i int64, temp Temporal) int {
+	res := C.always_le_bigint_tbigint(C.int64_t(i), temp.Inner())
+	return int(res)
+}
+
+
+// AlwaysLeTbigintBigint wraps MEOS C function always_le_tbigint_bigint.
+func AlwaysLeTbigintBigint(temp Temporal, i int64) int {
+	res := C.always_le_tbigint_bigint(temp.Inner(), C.int64_t(i))
+	return int(res)
+}
+
+
 // AlwaysLeTtextText wraps MEOS C function always_le_ttext_text.
 func AlwaysLeTtextText(temp Temporal, txt string) int {
 	_c_txt := cstring2text(txt)
@@ -7244,6 +7170,20 @@ func AlwaysLtTfloatFloat(temp Temporal, d float64) int {
 // AlwaysLtTintInt wraps MEOS C function always_lt_tint_int.
 func AlwaysLtTintInt(temp Temporal, i int) int {
 	res := C.always_lt_tint_int(temp.Inner(), C.int(i))
+	return int(res)
+}
+
+
+// AlwaysLtBigintTbigint wraps MEOS C function always_lt_bigint_tbigint.
+func AlwaysLtBigintTbigint(i int64, temp Temporal) int {
+	res := C.always_lt_bigint_tbigint(C.int64_t(i), temp.Inner())
+	return int(res)
+}
+
+
+// AlwaysLtTbigintBigint wraps MEOS C function always_lt_tbigint_bigint.
+func AlwaysLtTbigintBigint(temp Temporal, i int64) int {
+	res := C.always_lt_tbigint_bigint(temp.Inner(), C.int64_t(i))
 	return int(res)
 }
 
@@ -7315,6 +7255,20 @@ func AlwaysNeTintInt(temp Temporal, i int) int {
 }
 
 
+// AlwaysNeBigintTbigint wraps MEOS C function always_ne_bigint_tbigint.
+func AlwaysNeBigintTbigint(i int64, temp Temporal) int {
+	res := C.always_ne_bigint_tbigint(C.int64_t(i), temp.Inner())
+	return int(res)
+}
+
+
+// AlwaysNeTbigintBigint wraps MEOS C function always_ne_tbigint_bigint.
+func AlwaysNeTbigintBigint(temp Temporal, i int64) int {
+	res := C.always_ne_tbigint_bigint(temp.Inner(), C.int64_t(i))
+	return int(res)
+}
+
+
 // AlwaysNeTtextText wraps MEOS C function always_ne_ttext_text.
 func AlwaysNeTtextText(temp Temporal, txt string) int {
 	_c_txt := cstring2text(txt)
@@ -7382,6 +7336,20 @@ func EverEqTintInt(temp Temporal, i int) int {
 }
 
 
+// EverEqBigintTbigint wraps MEOS C function ever_eq_bigint_tbigint.
+func EverEqBigintTbigint(i int64, temp Temporal) int {
+	res := C.ever_eq_bigint_tbigint(C.int64_t(i), temp.Inner())
+	return int(res)
+}
+
+
+// EverEqTbigintBigint wraps MEOS C function ever_eq_tbigint_bigint.
+func EverEqTbigintBigint(temp Temporal, i int64) int {
+	res := C.ever_eq_tbigint_bigint(temp.Inner(), C.int64_t(i))
+	return int(res)
+}
+
+
 // EverEqTtextText wraps MEOS C function ever_eq_ttext_text.
 func EverEqTtextText(temp Temporal, txt string) int {
 	_c_txt := cstring2text(txt)
@@ -7431,6 +7399,20 @@ func EverGeTfloatFloat(temp Temporal, d float64) int {
 // EverGeTintInt wraps MEOS C function ever_ge_tint_int.
 func EverGeTintInt(temp Temporal, i int) int {
 	res := C.ever_ge_tint_int(temp.Inner(), C.int(i))
+	return int(res)
+}
+
+
+// EverGeBigintTbigint wraps MEOS C function ever_ge_bigint_tbigint.
+func EverGeBigintTbigint(i int64, temp Temporal) int {
+	res := C.ever_ge_bigint_tbigint(C.int64_t(i), temp.Inner())
+	return int(res)
+}
+
+
+// EverGeTbigintBigint wraps MEOS C function ever_ge_tbigint_bigint.
+func EverGeTbigintBigint(temp Temporal, i int64) int {
+	res := C.ever_ge_tbigint_bigint(temp.Inner(), C.int64_t(i))
 	return int(res)
 }
 
@@ -7488,6 +7470,20 @@ func EverGtTintInt(temp Temporal, i int) int {
 }
 
 
+// EverGtBigintTbigint wraps MEOS C function ever_gt_bigint_tbigint.
+func EverGtBigintTbigint(i int64, temp Temporal) int {
+	res := C.ever_gt_bigint_tbigint(C.int64_t(i), temp.Inner())
+	return int(res)
+}
+
+
+// EverGtTbigintBigint wraps MEOS C function ever_gt_tbigint_bigint.
+func EverGtTbigintBigint(temp Temporal, i int64) int {
+	res := C.ever_gt_tbigint_bigint(temp.Inner(), C.int64_t(i))
+	return int(res)
+}
+
+
 // EverGtTtextText wraps MEOS C function ever_gt_ttext_text.
 func EverGtTtextText(temp Temporal, txt string) int {
 	_c_txt := cstring2text(txt)
@@ -7541,6 +7537,20 @@ func EverLeTintInt(temp Temporal, i int) int {
 }
 
 
+// EverLeBigintTbigint wraps MEOS C function ever_le_bigint_tbigint.
+func EverLeBigintTbigint(i int64, temp Temporal) int {
+	res := C.ever_le_bigint_tbigint(C.int64_t(i), temp.Inner())
+	return int(res)
+}
+
+
+// EverLeTbigintBigint wraps MEOS C function ever_le_tbigint_bigint.
+func EverLeTbigintBigint(temp Temporal, i int64) int {
+	res := C.ever_le_tbigint_bigint(temp.Inner(), C.int64_t(i))
+	return int(res)
+}
+
+
 // EverLeTtextText wraps MEOS C function ever_le_ttext_text.
 func EverLeTtextText(temp Temporal, txt string) int {
 	_c_txt := cstring2text(txt)
@@ -7590,6 +7600,20 @@ func EverLtTfloatFloat(temp Temporal, d float64) int {
 // EverLtTintInt wraps MEOS C function ever_lt_tint_int.
 func EverLtTintInt(temp Temporal, i int) int {
 	res := C.ever_lt_tint_int(temp.Inner(), C.int(i))
+	return int(res)
+}
+
+
+// EverLtBigintTbigint wraps MEOS C function ever_lt_bigint_tbigint.
+func EverLtBigintTbigint(i int64, temp Temporal) int {
+	res := C.ever_lt_bigint_tbigint(C.int64_t(i), temp.Inner())
+	return int(res)
+}
+
+
+// EverLtTbigintBigint wraps MEOS C function ever_lt_tbigint_bigint.
+func EverLtTbigintBigint(temp Temporal, i int64) int {
+	res := C.ever_lt_tbigint_bigint(temp.Inner(), C.int64_t(i))
 	return int(res)
 }
 
@@ -7657,6 +7681,20 @@ func EverNeTfloatFloat(temp Temporal, d float64) int {
 // EverNeTintInt wraps MEOS C function ever_ne_tint_int.
 func EverNeTintInt(temp Temporal, i int) int {
 	res := C.ever_ne_tint_int(temp.Inner(), C.int(i))
+	return int(res)
+}
+
+
+// EverNeBigintTbigint wraps MEOS C function ever_ne_bigint_tbigint.
+func EverNeBigintTbigint(i int64, temp Temporal) int {
+	res := C.ever_ne_bigint_tbigint(C.int64_t(i), temp.Inner())
+	return int(res)
+}
+
+
+// EverNeTbigintBigint wraps MEOS C function ever_ne_tbigint_bigint.
+func EverNeTbigintBigint(temp Temporal, i int64) int {
+	res := C.ever_ne_tbigint_bigint(temp.Inner(), C.int64_t(i))
 	return int(res)
 }
 
@@ -8736,6 +8774,20 @@ func AddTintInt(tnumber Temporal, i int) Temporal {
 }
 
 
+// AddBigintTbigint wraps MEOS C function add_bigint_tbigint.
+func AddBigintTbigint(i int64, tnumber Temporal) Temporal {
+	res := C.add_bigint_tbigint(C.int64_t(i), tnumber.Inner())
+	return CreateTemporal(res)
+}
+
+
+// AddTbigintBigint wraps MEOS C function add_tbigint_bigint.
+func AddTbigintBigint(tnumber Temporal, i int64) Temporal {
+	res := C.add_tbigint_bigint(tnumber.Inner(), C.int64_t(i))
+	return CreateTemporal(res)
+}
+
+
 // AddTnumberTnumber wraps MEOS C function add_tnumber_tnumber.
 func AddTnumberTnumber(tnumber1 Temporal, tnumber2 Temporal) Temporal {
 	res := C.add_tnumber_tnumber(tnumber1.Inner(), tnumber2.Inner())
@@ -8771,6 +8823,20 @@ func DivTintInt(tnumber Temporal, i int) Temporal {
 }
 
 
+// DivBigintTbigint wraps MEOS C function div_bigint_tbigint.
+func DivBigintTbigint(i int64, tnumber Temporal) Temporal {
+	res := C.div_bigint_tbigint(C.int64_t(i), tnumber.Inner())
+	return CreateTemporal(res)
+}
+
+
+// DivTbigintBigint wraps MEOS C function div_tbigint_bigint.
+func DivTbigintBigint(tnumber Temporal, i int64) Temporal {
+	res := C.div_tbigint_bigint(tnumber.Inner(), C.int64_t(i))
+	return CreateTemporal(res)
+}
+
+
 // DivTnumberTnumber wraps MEOS C function div_tnumber_tnumber.
 func DivTnumberTnumber(tnumber1 Temporal, tnumber2 Temporal) Temporal {
 	res := C.div_tnumber_tnumber(tnumber1.Inner(), tnumber2.Inner())
@@ -8778,37 +8844,51 @@ func DivTnumberTnumber(tnumber1 Temporal, tnumber2 Temporal) Temporal {
 }
 
 
-// MultFloatTfloat wraps MEOS C function mult_float_tfloat.
-func MultFloatTfloat(d float64, tnumber Temporal) Temporal {
-	res := C.mult_float_tfloat(C.double(d), tnumber.Inner())
+// MulFloatTfloat wraps MEOS C function mul_float_tfloat.
+func MulFloatTfloat(d float64, tnumber Temporal) Temporal {
+	res := C.mul_float_tfloat(C.double(d), tnumber.Inner())
 	return CreateTemporal(res)
 }
 
 
-// MultIntTint wraps MEOS C function mult_int_tint.
-func MultIntTint(i int, tnumber Temporal) Temporal {
-	res := C.mult_int_tint(C.int(i), tnumber.Inner())
+// MulIntTint wraps MEOS C function mul_int_tint.
+func MulIntTint(i int, tnumber Temporal) Temporal {
+	res := C.mul_int_tint(C.int(i), tnumber.Inner())
 	return CreateTemporal(res)
 }
 
 
-// MultTfloatFloat wraps MEOS C function mult_tfloat_float.
-func MultTfloatFloat(tnumber Temporal, d float64) Temporal {
-	res := C.mult_tfloat_float(tnumber.Inner(), C.double(d))
+// MulTfloatFloat wraps MEOS C function mul_tfloat_float.
+func MulTfloatFloat(tnumber Temporal, d float64) Temporal {
+	res := C.mul_tfloat_float(tnumber.Inner(), C.double(d))
 	return CreateTemporal(res)
 }
 
 
-// MultTintInt wraps MEOS C function mult_tint_int.
-func MultTintInt(tnumber Temporal, i int) Temporal {
-	res := C.mult_tint_int(tnumber.Inner(), C.int(i))
+// MulTintInt wraps MEOS C function mul_tint_int.
+func MulTintInt(tnumber Temporal, i int) Temporal {
+	res := C.mul_tint_int(tnumber.Inner(), C.int(i))
 	return CreateTemporal(res)
 }
 
 
-// MultTnumberTnumber wraps MEOS C function mult_tnumber_tnumber.
-func MultTnumberTnumber(tnumber1 Temporal, tnumber2 Temporal) Temporal {
-	res := C.mult_tnumber_tnumber(tnumber1.Inner(), tnumber2.Inner())
+// MulBigintTbigint wraps MEOS C function mul_bigint_tbigint.
+func MulBigintTbigint(i int64, tnumber Temporal) Temporal {
+	res := C.mul_bigint_tbigint(C.int64_t(i), tnumber.Inner())
+	return CreateTemporal(res)
+}
+
+
+// MulTbigintBigint wraps MEOS C function mul_tbigint_bigint.
+func MulTbigintBigint(tnumber Temporal, i int64) Temporal {
+	res := C.mul_tbigint_bigint(tnumber.Inner(), C.int64_t(i))
+	return CreateTemporal(res)
+}
+
+
+// MulTnumberTnumber wraps MEOS C function mul_tnumber_tnumber.
+func MulTnumberTnumber(tnumber1 Temporal, tnumber2 Temporal) Temporal {
+	res := C.mul_tnumber_tnumber(tnumber1.Inner(), tnumber2.Inner())
 	return CreateTemporal(res)
 }
 
@@ -8837,6 +8917,20 @@ func SubTfloatFloat(tnumber Temporal, d float64) Temporal {
 // SubTintInt wraps MEOS C function sub_tint_int.
 func SubTintInt(tnumber Temporal, i int) Temporal {
 	res := C.sub_tint_int(tnumber.Inner(), C.int(i))
+	return CreateTemporal(res)
+}
+
+
+// SubBigintTbigint wraps MEOS C function sub_bigint_tbigint.
+func SubBigintTbigint(i int64, tnumber Temporal) Temporal {
+	res := C.sub_bigint_tbigint(C.int64_t(i), tnumber.Inner())
+	return CreateTemporal(res)
+}
+
+
+// SubTbigintBigint wraps MEOS C function sub_tbigint_bigint.
+func SubTbigintBigint(tnumber Temporal, i int64) Temporal {
+	res := C.sub_tbigint_bigint(tnumber.Inner(), C.int64_t(i))
 	return CreateTemporal(res)
 }
 
@@ -8872,6 +8966,27 @@ func TfloatLn(temp Temporal) Temporal {
 // TfloatLog10 wraps MEOS C function tfloat_log10.
 func TfloatLog10(temp Temporal) Temporal {
 	res := C.tfloat_log10(temp.Inner())
+	return CreateTemporal(res)
+}
+
+
+// TfloatSin wraps MEOS C function tfloat_sin.
+func TfloatSin(temp Temporal) Temporal {
+	res := C.tfloat_sin(temp.Inner())
+	return CreateTemporal(res)
+}
+
+
+// TfloatCos wraps MEOS C function tfloat_cos.
+func TfloatCos(temp Temporal) Temporal {
+	res := C.tfloat_cos(temp.Inner())
+	return CreateTemporal(res)
+}
+
+
+// TfloatTan wraps MEOS C function tfloat_tan.
+func TfloatTan(temp Temporal) Temporal {
+	res := C.tfloat_tan(temp.Inner())
 	return CreateTemporal(res)
 }
 
@@ -9041,9 +9156,23 @@ func TboolTandTransfn(state *SkipList, temp Temporal) *SkipList {
 }
 
 
+// TboolTandCombinefn wraps MEOS C function tbool_tand_combinefn.
+func TboolTandCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	res := C.tbool_tand_combinefn(state1._inner, state2._inner)
+	return &SkipList{_inner: res}
+}
+
+
 // TboolTorTransfn wraps MEOS C function tbool_tor_transfn.
 func TboolTorTransfn(state *SkipList, temp Temporal) *SkipList {
 	res := C.tbool_tor_transfn(state._inner, temp.Inner())
+	return &SkipList{_inner: res}
+}
+
+
+// TboolTorCombinefn wraps MEOS C function tbool_tor_combinefn.
+func TboolTorCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	res := C.tbool_tor_combinefn(state1._inner, state2._inner)
 	return &SkipList{_inner: res}
 }
 
@@ -9052,20 +9181,6 @@ func TboolTorTransfn(state *SkipList, temp Temporal) *SkipList {
 func TemporalExtentTransfn(s *Span, temp Temporal) *Span {
 	res := C.temporal_extent_transfn(s._inner, temp.Inner())
 	return &Span{_inner: res}
-}
-
-
-// TemporalMergeTransfn wraps MEOS C function temporal_merge_transfn.
-func TemporalMergeTransfn(state *SkipList, temp Temporal) *SkipList {
-	res := C.temporal_merge_transfn(state._inner, temp.Inner())
-	return &SkipList{_inner: res}
-}
-
-
-// TemporalMergeCombinefn wraps MEOS C function temporal_merge_combinefn.
-func TemporalMergeCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
-	res := C.temporal_merge_combinefn(state1._inner, state2._inner)
-	return &SkipList{_inner: res}
 }
 
 
@@ -9083,9 +9198,23 @@ func TemporalTcountTransfn(state *SkipList, temp Temporal) *SkipList {
 }
 
 
+// TemporalTcountCombinefn wraps MEOS C function temporal_tcount_combinefn.
+func TemporalTcountCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	res := C.temporal_tcount_combinefn(state1._inner, state2._inner)
+	return &SkipList{_inner: res}
+}
+
+
 // TfloatTmaxTransfn wraps MEOS C function tfloat_tmax_transfn.
 func TfloatTmaxTransfn(state *SkipList, temp Temporal) *SkipList {
 	res := C.tfloat_tmax_transfn(state._inner, temp.Inner())
+	return &SkipList{_inner: res}
+}
+
+
+// TfloatTmaxCombinefn wraps MEOS C function tfloat_tmax_combinefn.
+func TfloatTmaxCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	res := C.tfloat_tmax_combinefn(state1._inner, state2._inner)
 	return &SkipList{_inner: res}
 }
 
@@ -9097,9 +9226,23 @@ func TfloatTminTransfn(state *SkipList, temp Temporal) *SkipList {
 }
 
 
+// TfloatTminCombinefn wraps MEOS C function tfloat_tmin_combinefn.
+func TfloatTminCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	res := C.tfloat_tmin_combinefn(state1._inner, state2._inner)
+	return &SkipList{_inner: res}
+}
+
+
 // TfloatTsumTransfn wraps MEOS C function tfloat_tsum_transfn.
 func TfloatTsumTransfn(state *SkipList, temp Temporal) *SkipList {
 	res := C.tfloat_tsum_transfn(state._inner, temp.Inner())
+	return &SkipList{_inner: res}
+}
+
+
+// TfloatTsumCombinefn wraps MEOS C function tfloat_tsum_combinefn.
+func TfloatTsumCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	res := C.tfloat_tsum_combinefn(state1._inner, state2._inner)
 	return &SkipList{_inner: res}
 }
 
@@ -9139,6 +9282,13 @@ func TintTmaxTransfn(state *SkipList, temp Temporal) *SkipList {
 }
 
 
+// TintTmaxCombinefn wraps MEOS C function tint_tmax_combinefn.
+func TintTmaxCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	res := C.tint_tmax_combinefn(state1._inner, state2._inner)
+	return &SkipList{_inner: res}
+}
+
+
 // TintTminTransfn wraps MEOS C function tint_tmin_transfn.
 func TintTminTransfn(state *SkipList, temp Temporal) *SkipList {
 	res := C.tint_tmin_transfn(state._inner, temp.Inner())
@@ -9146,9 +9296,23 @@ func TintTminTransfn(state *SkipList, temp Temporal) *SkipList {
 }
 
 
+// TintTminCombinefn wraps MEOS C function tint_tmin_combinefn.
+func TintTminCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	res := C.tint_tmin_combinefn(state1._inner, state2._inner)
+	return &SkipList{_inner: res}
+}
+
+
 // TintTsumTransfn wraps MEOS C function tint_tsum_transfn.
 func TintTsumTransfn(state *SkipList, temp Temporal) *SkipList {
 	res := C.tint_tsum_transfn(state._inner, temp.Inner())
+	return &SkipList{_inner: res}
+}
+
+
+// TintTsumCombinefn wraps MEOS C function tint_tsum_combinefn.
+func TintTsumCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	res := C.tint_tsum_combinefn(state1._inner, state2._inner)
 	return &SkipList{_inner: res}
 }
 
@@ -9195,6 +9359,13 @@ func TnumberTavgTransfn(state *SkipList, temp Temporal) *SkipList {
 }
 
 
+// TnumberTavgCombinefn wraps MEOS C function tnumber_tavg_combinefn.
+func TnumberTavgCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	res := C.tnumber_tavg_combinefn(state1._inner, state2._inner)
+	return &SkipList{_inner: res}
+}
+
+
 // TnumberWavgTransfn wraps MEOS C function tnumber_wavg_transfn.
 func TnumberWavgTransfn(state *SkipList, temp Temporal, interv timeutil.Timedelta) *SkipList {
 	res := C.tnumber_wavg_transfn(state._inner, temp.Inner(), interv.Inner())
@@ -9223,9 +9394,30 @@ func TstzspansetTcountTransfn(state *SkipList, ss *SpanSet) *SkipList {
 }
 
 
+// TemporalMergeTransfn wraps MEOS C function temporal_merge_transfn.
+func TemporalMergeTransfn(state *SkipList, temp Temporal) *SkipList {
+	res := C.temporal_merge_transfn(state._inner, temp.Inner())
+	return &SkipList{_inner: res}
+}
+
+
+// TemporalMergeCombinefn wraps MEOS C function temporal_merge_combinefn.
+func TemporalMergeCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	res := C.temporal_merge_combinefn(state1._inner, state2._inner)
+	return &SkipList{_inner: res}
+}
+
+
 // TtextTmaxTransfn wraps MEOS C function ttext_tmax_transfn.
 func TtextTmaxTransfn(state *SkipList, temp Temporal) *SkipList {
 	res := C.ttext_tmax_transfn(state._inner, temp.Inner())
+	return &SkipList{_inner: res}
+}
+
+
+// TtextTmaxCombinefn wraps MEOS C function ttext_tmax_combinefn.
+func TtextTmaxCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	res := C.ttext_tmax_combinefn(state1._inner, state2._inner)
 	return &SkipList{_inner: res}
 }
 
@@ -9237,16 +9429,23 @@ func TtextTminTransfn(state *SkipList, temp Temporal) *SkipList {
 }
 
 
+// TtextTminCombinefn wraps MEOS C function ttext_tmin_combinefn.
+func TtextTminCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	res := C.ttext_tmin_combinefn(state1._inner, state2._inner)
+	return &SkipList{_inner: res}
+}
+
+
 // TemporalSimplifyDp wraps MEOS C function temporal_simplify_dp.
-func TemporalSimplifyDp(temp Temporal, eps_dist float64, synchronized bool) Temporal {
-	res := C.temporal_simplify_dp(temp.Inner(), C.double(eps_dist), C.bool(synchronized))
+func TemporalSimplifyDp(temp Temporal, dist float64, synchronized bool) Temporal {
+	res := C.temporal_simplify_dp(temp.Inner(), C.double(dist), C.bool(synchronized))
 	return CreateTemporal(res)
 }
 
 
 // TemporalSimplifyMaxDist wraps MEOS C function temporal_simplify_max_dist.
-func TemporalSimplifyMaxDist(temp Temporal, eps_dist float64, synchronized bool) Temporal {
-	res := C.temporal_simplify_max_dist(temp.Inner(), C.double(eps_dist), C.bool(synchronized))
+func TemporalSimplifyMaxDist(temp Temporal, dist float64, synchronized bool) Temporal {
+	res := C.temporal_simplify_max_dist(temp.Inner(), C.double(dist), C.bool(synchronized))
 	return CreateTemporal(res)
 }
 
@@ -9324,19 +9523,8 @@ func TemporalTimeBins(temp Temporal, duration timeutil.Timedelta, origin int64) 
 }
 
 
-// TemporalTimeSplit wraps MEOS C function temporal_time_split.
-func TemporalTimeSplit(temp Temporal, duration timeutil.Timedelta, torigin int64) ([]Temporal, []int64) {
-	var _out_time_bins *C.TimestampTz
-	var _out_count C.int
-	res := C.temporal_time_split(temp.Inner(), duration.Inner(), C.TimestampTz(torigin), &_out_time_bins, &_out_count)
-	_n := int(_out_count)
-	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
-	_out := make([]Temporal, _n)
-	for _i, _e := range _slice {
-		_out[_i] = CreateTemporal(_e)
-	}
-	return _out
-}
+// TODO temporal_time_split: unsupported param TimestampTz **
+// func TemporalTimeSplit(...) { /* not yet handled by codegen */ }
 
 
 // TfloatTimeBoxes wraps MEOS C function tfloat_time_boxes.
@@ -9363,19 +9551,8 @@ func TfloatValueBoxes(temp Temporal, vsize float64, vorigin float64) (*TBox, int
 }
 
 
-// TfloatValueSplit wraps MEOS C function tfloat_value_split.
-func TfloatValueSplit(temp Temporal, size float64, origin float64) ([]Temporal, []float64) {
-	var _out_bins *C.double
-	var _out_count C.int
-	res := C.tfloat_value_split(temp.Inner(), C.double(size), C.double(origin), &_out_bins, &_out_count)
-	_n := int(_out_count)
-	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
-	_out := make([]Temporal, _n)
-	for _i, _e := range _slice {
-		_out[_i] = CreateTemporal(_e)
-	}
-	return _out
-}
+// TODO tfloat_value_split: unsupported param double **
+// func TfloatValueSplit(...) { /* not yet handled by codegen */ }
 
 
 // TfloatValueTimeBoxes wraps MEOS C function tfloat_value_time_boxes.
@@ -9386,20 +9563,8 @@ func TfloatValueTimeBoxes(temp Temporal, vsize float64, duration timeutil.Timede
 }
 
 
-// TfloatValueTimeSplit wraps MEOS C function tfloat_value_time_split.
-func TfloatValueTimeSplit(temp Temporal, vsize float64, duration timeutil.Timedelta, vorigin float64, torigin int64) ([]Temporal, []float64, []int64) {
-	var _out_value_bins *C.double
-	var _out_time_bins *C.TimestampTz
-	var _out_count C.int
-	res := C.tfloat_value_time_split(temp.Inner(), C.double(vsize), duration.Inner(), C.double(vorigin), C.TimestampTz(torigin), &_out_value_bins, &_out_time_bins, &_out_count)
-	_n := int(_out_count)
-	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
-	_out := make([]Temporal, _n)
-	for _i, _e := range _slice {
-		_out[_i] = CreateTemporal(_e)
-	}
-	return _out
-}
+// TODO tfloat_value_time_split: unsupported param double **
+// func TfloatValueTimeSplit(...) { /* not yet handled by codegen */ }
 
 
 // TfloatboxTimeTiles wraps MEOS C function tfloatbox_time_tiles.
@@ -9450,19 +9615,8 @@ func TintValueBoxes(temp Temporal, vsize int, vorigin int) (*TBox, int) {
 }
 
 
-// TintValueSplit wraps MEOS C function tint_value_split.
-func TintValueSplit(temp Temporal, vsize int, vorigin int) ([]Temporal, []int) {
-	var _out_bins *C.int
-	var _out_count C.int
-	res := C.tint_value_split(temp.Inner(), C.int(vsize), C.int(vorigin), &_out_bins, &_out_count)
-	_n := int(_out_count)
-	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
-	_out := make([]Temporal, _n)
-	for _i, _e := range _slice {
-		_out[_i] = CreateTemporal(_e)
-	}
-	return _out
-}
+// TODO tint_value_split: unsupported param int **
+// func TintValueSplit(...) { /* not yet handled by codegen */ }
 
 
 // TintValueTimeBoxes wraps MEOS C function tint_value_time_boxes.
@@ -9473,20 +9627,8 @@ func TintValueTimeBoxes(temp Temporal, vsize int, duration timeutil.Timedelta, v
 }
 
 
-// TintValueTimeSplit wraps MEOS C function tint_value_time_split.
-func TintValueTimeSplit(temp Temporal, size int, duration timeutil.Timedelta, vorigin int, torigin int64) ([]Temporal, []int, []int64) {
-	var _out_value_bins *C.int
-	var _out_time_bins *C.TimestampTz
-	var _out_count C.int
-	res := C.tint_value_time_split(temp.Inner(), C.int(size), duration.Inner(), C.int(vorigin), C.TimestampTz(torigin), &_out_value_bins, &_out_time_bins, &_out_count)
-	_n := int(_out_count)
-	_slice := unsafe.Slice((**C.Temporal)(unsafe.Pointer(res)), _n)
-	_out := make([]Temporal, _n)
-	for _i, _e := range _slice {
-		_out[_i] = CreateTemporal(_e)
-	}
-	return _out
-}
+// TODO tint_value_time_split: unsupported param int **
+// func TintValueTimeSplit(...) { /* not yet handled by codegen */ }
 
 
 // TintboxTimeTiles wraps MEOS C function tintbox_time_tiles.

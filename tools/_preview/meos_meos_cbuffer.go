@@ -124,16 +124,16 @@ func GeomToCbuffer(gs *Geom) *Cbuffer {
 
 
 // CbufferHash wraps MEOS C function cbuffer_hash.
-func CbufferHash(cb *Cbuffer) uint32 {
+func CbufferHash(cb *Cbuffer) int {
 	res := C.cbuffer_hash(cb._inner)
-	return uint32(res)
+	return int(res)
 }
 
 
 // CbufferHashExtended wraps MEOS C function cbuffer_hash_extended.
-func CbufferHashExtended(cb *Cbuffer, seed uint64) uint64 {
-	res := C.cbuffer_hash_extended(cb._inner, C.uint64(seed))
-	return uint64(res)
+func CbufferHashExtended(cb *Cbuffer, seed int) int {
+	res := C.cbuffer_hash_extended(cb._inner, C.int(seed))
+	return int(res)
 }
 
 
@@ -405,8 +405,9 @@ func CbuffersetValueN(s *Set, n int) (bool, *Cbuffer) {
 
 // CbuffersetValues wraps MEOS C function cbufferset_values.
 func CbuffersetValues(s *Set) []*Cbuffer {
-	res := C.cbufferset_values(s._inner)
-	_n := int(C.set_num_values(s.Inner()))
+	var _out_count C.int
+	res := C.cbufferset_values(s._inner, &_out_count)
+	_n := int(_out_count)
 	_slice := unsafe.Slice((**C.Cbuffer)(unsafe.Pointer(res)), _n)
 	_out := make([]*Cbuffer, _n)
 	for _i, _e := range _slice {
@@ -488,10 +489,61 @@ func TcbufferIn(str string) Temporal {
 }
 
 
+// TcbufferFromMFJSON wraps MEOS C function tcbuffer_from_mfjson.
+func TcbufferFromMFJSON(mfjson string) Temporal {
+	_c_mfjson := C.CString(mfjson)
+	defer C.free(unsafe.Pointer(_c_mfjson))
+	res := C.tcbuffer_from_mfjson(_c_mfjson)
+	return CreateTemporal(res)
+}
+
+
+// TcbufferinstMake wraps MEOS C function tcbufferinst_make.
+func TcbufferinstMake(cb *Cbuffer, t int64) TInstant {
+	res := C.tcbufferinst_make(cb._inner, C.TimestampTz(t))
+	return TInstant{_inner: res}
+}
+
+
 // TcbufferMake wraps MEOS C function tcbuffer_make.
 func TcbufferMake(tpoint Temporal, tfloat Temporal) Temporal {
 	res := C.tcbuffer_make(tpoint.Inner(), tfloat.Inner())
 	return CreateTemporal(res)
+}
+
+
+// TcbufferFromBaseTemp wraps MEOS C function tcbuffer_from_base_temp.
+func TcbufferFromBaseTemp(cb *Cbuffer, temp Temporal) Temporal {
+	res := C.tcbuffer_from_base_temp(cb._inner, temp.Inner())
+	return CreateTemporal(res)
+}
+
+
+// TcbufferseqFromBaseTstzset wraps MEOS C function tcbufferseq_from_base_tstzset.
+func TcbufferseqFromBaseTstzset(cb *Cbuffer, s *Set) TSequence {
+	res := C.tcbufferseq_from_base_tstzset(cb._inner, s._inner)
+	return TSequence{_inner: res}
+}
+
+
+// TcbufferseqFromBaseTstzspan wraps MEOS C function tcbufferseq_from_base_tstzspan.
+func TcbufferseqFromBaseTstzspan(cb *Cbuffer, s *Span, interp Interpolation) TSequence {
+	res := C.tcbufferseq_from_base_tstzspan(cb._inner, s._inner, C.interpType(interp))
+	return TSequence{_inner: res}
+}
+
+
+// TcbufferseqsetFromBaseTstzspanset wraps MEOS C function tcbufferseqset_from_base_tstzspanset.
+func TcbufferseqsetFromBaseTstzspanset(cb *Cbuffer, ss *SpanSet, interp Interpolation) TSequenceSet {
+	res := C.tcbufferseqset_from_base_tstzspanset(cb._inner, ss._inner, C.interpType(interp))
+	return TSequenceSet{_inner: res}
+}
+
+
+// TcbufferEndValue wraps MEOS C function tcbuffer_end_value.
+func TcbufferEndValue(temp Temporal) *Cbuffer {
+	res := C.tcbuffer_end_value(temp.Inner())
+	return &Cbuffer{_inner: res}
 }
 
 
@@ -509,10 +561,54 @@ func TcbufferRadius(temp Temporal) *Set {
 }
 
 
-// TcbufferTravArea wraps MEOS C function tcbuffer_trav_area.
-func TcbufferTravArea(temp Temporal, merge_union bool) *Geom {
-	res := C.tcbuffer_trav_area(temp.Inner(), C.bool(merge_union))
+// TcbufferTraversedArea wraps MEOS C function tcbuffer_traversed_area.
+func TcbufferTraversedArea(temp Temporal, unary_union bool) *Geom {
+	res := C.tcbuffer_traversed_area(temp.Inner(), C.bool(unary_union))
 	return &Geom{_inner: res}
+}
+
+
+// TcbufferConvexHull wraps MEOS C function tcbuffer_convex_hull.
+func TcbufferConvexHull(temp Temporal) *Geom {
+	res := C.tcbuffer_convex_hull(temp.Inner())
+	return &Geom{_inner: res}
+}
+
+
+// TcbufferStartValue wraps MEOS C function tcbuffer_start_value.
+func TcbufferStartValue(temp Temporal) *Cbuffer {
+	res := C.tcbuffer_start_value(temp.Inner())
+	return &Cbuffer{_inner: res}
+}
+
+
+// TcbufferValueAtTimestamptz wraps MEOS C function tcbuffer_value_at_timestamptz.
+func TcbufferValueAtTimestamptz(temp Temporal, t int64, strict bool) (bool, *Cbuffer) {
+	var _out_value *C.Cbuffer
+	res := C.tcbuffer_value_at_timestamptz(temp.Inner(), C.TimestampTz(t), C.bool(strict), &_out_value)
+	return bool(res), &Cbuffer{_inner: _out_value}
+}
+
+
+// TcbufferValueN wraps MEOS C function tcbuffer_value_n.
+func TcbufferValueN(temp Temporal, n int) (bool, *Cbuffer) {
+	var _out_result *C.Cbuffer
+	res := C.tcbuffer_value_n(temp.Inner(), C.int(n), &_out_result)
+	return bool(res), &Cbuffer{_inner: _out_result}
+}
+
+
+// TcbufferValues wraps MEOS C function tcbuffer_values.
+func TcbufferValues(temp Temporal) []*Cbuffer {
+	var _out_count C.int
+	res := C.tcbuffer_values(temp.Inner(), &_out_count)
+	_n := int(_out_count)
+	_slice := unsafe.Slice((**C.Cbuffer)(unsafe.Pointer(res)), _n)
+	_out := make([]*Cbuffer, _n)
+	for _i, _e := range _slice {
+		_out[_i] = &Cbuffer{_inner: _e}
+	}
+	return _out
 }
 
 
@@ -631,6 +727,13 @@ func NadTcbufferSTBOX(temp Temporal, box *STBox) float64 {
 // NadTcbufferTcbuffer wraps MEOS C function nad_tcbuffer_tcbuffer.
 func NadTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) float64 {
 	res := C.nad_tcbuffer_tcbuffer(temp1.Inner(), temp2.Inner())
+	return float64(res)
+}
+
+
+// MindistanceTcbufferTcbuffer wraps MEOS C function mindistance_tcbuffer_tcbuffer.
+func MindistanceTcbufferTcbuffer(temp1 Temporal, temp2 Temporal, threshold float64) float64 {
+	res := C.mindistance_tcbuffer_tcbuffer(temp1.Inner(), temp2.Inner(), C.double(threshold))
 	return float64(res)
 }
 
@@ -845,6 +948,13 @@ func AcoversTcbufferGeo(temp Temporal, gs *Geom) int {
 }
 
 
+// AcoversTcbufferTcbuffer wraps MEOS C function acovers_tcbuffer_tcbuffer.
+func AcoversTcbufferTcbuffer(temp1 Temporal, temp2 Temporal) int {
+	res := C.acovers_tcbuffer_tcbuffer(temp1.Inner(), temp2.Inner())
+	return int(res)
+}
+
+
 // AdisjointTcbufferGeo wraps MEOS C function adisjoint_tcbuffer_geo.
 func AdisjointTcbufferGeo(temp Temporal, gs *Geom) int {
 	res := C.adisjoint_tcbuffer_geo(temp.Inner(), gs._inner)
@@ -953,6 +1063,13 @@ func EcontainsTcbufferGeo(temp Temporal, gs *Geom) int {
 // EcoversCbufferTcbuffer wraps MEOS C function ecovers_cbuffer_tcbuffer.
 func EcoversCbufferTcbuffer(cb *Cbuffer, temp Temporal) int {
 	res := C.ecovers_cbuffer_tcbuffer(cb._inner, temp.Inner())
+	return int(res)
+}
+
+
+// EcoversGeoTcbuffer wraps MEOS C function ecovers_geo_tcbuffer.
+func EcoversGeoTcbuffer(gs *Geom, temp Temporal) int {
+	res := C.ecovers_geo_tcbuffer(gs._inner, temp.Inner())
 	return int(res)
 }
 
