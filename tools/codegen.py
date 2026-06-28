@@ -832,8 +832,9 @@ def _todo_stub(c_name: str, reason: str) -> str:
 
 # Driver ----------------------------------------------------------------
 
-# Cgo preamble lives in its own file (_cgo.go) so the generated per-header
-# files can share it without duplicating #include directives.
+# The package-global #cgo directives (CFLAGS/LDFLAGS) live once here in cgo.go.
+# cgo resolves each Go file's C references against THAT file's own preamble, so
+# every generated per-header file repeats the MEOS #includes (see _PER_HEADER_PREAMBLE).
 _CGO_FILE = """package generated
 
 /*
@@ -864,7 +865,23 @@ import "C"
 
 _PER_HEADER_PREAMBLE = """package generated
 
-// #include <stddef.h>
+/*
+#include <stddef.h>
+#include "meos.h"
+#include "meos_catalog.h"
+#include "meos_geo.h"
+#include "meos_internal.h"
+#include "meos_internal_geo.h"
+#include "meos_npoint.h"
+#include "meos_cbuffer.h"
+#include "meos_pose.h"
+#include "meos_rgeo.h"
+#include "meos_h3.h"
+#include "meos_quadbin.h"
+#include "meos_json.h"
+#include "meos_pointcloud.h"
+#include "meos_arrow.h"
+*/
 import "C"
 import (
 \t"unsafe"
