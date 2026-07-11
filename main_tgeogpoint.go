@@ -25,7 +25,7 @@ func NewTGeogPointInst(tgmpi_in string) *TGeogPointInst {
 }
 
 func (tgmpi *TGeogPointInst) TPointOut(maxdd int) string {
-	c_tgmpi_out := C.tpoint_as_text(tgmpi._inner, C.int(maxdd))
+	c_tgmpi_out := C.tspatial_as_text(tgmpi._inner, C.int(maxdd))
 	defer C.free(unsafe.Pointer(c_tgmpi_out))
 	tgmpi_out := C.GoString(c_tgmpi_out)
 	return tgmpi_out
@@ -82,7 +82,7 @@ func NewTGeogPointSeq(tgmpi_in string) TGeogPointSeq {
 }
 
 func (tgmpi *TGeogPointSeq) TPointOut(maxdd int) string {
-	c_tgmpi_out := C.tpoint_as_text(tgmpi._inner, C.int(maxdd))
+	c_tgmpi_out := C.tspatial_as_text(tgmpi._inner, C.int(maxdd))
 	defer C.free(unsafe.Pointer(c_tgmpi_out))
 	tgmpi_out := C.GoString(c_tgmpi_out)
 	return tgmpi_out
@@ -129,7 +129,7 @@ func NewTGeogPointSeqSet(tgmpi_in string) *TGeogPointSeqSet {
 }
 
 func (tgmpi *TGeogPointSeqSet) TPointOut(maxdd int) string {
-	c_tgmpi_out := C.tpoint_as_text(tgmpi._inner, C.int(maxdd))
+	c_tgmpi_out := C.tspatial_as_text(tgmpi._inner, C.int(maxdd))
 	defer C.free(unsafe.Pointer(c_tgmpi_out))
 	tgmpi_out := C.GoString(c_tgmpi_out)
 	return tgmpi_out

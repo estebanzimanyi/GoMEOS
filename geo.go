@@ -17,7 +17,7 @@ type Geom struct {
 func NewGeom(geom_str string, typemod int) Geom {
 	c_geom_str := C.CString(geom_str)
 	defer C.free(unsafe.Pointer(c_geom_str))
-	c_geom := C.pgis_geometry_in(c_geom_str, C.int(typemod))
+	c_geom := C.geom_in(c_geom_str, C.int(typemod))
 	g := Geom{_inner: c_geom}
 	return g
 }
@@ -25,7 +25,7 @@ func NewGeom(geom_str string, typemod int) Geom {
 func PgisGeometryIn(input string, typemod int) *Geom {
 	c_geom_str := C.CString(input)
 	defer C.free(unsafe.Pointer(c_geom_str))
-	c_geom := C.pgis_geometry_in(c_geom_str, C.int(typemod))
+	c_geom := C.geom_in(c_geom_str, C.int(typemod))
 	g := &Geom{_inner: c_geom}
 	return g
 }
@@ -33,7 +33,7 @@ func PgisGeometryIn(input string, typemod int) *Geom {
 func PgisGeographyIn(input string, typemod int) *Geom {
 	c_geom_str := C.CString(input)
 	defer C.free(unsafe.Pointer(c_geom_str))
-	c_geom := C.pgis_geography_in(c_geom_str, C.int(typemod))
+	c_geom := C.geog_in(c_geom_str, C.int(typemod))
 	g := &Geom{_inner: c_geom}
 	return g
 }
@@ -41,7 +41,7 @@ func PgisGeographyIn(input string, typemod int) *Geom {
 func GeographyFromHexEwkb(input string) *Geom {
 	c_geom_str := C.CString(input)
 	defer C.free(unsafe.Pointer(c_geom_str))
-	c_geom := C.geography_from_hexewkb(c_geom_str)
+	c_geom := C.geog_from_hexewkb(c_geom_str)
 	g := &Geom{_inner: c_geom}
 	return g
 }
@@ -49,7 +49,7 @@ func GeographyFromHexEwkb(input string) *Geom {
 func GeometryFromHexEwkb(input string) *Geom {
 	c_geom_str := C.CString(input)
 	defer C.free(unsafe.Pointer(c_geom_str))
-	c_geom := C.geometry_from_hexewkb(c_geom_str)
+	c_geom := C.geom_from_hexewkb(c_geom_str)
 	g := &Geom{_inner: c_geom}
 	return g
 }
@@ -57,7 +57,7 @@ func GeometryFromHexEwkb(input string) *Geom {
 func GeographyFromText(input string, srid int) *Geom {
 	c_geom_str := C.CString(input)
 	defer C.free(unsafe.Pointer(c_geom_str))
-	c_geom := C.geography_from_text(c_geom_str, C.int(srid))
+	c_geom := C.geo_from_text(c_geom_str, C.int(srid))
 	g := &Geom{_inner: c_geom}
 	return g
 }
@@ -65,7 +65,7 @@ func GeographyFromText(input string, srid int) *Geom {
 func GeometryFromText(input string, srid int) *Geom {
 	c_geom_str := C.CString(input)
 	defer C.free(unsafe.Pointer(c_geom_str))
-	c_geom := C.geometry_from_text(c_geom_str, C.int(srid))
+	c_geom := C.geo_from_text(c_geom_str, C.int(srid))
 	g := &Geom{_inner: c_geom}
 	return g
 }

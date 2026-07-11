@@ -17,7 +17,9 @@
 #define gunion_spanset_spanset union_spanset_spanset
 
 
+#include <stddef.h>
 #include "meos.h"
+#include "meos_geo.h"
 #include <stdio.h>
 #include <stdlib.h>
 

@@ -376,7 +376,7 @@ func TFloatValueAtTimestamp[TF TFloat](tf TF, ts time.Time) float64 {
 
 // TFloatDerivative Return the derivative of a temporal number
 func TFloatDerivative[TF TFloat](tf TF) Temporal {
-	return CreateTemporal(C.tfloat_derivative(tf.Inner()))
+	return CreateTemporal(C.temporal_derivative(tf.Inner()))
 }
 
 // TFloatToDegrees Return a temporal number transformed from radians to degrees
@@ -391,7 +391,7 @@ func TFloatToRadians[TF TFloat](tf TF) Temporal {
 
 // TFloatRound Return a temporal float with the precision of the values set to a number of decimal places
 func TFloatRound[TF TFloat](tf TF, max_decimals int) Temporal {
-	return CreateTemporal(C.tfloat_round(tf.Inner(), C.int(max_decimals)))
+	return CreateTemporal(C.temporal_round(tf.Inner(), C.int(max_decimals)))
 }
 
 // TFloatShiftValue Return a temporal integer whose value dimension is shifted by a value
@@ -465,7 +465,7 @@ func DivFloatTFloat[TF TFloat](value float64, tf TF) Temporal {
 
 // DistanceTFloatFloat returns the temporal distance between a temporal float and a constant float.
 func DistanceTFloatFloat[TF TFloat](tf TF, value float64) Temporal {
-	c_temp := C.distance_tfloat_float(tf.Inner(), C.double(value))
+	c_temp := C.tdistance_tfloat_float(tf.Inner(), C.double(value))
 	return CreateTemporal(c_temp)
 }
 
