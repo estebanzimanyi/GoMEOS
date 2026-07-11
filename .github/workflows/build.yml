@@ -1,0 +1,76 @@
+name: build
+
+# Derive the MEOS catalog and the all-families libmeos from a single
+# MobilityDB commit via the shared provision-meos action (the same derivation
+# JMEOS / Spark / PyMEOS-CFFI consume), regenerate the flat FFI functions
+# package from that catalog, and prove the committed generated code is in sync
+# with it. No MEOS header is parsed in this repository: the functions package
+# is a projection of the catalog, and cgo only compiles it against the
+# installed libmeos. The catalog itself is never committed — it is derived
+# here from MobilityDB.
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Provision catalog + build GoMEOS (Linux, all families)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Provision MEOS (catalog + all-families libmeos)
+        id: provision
+        uses: MobilityDB/MEOS-API/.github/actions/provision-meos@master
+        with:
+          mobilitydb-ref: master
+          build-libmeos: "true"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      - name: Stage the derived catalog for the generator
+        run: cp "${{ steps.provision.outputs.catalog-path }}" tools/meos-idl.json
+
+      - name: Regenerate the functions package from the catalog
+        run: python3 tools/codegen.py
+
+      - name: Report drift between the committed and freshly derived functions package
+        run: |
+          # Informational only: CI builds and tests the FRESHLY regenerated
+          # functions/ above, so a drift against the committed snapshot never
+          # fails the build (MobilityDB master moves independently of this repo).
+          # The committed functions/ is a convenience snapshot for `go get`
+          # consumers; refresh it by running 'python3 tools/codegen.py' against a
+          # freshly derived meos-idl.json and committing the result.
+          if ! git diff --quiet -- functions/; then
+            echo "::notice::functions/ differs from the freshly derived catalog (snapshot lags MobilityDB master):"
+            git diff --stat -- functions/
+          else
+            echo "functions/ snapshot is in sync with the derived catalog."
+          fi
+
+      - name: Build the generated functions package against the all-families libmeos
+        env:
+          CGO_CFLAGS: -I/usr/local/include -I/usr/include/h3
+          CGO_LDFLAGS: -L/usr/local/lib -lmeos
+          LD_LIBRARY_PATH: /usr/local/lib
+        run: go build ./functions
+
+      - name: Run the portable-parity gate
+        env:
+          CGO_ENABLED: "0"
+        run: go test ./tools/parity/

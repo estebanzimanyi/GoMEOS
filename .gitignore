@@ -1,2 +1,6 @@
 cgo_flag_config.go
 /test
+# Derived MEOS catalog: generated in CI from MobilityDB via the shared
+# provision-meos action (MEOS-API run.py), never committed. The flat FFI
+# functions package is projected from it and IS committed.
+tools/meos-idl.json

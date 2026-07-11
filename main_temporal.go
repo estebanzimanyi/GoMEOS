@@ -242,7 +242,7 @@ func TemporalTPrecision[T Temporal](temp T, duration timeutil.Timedelta, start t
 // TemporalAppendTInstant Append an instant to a temporal value
 func TemporalAppendTInstant[T Temporal, TI TInstant](temp T, inst TI, max_dist float64, max_time timeutil.Timedelta, expand bool) Temporal {
 	m := TimeDeltaToInterval(max_time)
-	res := C.temporal_append_tinstant(temp.Inner(), C.cast_temporal_to_tinstant(inst.Inner()), C.double(max_dist), &m, C.bool(expand))
+	res := C.temporal_append_tinstant(temp.Inner(), C.cast_temporal_to_tinstant(inst.Inner()), C.interpType(C.INTERP_NONE), C.double(max_dist), &m, C.bool(expand))
 	return CreateTemporal(res)
 }
 

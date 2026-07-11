@@ -159,7 +159,7 @@ func TNumberDeltaValue[TN TNumber](tn TN) Temporal {
 
 // DistanceTNumberTNumber returns the temporal distance between two temporal numbers.
 func DistanceTNumberTNumber[TN1 TNumber, TN2 TNumber](tn1 TN1, tn2 TN2) Temporal {
-	c_temp := C.distance_tnumber_tnumber(tn1.Inner(), tn2.Inner())
+	c_temp := C.tdistance_tnumber_tnumber(tn1.Inner(), tn2.Inner())
 	return CreateTemporal(c_temp)
 }
 
