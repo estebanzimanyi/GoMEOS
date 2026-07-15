@@ -25,11 +25,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Resolve the MEOS source commit
+        id: meos
+        # The MEOS catalog (meos-idl.json) and the libmeos build are derived from one
+        # upstream MobilityDB commit, recorded once in tools/meos-source-commit.txt. CI
+        # reads it so the derived catalog and the native library stay in lockstep with
+        # the pinned surface — bumping the surface is a single edit there, no SHA duplicated.
+        run: echo "sha=$(tr -d '[:space:]' < tools/meos-source-commit.txt)" >> "$GITHUB_OUTPUT"
+
       - name: Provision MEOS (catalog + all-families libmeos)
         id: provision
         uses: MobilityDB/MEOS-API/.github/actions/provision-meos@master
         with:
-          mobilitydb-ref: master
+          mobilitydb-ref: ${{ steps.meos.outputs.sha }}
           build-libmeos: "true"
 
       - name: Setup Python
