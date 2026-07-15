@@ -39,7 +39,6 @@ HEADER_FILES = [
     "meos_quadbin.h",
     "meos_json.h",
     "meos_pointcloud.h",
-    "meos_arrow.h",
 ]
 
 # Forward-declared opaque types we never wrap (mirrors the cdef skip list
@@ -285,15 +284,6 @@ def _strip_qualifiers(c_type: str) -> tuple[str, int]:
     return s.replace("*", "").strip(), stars
 
 
-# Arrow C Data Interface structs cross the cgo boundary as opaque pointers: the
-# caller owns the ArrowSchema/ArrowArray (zero-copy interop), so they map to
-# unsafe.Pointer, cast to the concrete C struct at the call site.
-_ARROW_STRUCTS = {
-    "struct ArrowSchema": "C.struct_ArrowSchema",
-    "struct ArrowArray": "C.struct_ArrowArray",
-}
-
-
 def _go_type_for(c_type: str) -> tuple[str | None, str | None, str | None]:
     """Look up a C type in the mapping tables.
 
@@ -314,8 +304,6 @@ def _go_type_for(c_type: str) -> tuple[str | None, str | None, str | None]:
         # Pass through the wrapper as an input; convert back as a return.
         c_cast = "$x.Inner()" if not go_type.startswith("*") else "$x._inner"
         return go_type, c_cast, ctor.replace("$res", "$x")
-    if stars == 1 and base in _ARROW_STRUCTS:
-        return "unsafe.Pointer", f"(*{_ARROW_STRUCTS[base]})($x)", None
     # JMEOS-flat fallback: any remaining pointer (an array ``T **``, a scalar
     # out-pointer, a ``void *``) is an opaque handle -- JMEOS maps every such
     # pointer to a raw ``Pointer`` and never unpacks it (the array->collection
@@ -971,10 +959,10 @@ _CGO_FILE = """package functions
 // sync with MobilityDB CMakeLists.txt's ``if(ALL)`` loop (alphabetical). The
 // families expose external library types (H3's h3api.h) through their own
 // headers, so their include dirs are added too.
-#cgo darwin CFLAGS: -I/opt/homebrew/include -I/opt/homebrew/include/h3 -DMEOS=1 -DARROW=1 -DCBUFFER=1 -DH3=1 -DJSON=1 -DNPOINT=1 -DPOINTCLOUD=1 -DPOSE=1 -DQUADBIN=1 -DRASTER=1 -DRGEO=1
+#cgo darwin CFLAGS: -I/opt/homebrew/include -I/opt/homebrew/include/h3 -DMEOS=1 -DCBUFFER=1 -DH3=1 -DJSON=1 -DNPOINT=1 -DPOINTCLOUD=1 -DPOSE=1 -DQUADBIN=1 -DRASTER=1 -DRGEO=1
 #cgo darwin LDFLAGS: -L/opt/homebrew/lib -lmeos -Wl,-rpath,/opt/homebrew/lib
 
-#cgo linux CFLAGS: -I/usr/local/include/ -I/usr/include/h3 -DMEOS=1 -DARROW=1 -DCBUFFER=1 -DH3=1 -DJSON=1 -DNPOINT=1 -DPOINTCLOUD=1 -DPOSE=1 -DQUADBIN=1 -DRASTER=1 -DRGEO=1
+#cgo linux CFLAGS: -I/usr/local/include/ -I/usr/include/h3 -DMEOS=1 -DCBUFFER=1 -DH3=1 -DJSON=1 -DNPOINT=1 -DPOINTCLOUD=1 -DPOSE=1 -DQUADBIN=1 -DRASTER=1 -DRGEO=1
 #cgo linux LDFLAGS: -L/usr/local/lib -lmeos -Wl,-rpath,/usr/local/lib
 
 #include <stddef.h>
@@ -991,7 +979,6 @@ _CGO_FILE = """package functions
 #include "meos_quadbin.h"
 #include "meos_json.h"
 #include "meos_pointcloud.h"
-#include "meos_arrow.h"
 */
 import "C"
 """
@@ -1013,7 +1000,6 @@ _PER_HEADER_PREAMBLE = """package functions
 #include "meos_quadbin.h"
 #include "meos_json.h"
 #include "meos_pointcloud.h"
-#include "meos_arrow.h"
 */
 import "C"
 import (
