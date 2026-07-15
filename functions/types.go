@@ -15,7 +15,6 @@ package functions
 #include "meos_quadbin.h"
 #include "meos_json.h"
 #include "meos_pointcloud.h"
-#include "meos_arrow.h"
 */
 import "C"
 import (

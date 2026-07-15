@@ -15,7 +15,6 @@ package functions
 #include "meos_quadbin.h"
 #include "meos_json.h"
 #include "meos_pointcloud.h"
-#include "meos_arrow.h"
 
 // cgo reads C.union_* as a union TYPE; alias the union operators so C.g<name> resolves them as functions.
 #define gunion_bigint_set union_bigint_set

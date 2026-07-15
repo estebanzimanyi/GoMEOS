@@ -7,10 +7,10 @@ package functions
 // sync with MobilityDB CMakeLists.txt's ``if(ALL)`` loop (alphabetical). The
 // families expose external library types (H3's h3api.h) through their own
 // headers, so their include dirs are added too.
-#cgo darwin CFLAGS: -I/opt/homebrew/include -I/opt/homebrew/include/h3 -DMEOS=1 -DARROW=1 -DCBUFFER=1 -DH3=1 -DJSON=1 -DNPOINT=1 -DPOINTCLOUD=1 -DPOSE=1 -DQUADBIN=1 -DRASTER=1 -DRGEO=1
+#cgo darwin CFLAGS: -I/opt/homebrew/include -I/opt/homebrew/include/h3 -DMEOS=1 -DCBUFFER=1 -DH3=1 -DJSON=1 -DNPOINT=1 -DPOINTCLOUD=1 -DPOSE=1 -DQUADBIN=1 -DRASTER=1 -DRGEO=1
 #cgo darwin LDFLAGS: -L/opt/homebrew/lib -lmeos -Wl,-rpath,/opt/homebrew/lib
 
-#cgo linux CFLAGS: -I/usr/local/include/ -I/usr/include/h3 -DMEOS=1 -DARROW=1 -DCBUFFER=1 -DH3=1 -DJSON=1 -DNPOINT=1 -DPOINTCLOUD=1 -DPOSE=1 -DQUADBIN=1 -DRASTER=1 -DRGEO=1
+#cgo linux CFLAGS: -I/usr/local/include/ -I/usr/include/h3 -DMEOS=1 -DCBUFFER=1 -DH3=1 -DJSON=1 -DNPOINT=1 -DPOINTCLOUD=1 -DPOSE=1 -DQUADBIN=1 -DRASTER=1 -DRGEO=1
 #cgo linux LDFLAGS: -L/usr/local/lib -lmeos -Wl,-rpath,/usr/local/lib
 
 #include <stddef.h>
@@ -27,6 +27,5 @@ package functions
 #include "meos_quadbin.h"
 #include "meos_json.h"
 #include "meos_pointcloud.h"
-#include "meos_arrow.h"
 */
 import "C"
