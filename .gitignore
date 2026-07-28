@@ -4,3 +4,6 @@ cgo_flag_config.go
 # provision-meos action (MEOS-API run.py), never committed. The flat FFI
 # functions package is projected from it and IS committed.
 tools/meos-idl.json
+
+# tools/refresh-from-master.sh scratch (sibling clones + libmeos prefix).
+.meos-chain/
