@@ -86,920 +86,1440 @@ import (
 var _ = unsafe.Pointer(nil)
 
 // TrgeometryIn wraps MEOS C function trgeometry_in.
-func TrgeometryIn(str string) *Temporal {
+func TrgeometryIn(str string) (_r0 *Temporal, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.trgeometry_in(_c_str)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryFromMFJSON wraps MEOS C function trgeometry_from_mfjson.
-func TrgeometryFromMFJSON(mfjson string) *Temporal {
+func TrgeometryFromMFJSON(mfjson string) (_r0 *Temporal, _err error) {
 	_c_mfjson := C.CString(mfjson)
 	defer C.free(unsafe.Pointer(_c_mfjson))
+	C.meos_errno_reset()
 	_cret := C.trgeometry_from_mfjson(_c_mfjson)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryOut wraps MEOS C function trgeometry_out.
-func TrgeometryOut(temp *Temporal) string {
+func TrgeometryOut(temp *Temporal) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_out(temp._inner)
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // TrgeometryAsText wraps MEOS C function trgeometry_as_text.
-func TrgeometryAsText(temp *Temporal, maxdd int) string {
+func TrgeometryAsText(temp *Temporal, maxdd int) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_as_text(temp._inner, C.int(maxdd))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // TrgeometryAsEWKT wraps MEOS C function trgeometry_as_ewkt.
-func TrgeometryAsEWKT(temp *Temporal, maxdd int) string {
+func TrgeometryAsEWKT(temp *Temporal, maxdd int) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_as_ewkt(temp._inner, C.int(maxdd))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // TrgeometryinstMake wraps MEOS C function trgeometryinst_make.
-func TrgeometryinstMake(geom *Geom, pose *Pose, t int64) *TInstant {
+func TrgeometryinstMake(geom *Geom, pose *Pose, t int64) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometryinst_make(geom._inner, pose._inner, C.TimestampTz(t))
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TrgeometryseqMake wraps MEOS C function trgeometryseq_make.
-func TrgeometryseqMake(geom *Geom, instants unsafe.Pointer, count int, lower_inc bool, upper_inc bool, interp Interpolation, normalize bool) *TSequence {
+func TrgeometryseqMake(geom *Geom, instants unsafe.Pointer, count int, lower_inc bool, upper_inc bool, interp Interpolation, normalize bool) (_r0 *TSequence, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometryseq_make(geom._inner, (**C.TInstant)(unsafe.Pointer(instants)), C.int(count), C.bool(lower_inc), C.bool(upper_inc), C.interpType(interp), C.bool(normalize))
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TrgeometryseqsetMake wraps MEOS C function trgeometryseqset_make.
-func TrgeometryseqsetMake(geom *Geom, sequences unsafe.Pointer, count int, normalize bool) *TSequenceSet {
+func TrgeometryseqsetMake(geom *Geom, sequences unsafe.Pointer, count int, normalize bool) (_r0 *TSequenceSet, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometryseqset_make(geom._inner, (**C.TSequence)(unsafe.Pointer(sequences)), C.int(count), C.bool(normalize))
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TrgeometryseqsetMakeGaps wraps MEOS C function trgeometryseqset_make_gaps.
-func TrgeometryseqsetMakeGaps(geom *Geom, instants unsafe.Pointer, count int, interp Interpolation, maxt *Interval, maxdist float64) *TSequenceSet {
+func TrgeometryseqsetMakeGaps(geom *Geom, instants unsafe.Pointer, count int, interp Interpolation, maxt *Interval, maxdist float64) (_r0 *TSequenceSet, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometryseqset_make_gaps(geom._inner, (**C.TInstant)(unsafe.Pointer(instants)), C.int(count), C.interpType(interp), maxt._inner, C.double(maxdist))
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // GeometryTposeToTrgeometry wraps MEOS C function geometry_tpose_to_trgeometry.
-func GeometryTposeToTrgeometry(gs *Geom, temp *Temporal) *Temporal {
+func GeometryTposeToTrgeometry(gs *Geom, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.geometry_tpose_to_trgeometry(gs._inner, temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryToTpose wraps MEOS C function trgeometry_to_tpose.
-func TrgeometryToTpose(temp *Temporal) *Temporal {
+func TrgeometryToTpose(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_to_tpose(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryToTgeompoint wraps MEOS C function trgeometry_to_tgeompoint.
-func TrgeometryToTgeompoint(temp *Temporal) *Temporal {
+func TrgeometryToTgeompoint(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_to_tgeompoint(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryToTgeometry wraps MEOS C function trgeometry_to_tgeometry.
-func TrgeometryToTgeometry(temp *Temporal) *Temporal {
+func TrgeometryToTgeometry(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_to_tgeometry(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryEndInstant wraps MEOS C function trgeometry_end_instant.
-func TrgeometryEndInstant(temp *Temporal) *TInstant {
+func TrgeometryEndInstant(temp *Temporal) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_end_instant(temp._inner)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TrgeometryEndSequence wraps MEOS C function trgeometry_end_sequence.
-func TrgeometryEndSequence(temp *Temporal) *TSequence {
+func TrgeometryEndSequence(temp *Temporal) (_r0 *TSequence, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_end_sequence(temp._inner)
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TrgeometryEndValue wraps MEOS C function trgeometry_end_value.
-func TrgeometryEndValue(temp *Temporal) *Geom {
+func TrgeometryEndValue(temp *Temporal) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_end_value(temp._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // TrgeometryGeom wraps MEOS C function trgeometry_geom.
-func TrgeometryGeom(temp *Temporal) *Geom {
+func TrgeometryGeom(temp *Temporal) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_geom(temp._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // TrgeometryInstantN wraps MEOS C function trgeometry_instant_n.
-func TrgeometryInstantN(temp *Temporal, n int) *TInstant {
+func TrgeometryInstantN(temp *Temporal, n int) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_instant_n(temp._inner, C.int(n))
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TrgeometryInstants wraps MEOS C function trgeometry_instants.
-func TrgeometryInstants(temp *Temporal, count unsafe.Pointer) unsafe.Pointer {
+func TrgeometryInstants(temp *Temporal, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_instants(temp._inner, (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // TrgeometryPoints wraps MEOS C function trgeometry_points.
-func TrgeometryPoints(temp *Temporal) *Set {
+func TrgeometryPoints(temp *Temporal) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_points(temp._inner)
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // TrgeometryRotation wraps MEOS C function trgeometry_rotation.
-func TrgeometryRotation(temp *Temporal) *Temporal {
+func TrgeometryRotation(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_rotation(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometrySegments wraps MEOS C function trgeometry_segments.
-func TrgeometrySegments(temp *Temporal, count unsafe.Pointer) unsafe.Pointer {
+func TrgeometrySegments(temp *Temporal, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_segments(temp._inner, (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // TrgeometrySequenceN wraps MEOS C function trgeometry_sequence_n.
-func TrgeometrySequenceN(temp *Temporal, i int) *TSequence {
+func TrgeometrySequenceN(temp *Temporal, i int) (_r0 *TSequence, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_sequence_n(temp._inner, C.int(i))
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TrgeometrySequences wraps MEOS C function trgeometry_sequences.
-func TrgeometrySequences(temp *Temporal, count unsafe.Pointer) unsafe.Pointer {
+func TrgeometrySequences(temp *Temporal, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_sequences(temp._inner, (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // TrgeometryStartInstant wraps MEOS C function trgeometry_start_instant.
-func TrgeometryStartInstant(temp *Temporal) *TInstant {
+func TrgeometryStartInstant(temp *Temporal) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_start_instant(temp._inner)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TrgeometryStartSequence wraps MEOS C function trgeometry_start_sequence.
-func TrgeometryStartSequence(temp *Temporal) *TSequence {
+func TrgeometryStartSequence(temp *Temporal) (_r0 *TSequence, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_start_sequence(temp._inner)
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TrgeometryStartValue wraps MEOS C function trgeometry_start_value.
-func TrgeometryStartValue(temp *Temporal) *Geom {
+func TrgeometryStartValue(temp *Temporal) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_start_value(temp._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // TrgeometryValueN wraps MEOS C function trgeometry_value_n.
-func TrgeometryValueN(temp *Temporal, n int) (bool, *Geom) {
+func TrgeometryValueN(temp *Temporal, n int) (_r0 bool, _r1 *Geom, _err error) {
 	var _out_result *C.GSERIALIZED
+	C.meos_errno_reset()
 	_cret := C.trgeometry_value_n(temp._inner, C.int(n), &_out_result)
-	return bool(_cret), &Geom{_inner: _out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), &Geom{_inner: _out_result}, nil
 }
 
 
 // TrgeometryTraversedArea wraps MEOS C function trgeometry_traversed_area.
-func TrgeometryTraversedArea(temp *Temporal, unary_union bool) *Geom {
+func TrgeometryTraversedArea(temp *Temporal, unary_union bool) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_traversed_area(temp._inner, C.bool(unary_union))
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // TrgeometryCentroid wraps MEOS C function trgeometry_centroid.
-func TrgeometryCentroid(temp *Temporal) *Temporal {
+func TrgeometryCentroid(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_centroid(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryConvexHull wraps MEOS C function trgeometry_convex_hull.
-func TrgeometryConvexHull(temp *Temporal) *Geom {
+func TrgeometryConvexHull(temp *Temporal) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_convex_hull(temp._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // TrgeometryBodyPointTrajectory wraps MEOS C function trgeometry_body_point_trajectory.
-func TrgeometryBodyPointTrajectory(temp *Temporal, gs *Geom) *Temporal {
+func TrgeometryBodyPointTrajectory(temp *Temporal, gs *Geom) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_body_point_trajectory(temp._inner, gs._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometrySpaceBoxes wraps MEOS C function trgeometry_space_boxes.
-func TrgeometrySpaceBoxes(temp *Temporal, xsize float64, ysize float64, zsize float64, sorigin *Geom, bitmatrix bool, border_inc bool, count unsafe.Pointer) *STBox {
+func TrgeometrySpaceBoxes(temp *Temporal, xsize float64, ysize float64, zsize float64, sorigin *Geom, bitmatrix bool, border_inc bool, count unsafe.Pointer) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_space_boxes(temp._inner, C.double(xsize), C.double(ysize), C.double(zsize), sorigin._inner, C.bool(bitmatrix), C.bool(border_inc), (*C.int)(unsafe.Pointer(count)))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // TrgeometrySpaceTimeBoxes wraps MEOS C function trgeometry_space_time_boxes.
-func TrgeometrySpaceTimeBoxes(temp *Temporal, xsize float64, ysize float64, zsize float64, duration *Interval, sorigin *Geom, torigin int64, bitmatrix bool, border_inc bool, count unsafe.Pointer) *STBox {
+func TrgeometrySpaceTimeBoxes(temp *Temporal, xsize float64, ysize float64, zsize float64, duration *Interval, sorigin *Geom, torigin int64, bitmatrix bool, border_inc bool, count unsafe.Pointer) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_space_time_boxes(temp._inner, C.double(xsize), C.double(ysize), C.double(zsize), duration._inner, sorigin._inner, C.TimestampTz(torigin), C.bool(bitmatrix), C.bool(border_inc), (*C.int)(unsafe.Pointer(count)))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // TrgeometryStboxes wraps MEOS C function trgeometry_stboxes.
-func TrgeometryStboxes(temp *Temporal, count unsafe.Pointer) *STBox {
+func TrgeometryStboxes(temp *Temporal, count unsafe.Pointer) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_stboxes(temp._inner, (*C.int)(unsafe.Pointer(count)))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // TrgeometrySplitNStboxes wraps MEOS C function trgeometry_split_n_stboxes.
-func TrgeometrySplitNStboxes(temp *Temporal, box_count int, count unsafe.Pointer) *STBox {
+func TrgeometrySplitNStboxes(temp *Temporal, box_count int, count unsafe.Pointer) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_split_n_stboxes(temp._inner, C.int(box_count), (*C.int)(unsafe.Pointer(count)))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // TrgeometrySplitEachNStboxes wraps MEOS C function trgeometry_split_each_n_stboxes.
-func TrgeometrySplitEachNStboxes(temp *Temporal, elem_count int, count unsafe.Pointer) *STBox {
+func TrgeometrySplitEachNStboxes(temp *Temporal, elem_count int, count unsafe.Pointer) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_split_each_n_stboxes(temp._inner, C.int(elem_count), (*C.int)(unsafe.Pointer(count)))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // TrgeometryHausdorffDistance wraps MEOS C function trgeometry_hausdorff_distance.
-func TrgeometryHausdorffDistance(temp1 *Temporal, temp2 *Temporal) float64 {
+func TrgeometryHausdorffDistance(temp1 *Temporal, temp2 *Temporal) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_hausdorff_distance(temp1._inner, temp2._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // TrgeometryFrechetDistance wraps MEOS C function trgeometry_frechet_distance.
-func TrgeometryFrechetDistance(temp1 *Temporal, temp2 *Temporal) float64 {
+func TrgeometryFrechetDistance(temp1 *Temporal, temp2 *Temporal) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_frechet_distance(temp1._inner, temp2._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // TrgeometryDyntimewarpDistance wraps MEOS C function trgeometry_dyntimewarp_distance.
-func TrgeometryDyntimewarpDistance(temp1 *Temporal, temp2 *Temporal) float64 {
+func TrgeometryDyntimewarpDistance(temp1 *Temporal, temp2 *Temporal) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_dyntimewarp_distance(temp1._inner, temp2._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // TrgeometryFrechetPath wraps MEOS C function trgeometry_frechet_path.
-func TrgeometryFrechetPath(temp1 *Temporal, temp2 *Temporal, count unsafe.Pointer) *Match {
+func TrgeometryFrechetPath(temp1 *Temporal, temp2 *Temporal, count unsafe.Pointer) (_r0 *Match, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_frechet_path(temp1._inner, temp2._inner, (*C.int)(unsafe.Pointer(count)))
-	return &Match{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Match{_inner: _cret}, nil
 }
 
 
 // TrgeometryDyntimewarpPath wraps MEOS C function trgeometry_dyntimewarp_path.
-func TrgeometryDyntimewarpPath(temp1 *Temporal, temp2 *Temporal, count unsafe.Pointer) *Match {
+func TrgeometryDyntimewarpPath(temp1 *Temporal, temp2 *Temporal, count unsafe.Pointer) (_r0 *Match, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_dyntimewarp_path(temp1._inner, temp2._inner, (*C.int)(unsafe.Pointer(count)))
-	return &Match{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Match{_inner: _cret}, nil
 }
 
 
 // TrgeometryLength wraps MEOS C function trgeometry_length.
-func TrgeometryLength(temp *Temporal) float64 {
+func TrgeometryLength(temp *Temporal) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_length(temp._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // TrgeometryCumulativeLength wraps MEOS C function trgeometry_cumulative_length.
-func TrgeometryCumulativeLength(temp *Temporal) *Temporal {
+func TrgeometryCumulativeLength(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_cumulative_length(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometrySpeed wraps MEOS C function trgeometry_speed.
-func TrgeometrySpeed(temp *Temporal) *Temporal {
+func TrgeometrySpeed(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_speed(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryTwcentroid wraps MEOS C function trgeometry_twcentroid.
-func TrgeometryTwcentroid(temp *Temporal) *Geom {
+func TrgeometryTwcentroid(temp *Temporal) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_twcentroid(temp._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // TrgeometryAppendTinstant wraps MEOS C function trgeometry_append_tinstant.
-func TrgeometryAppendTinstant(temp *Temporal, inst *TInstant, interp Interpolation, maxdist float64, maxt *Interval, expand bool) *Temporal {
+func TrgeometryAppendTinstant(temp *Temporal, inst *TInstant, interp Interpolation, maxdist float64, maxt *Interval, expand bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_append_tinstant(temp._inner, inst._inner, C.interpType(interp), C.double(maxdist), maxt._inner, C.bool(expand))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryAppendTsequence wraps MEOS C function trgeometry_append_tsequence.
-func TrgeometryAppendTsequence(temp *Temporal, seq *TSequence, expand bool) *Temporal {
+func TrgeometryAppendTsequence(temp *Temporal, seq *TSequence, expand bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_append_tsequence(temp._inner, seq._inner, C.bool(expand))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryDeleteTimestamptz wraps MEOS C function trgeometry_delete_timestamptz.
-func TrgeometryDeleteTimestamptz(temp *Temporal, t int64, connect bool) *Temporal {
+func TrgeometryDeleteTimestamptz(temp *Temporal, t int64, connect bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_delete_timestamptz(temp._inner, C.TimestampTz(t), C.bool(connect))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryDeleteTstzset wraps MEOS C function trgeometry_delete_tstzset.
-func TrgeometryDeleteTstzset(temp *Temporal, s *Set, connect bool) *Temporal {
+func TrgeometryDeleteTstzset(temp *Temporal, s *Set, connect bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_delete_tstzset(temp._inner, s._inner, C.bool(connect))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryDeleteTstzspan wraps MEOS C function trgeometry_delete_tstzspan.
-func TrgeometryDeleteTstzspan(temp *Temporal, s *Span, connect bool) *Temporal {
+func TrgeometryDeleteTstzspan(temp *Temporal, s *Span, connect bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_delete_tstzspan(temp._inner, s._inner, C.bool(connect))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryDeleteTstzspanset wraps MEOS C function trgeometry_delete_tstzspanset.
-func TrgeometryDeleteTstzspanset(temp *Temporal, ss *SpanSet, connect bool) *Temporal {
+func TrgeometryDeleteTstzspanset(temp *Temporal, ss *SpanSet, connect bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_delete_tstzspanset(temp._inner, ss._inner, C.bool(connect))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryRound wraps MEOS C function trgeometry_round.
-func TrgeometryRound(temp *Temporal, maxdd int) *Temporal {
+func TrgeometryRound(temp *Temporal, maxdd int) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_round(temp._inner, C.int(maxdd))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometrySetInterp wraps MEOS C function trgeometry_set_interp.
-func TrgeometrySetInterp(temp *Temporal, interp Interpolation) *Temporal {
+func TrgeometrySetInterp(temp *Temporal, interp Interpolation) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_set_interp(temp._inner, C.interpType(interp))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryAsTinstant wraps MEOS C function trgeometry_as_tinstant.
-func TrgeometryAsTinstant(temp *Temporal) *TInstant {
+func TrgeometryAsTinstant(temp *Temporal) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_as_tinstant(temp._inner)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TrgeometryAsTsequence wraps MEOS C function trgeometry_as_tsequence.
-func TrgeometryAsTsequence(temp *Temporal, interp_str string) *TSequence {
+func TrgeometryAsTsequence(temp *Temporal, interp_str string) (_r0 *TSequence, _err error) {
 	_c_interp_str := C.CString(interp_str)
 	defer C.free(unsafe.Pointer(_c_interp_str))
+	C.meos_errno_reset()
 	_cret := C.trgeometry_as_tsequence(temp._inner, _c_interp_str)
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TrgeometryAsTsequenceset wraps MEOS C function trgeometry_as_tsequenceset.
-func TrgeometryAsTsequenceset(temp *Temporal, interp_str string) *TSequenceSet {
+func TrgeometryAsTsequenceset(temp *Temporal, interp_str string) (_r0 *TSequenceSet, _err error) {
 	_c_interp_str := C.CString(interp_str)
 	defer C.free(unsafe.Pointer(_c_interp_str))
+	C.meos_errno_reset()
 	_cret := C.trgeometry_as_tsequenceset(temp._inner, _c_interp_str)
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TrgeometryAfterTimestamptz wraps MEOS C function trgeometry_after_timestamptz.
-func TrgeometryAfterTimestamptz(temp *Temporal, t int64, strict bool) *Temporal {
+func TrgeometryAfterTimestamptz(temp *Temporal, t int64, strict bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_after_timestamptz(temp._inner, C.TimestampTz(t), C.bool(strict))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryBeforeTimestamptz wraps MEOS C function trgeometry_before_timestamptz.
-func TrgeometryBeforeTimestamptz(temp *Temporal, t int64, strict bool) *Temporal {
+func TrgeometryBeforeTimestamptz(temp *Temporal, t int64, strict bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_before_timestamptz(temp._inner, C.TimestampTz(t), C.bool(strict))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryRestrictValues wraps MEOS C function trgeometry_restrict_values.
-func TrgeometryRestrictValues(temp *Temporal, s *Set, atfunc bool) *Temporal {
+func TrgeometryRestrictValues(temp *Temporal, s *Set, atfunc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_restrict_values(temp._inner, s._inner, C.bool(atfunc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryRestrictTimestamptz wraps MEOS C function trgeometry_restrict_timestamptz.
-func TrgeometryRestrictTimestamptz(temp *Temporal, t int64, atfunc bool) *Temporal {
+func TrgeometryRestrictTimestamptz(temp *Temporal, t int64, atfunc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_restrict_timestamptz(temp._inner, C.TimestampTz(t), C.bool(atfunc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryRestrictTstzset wraps MEOS C function trgeometry_restrict_tstzset.
-func TrgeometryRestrictTstzset(temp *Temporal, s *Set, atfunc bool) *Temporal {
+func TrgeometryRestrictTstzset(temp *Temporal, s *Set, atfunc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_restrict_tstzset(temp._inner, s._inner, C.bool(atfunc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryRestrictTstzspan wraps MEOS C function trgeometry_restrict_tstzspan.
-func TrgeometryRestrictTstzspan(temp *Temporal, s *Span, atfunc bool) *Temporal {
+func TrgeometryRestrictTstzspan(temp *Temporal, s *Span, atfunc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_restrict_tstzspan(temp._inner, s._inner, C.bool(atfunc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryRestrictTstzspanset wraps MEOS C function trgeometry_restrict_tstzspanset.
-func TrgeometryRestrictTstzspanset(temp *Temporal, ss *SpanSet, atfunc bool) *Temporal {
+func TrgeometryRestrictTstzspanset(temp *Temporal, ss *SpanSet, atfunc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_restrict_tstzspanset(temp._inner, ss._inner, C.bool(atfunc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryAtGeom wraps MEOS C function trgeometry_at_geom.
-func TrgeometryAtGeom(temp *Temporal, gs *Geom) *Temporal {
+func TrgeometryAtGeom(temp *Temporal, gs *Geom) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_at_geom(temp._inner, gs._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryMinusGeom wraps MEOS C function trgeometry_minus_geom.
-func TrgeometryMinusGeom(temp *Temporal, gs *Geom) *Temporal {
+func TrgeometryMinusGeom(temp *Temporal, gs *Geom) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_minus_geom(temp._inner, gs._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryAtSTBOX wraps MEOS C function trgeometry_at_stbox.
-func TrgeometryAtSTBOX(temp *Temporal, box *STBox, border_inc bool) *Temporal {
+func TrgeometryAtSTBOX(temp *Temporal, box *STBox, border_inc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_at_stbox(temp._inner, box._inner, C.bool(border_inc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryMinusSTBOX wraps MEOS C function trgeometry_minus_stbox.
-func TrgeometryMinusSTBOX(temp *Temporal, box *STBox, border_inc bool) *Temporal {
+func TrgeometryMinusSTBOX(temp *Temporal, box *STBox, border_inc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_minus_stbox(temp._inner, box._inner, C.bool(border_inc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryAtValue wraps MEOS C function trgeometry_at_value.
-func TrgeometryAtValue(temp *Temporal, pose *Pose) *Temporal {
+func TrgeometryAtValue(temp *Temporal, pose *Pose) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_at_value(temp._inner, pose._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryMinusValue wraps MEOS C function trgeometry_minus_value.
-func TrgeometryMinusValue(temp *Temporal, pose *Pose) *Temporal {
+func TrgeometryMinusValue(temp *Temporal, pose *Pose) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_minus_value(temp._inner, pose._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryAtValues wraps MEOS C function trgeometry_at_values.
-func TrgeometryAtValues(temp *Temporal, s *Set) *Temporal {
+func TrgeometryAtValues(temp *Temporal, s *Set) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_at_values(temp._inner, s._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryMinusValues wraps MEOS C function trgeometry_minus_values.
-func TrgeometryMinusValues(temp *Temporal, s *Set) *Temporal {
+func TrgeometryMinusValues(temp *Temporal, s *Set) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_minus_values(temp._inner, s._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryAtTimestamptz wraps MEOS C function trgeometry_at_timestamptz.
-func TrgeometryAtTimestamptz(temp *Temporal, t int64) *Temporal {
+func TrgeometryAtTimestamptz(temp *Temporal, t int64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_at_timestamptz(temp._inner, C.TimestampTz(t))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryMinusTimestamptz wraps MEOS C function trgeometry_minus_timestamptz.
-func TrgeometryMinusTimestamptz(temp *Temporal, t int64) *Temporal {
+func TrgeometryMinusTimestamptz(temp *Temporal, t int64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_minus_timestamptz(temp._inner, C.TimestampTz(t))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryAtTstzset wraps MEOS C function trgeometry_at_tstzset.
-func TrgeometryAtTstzset(temp *Temporal, s *Set) *Temporal {
+func TrgeometryAtTstzset(temp *Temporal, s *Set) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_at_tstzset(temp._inner, s._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryMinusTstzset wraps MEOS C function trgeometry_minus_tstzset.
-func TrgeometryMinusTstzset(temp *Temporal, s *Set) *Temporal {
+func TrgeometryMinusTstzset(temp *Temporal, s *Set) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_minus_tstzset(temp._inner, s._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryAtTstzspan wraps MEOS C function trgeometry_at_tstzspan.
-func TrgeometryAtTstzspan(temp *Temporal, s *Span) *Temporal {
+func TrgeometryAtTstzspan(temp *Temporal, s *Span) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_at_tstzspan(temp._inner, s._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryMinusTstzspan wraps MEOS C function trgeometry_minus_tstzspan.
-func TrgeometryMinusTstzspan(temp *Temporal, s *Span) *Temporal {
+func TrgeometryMinusTstzspan(temp *Temporal, s *Span) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_minus_tstzspan(temp._inner, s._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryAtTstzspanset wraps MEOS C function trgeometry_at_tstzspanset.
-func TrgeometryAtTstzspanset(temp *Temporal, ss *SpanSet) *Temporal {
+func TrgeometryAtTstzspanset(temp *Temporal, ss *SpanSet) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_at_tstzspanset(temp._inner, ss._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TrgeometryMinusTstzspanset wraps MEOS C function trgeometry_minus_tstzspanset.
-func TrgeometryMinusTstzspanset(temp *Temporal, ss *SpanSet) *Temporal {
+func TrgeometryMinusTstzspanset(temp *Temporal, ss *SpanSet) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.trgeometry_minus_tstzspanset(temp._inner, ss._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TdistanceTrgeometryGeo wraps MEOS C function tdistance_trgeometry_geo.
-func TdistanceTrgeometryGeo(temp *Temporal, gs *Geom) *Temporal {
+func TdistanceTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tdistance_trgeometry_geo(temp._inner, gs._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TdistanceTrgeometryTpoint wraps MEOS C function tdistance_trgeometry_tpoint.
-func TdistanceTrgeometryTpoint(temp1 *Temporal, temp2 *Temporal) *Temporal {
+func TdistanceTrgeometryTpoint(temp1 *Temporal, temp2 *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tdistance_trgeometry_tpoint(temp1._inner, temp2._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TdistanceTrgeometryTrgeometry wraps MEOS C function tdistance_trgeometry_trgeometry.
-func TdistanceTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) *Temporal {
+func TdistanceTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tdistance_trgeometry_trgeometry(temp1._inner, temp2._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // NadSTBOXTrgeometry wraps MEOS C function nad_stbox_trgeometry.
-func NadSTBOXTrgeometry(box *STBox, temp *Temporal) float64 {
+func NadSTBOXTrgeometry(box *STBox, temp *Temporal) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nad_stbox_trgeometry(box._inner, temp._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // NadTrgeometryGeo wraps MEOS C function nad_trgeometry_geo.
-func NadTrgeometryGeo(temp *Temporal, gs *Geom) float64 {
+func NadTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nad_trgeometry_geo(temp._inner, gs._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // NadTrgeometrySTBOX wraps MEOS C function nad_trgeometry_stbox.
-func NadTrgeometrySTBOX(temp *Temporal, box *STBox) float64 {
+func NadTrgeometrySTBOX(temp *Temporal, box *STBox) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nad_trgeometry_stbox(temp._inner, box._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // NadTrgeometryTpoint wraps MEOS C function nad_trgeometry_tpoint.
-func NadTrgeometryTpoint(temp1 *Temporal, temp2 *Temporal) float64 {
+func NadTrgeometryTpoint(temp1 *Temporal, temp2 *Temporal) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nad_trgeometry_tpoint(temp1._inner, temp2._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // NadTrgeometryTrgeometry wraps MEOS C function nad_trgeometry_trgeometry.
-func NadTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) float64 {
+func NadTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nad_trgeometry_trgeometry(temp1._inner, temp2._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // NaiTrgeometryGeo wraps MEOS C function nai_trgeometry_geo.
-func NaiTrgeometryGeo(temp *Temporal, gs *Geom) *TInstant {
+func NaiTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nai_trgeometry_geo(temp._inner, gs._inner)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // NaiTrgeometryTpoint wraps MEOS C function nai_trgeometry_tpoint.
-func NaiTrgeometryTpoint(temp1 *Temporal, temp2 *Temporal) *TInstant {
+func NaiTrgeometryTpoint(temp1 *Temporal, temp2 *Temporal) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nai_trgeometry_tpoint(temp1._inner, temp2._inner)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // NaiTrgeometryTrgeometry wraps MEOS C function nai_trgeometry_trgeometry.
-func NaiTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) *TInstant {
+func NaiTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nai_trgeometry_trgeometry(temp1._inner, temp2._inner)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // ShortestlineTrgeometryGeo wraps MEOS C function shortestline_trgeometry_geo.
-func ShortestlineTrgeometryGeo(temp *Temporal, gs *Geom) *Geom {
+func ShortestlineTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.shortestline_trgeometry_geo(temp._inner, gs._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // ShortestlineTrgeometryTpoint wraps MEOS C function shortestline_trgeometry_tpoint.
-func ShortestlineTrgeometryTpoint(temp1 *Temporal, temp2 *Temporal) *Geom {
+func ShortestlineTrgeometryTpoint(temp1 *Temporal, temp2 *Temporal) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.shortestline_trgeometry_tpoint(temp1._inner, temp2._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // ShortestlineTrgeometryTrgeometry wraps MEOS C function shortestline_trgeometry_trgeometry.
-func ShortestlineTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) *Geom {
+func ShortestlineTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.shortestline_trgeometry_trgeometry(temp1._inner, temp2._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // AlwaysEqGeoTrgeometry wraps MEOS C function always_eq_geo_trgeometry.
-func AlwaysEqGeoTrgeometry(gs *Geom, temp *Temporal) int {
+func AlwaysEqGeoTrgeometry(gs *Geom, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_eq_geo_trgeometry(gs._inner, temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysEqTrgeometryGeo wraps MEOS C function always_eq_trgeometry_geo.
-func AlwaysEqTrgeometryGeo(temp *Temporal, gs *Geom) int {
+func AlwaysEqTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_eq_trgeometry_geo(temp._inner, gs._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysEqTrgeometryTrgeometry wraps MEOS C function always_eq_trgeometry_trgeometry.
-func AlwaysEqTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) int {
+func AlwaysEqTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_eq_trgeometry_trgeometry(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysNeGeoTrgeometry wraps MEOS C function always_ne_geo_trgeometry.
-func AlwaysNeGeoTrgeometry(gs *Geom, temp *Temporal) int {
+func AlwaysNeGeoTrgeometry(gs *Geom, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_ne_geo_trgeometry(gs._inner, temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysNeTrgeometryGeo wraps MEOS C function always_ne_trgeometry_geo.
-func AlwaysNeTrgeometryGeo(temp *Temporal, gs *Geom) int {
+func AlwaysNeTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_ne_trgeometry_geo(temp._inner, gs._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysNeTrgeometryTrgeometry wraps MEOS C function always_ne_trgeometry_trgeometry.
-func AlwaysNeTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) int {
+func AlwaysNeTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_ne_trgeometry_trgeometry(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverEqGeoTrgeometry wraps MEOS C function ever_eq_geo_trgeometry.
-func EverEqGeoTrgeometry(gs *Geom, temp *Temporal) int {
+func EverEqGeoTrgeometry(gs *Geom, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_eq_geo_trgeometry(gs._inner, temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverEqTrgeometryGeo wraps MEOS C function ever_eq_trgeometry_geo.
-func EverEqTrgeometryGeo(temp *Temporal, gs *Geom) int {
+func EverEqTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_eq_trgeometry_geo(temp._inner, gs._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverEqTrgeometryTrgeometry wraps MEOS C function ever_eq_trgeometry_trgeometry.
-func EverEqTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) int {
+func EverEqTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_eq_trgeometry_trgeometry(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverNeGeoTrgeometry wraps MEOS C function ever_ne_geo_trgeometry.
-func EverNeGeoTrgeometry(gs *Geom, temp *Temporal) int {
+func EverNeGeoTrgeometry(gs *Geom, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_ne_geo_trgeometry(gs._inner, temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverNeTrgeometryGeo wraps MEOS C function ever_ne_trgeometry_geo.
-func EverNeTrgeometryGeo(temp *Temporal, gs *Geom) int {
+func EverNeTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_ne_trgeometry_geo(temp._inner, gs._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverNeTrgeometryTrgeometry wraps MEOS C function ever_ne_trgeometry_trgeometry.
-func EverNeTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) int {
+func EverNeTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_ne_trgeometry_trgeometry(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // TeqGeoTrgeometry wraps MEOS C function teq_geo_trgeometry.
-func TeqGeoTrgeometry(gs *Geom, temp *Temporal) *Temporal {
+func TeqGeoTrgeometry(gs *Geom, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.teq_geo_trgeometry(gs._inner, temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TeqTrgeometryGeo wraps MEOS C function teq_trgeometry_geo.
-func TeqTrgeometryGeo(temp *Temporal, gs *Geom) *Temporal {
+func TeqTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.teq_trgeometry_geo(temp._inner, gs._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TneGeoTrgeometry wraps MEOS C function tne_geo_trgeometry.
-func TneGeoTrgeometry(gs *Geom, temp *Temporal) *Temporal {
+func TneGeoTrgeometry(gs *Geom, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tne_geo_trgeometry(gs._inner, temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TneTrgeometryGeo wraps MEOS C function tne_trgeometry_geo.
-func TneTrgeometryGeo(temp *Temporal, gs *Geom) *Temporal {
+func TneTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tne_trgeometry_geo(temp._inner, gs._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // EcontainsGeoTrgeometry wraps MEOS C function econtains_geo_trgeometry.
-func EcontainsGeoTrgeometry(gs *Geom, temp *Temporal) int {
+func EcontainsGeoTrgeometry(gs *Geom, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.econtains_geo_trgeometry(gs._inner, temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AcontainsGeoTrgeometry wraps MEOS C function acontains_geo_trgeometry.
-func AcontainsGeoTrgeometry(gs *Geom, temp *Temporal) int {
+func AcontainsGeoTrgeometry(gs *Geom, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.acontains_geo_trgeometry(gs._inner, temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EcoversGeoTrgeometry wraps MEOS C function ecovers_geo_trgeometry.
-func EcoversGeoTrgeometry(gs *Geom, temp *Temporal) int {
+func EcoversGeoTrgeometry(gs *Geom, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ecovers_geo_trgeometry(gs._inner, temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AcoversGeoTrgeometry wraps MEOS C function acovers_geo_trgeometry.
-func AcoversGeoTrgeometry(gs *Geom, temp *Temporal) int {
+func AcoversGeoTrgeometry(gs *Geom, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.acovers_geo_trgeometry(gs._inner, temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EcoversTrgeometryGeo wraps MEOS C function ecovers_trgeometry_geo.
-func EcoversTrgeometryGeo(temp *Temporal, gs *Geom) int {
+func EcoversTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ecovers_trgeometry_geo(temp._inner, gs._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AcoversTrgeometryGeo wraps MEOS C function acovers_trgeometry_geo.
-func AcoversTrgeometryGeo(temp *Temporal, gs *Geom) int {
+func AcoversTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.acovers_trgeometry_geo(temp._inner, gs._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EdisjointTrgeometryGeo wraps MEOS C function edisjoint_trgeometry_geo.
-func EdisjointTrgeometryGeo(temp *Temporal, gs *Geom) int {
+func EdisjointTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.edisjoint_trgeometry_geo(temp._inner, gs._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AdisjointTrgeometryGeo wraps MEOS C function adisjoint_trgeometry_geo.
-func AdisjointTrgeometryGeo(temp *Temporal, gs *Geom) int {
+func AdisjointTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.adisjoint_trgeometry_geo(temp._inner, gs._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EintersectsTrgeometryGeo wraps MEOS C function eintersects_trgeometry_geo.
-func EintersectsTrgeometryGeo(temp *Temporal, gs *Geom) int {
+func EintersectsTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.eintersects_trgeometry_geo(temp._inner, gs._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AintersectsTrgeometryGeo wraps MEOS C function aintersects_trgeometry_geo.
-func AintersectsTrgeometryGeo(temp *Temporal, gs *Geom) int {
+func AintersectsTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.aintersects_trgeometry_geo(temp._inner, gs._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EtouchesTrgeometryGeo wraps MEOS C function etouches_trgeometry_geo.
-func EtouchesTrgeometryGeo(temp *Temporal, gs *Geom) int {
+func EtouchesTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.etouches_trgeometry_geo(temp._inner, gs._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AtouchesTrgeometryGeo wraps MEOS C function atouches_trgeometry_geo.
-func AtouchesTrgeometryGeo(temp *Temporal, gs *Geom) int {
+func AtouchesTrgeometryGeo(temp *Temporal, gs *Geom) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.atouches_trgeometry_geo(temp._inner, gs._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EdwithinTrgeometryGeo wraps MEOS C function edwithin_trgeometry_geo.
-func EdwithinTrgeometryGeo(temp *Temporal, gs *Geom, dist float64) int {
+func EdwithinTrgeometryGeo(temp *Temporal, gs *Geom, dist float64) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.edwithin_trgeometry_geo(temp._inner, gs._inner, C.double(dist))
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AdwithinTrgeometryGeo wraps MEOS C function adwithin_trgeometry_geo.
-func AdwithinTrgeometryGeo(temp *Temporal, gs *Geom, dist float64) int {
+func AdwithinTrgeometryGeo(temp *Temporal, gs *Geom, dist float64) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.adwithin_trgeometry_geo(temp._inner, gs._inner, C.double(dist))
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EdisjointTrgeometryTrgeometry wraps MEOS C function edisjoint_trgeometry_trgeometry.
-func EdisjointTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) int {
+func EdisjointTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.edisjoint_trgeometry_trgeometry(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AdisjointTrgeometryTrgeometry wraps MEOS C function adisjoint_trgeometry_trgeometry.
-func AdisjointTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) int {
+func AdisjointTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.adisjoint_trgeometry_trgeometry(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EintersectsTrgeometryTrgeometry wraps MEOS C function eintersects_trgeometry_trgeometry.
-func EintersectsTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) int {
+func EintersectsTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.eintersects_trgeometry_trgeometry(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AintersectsTrgeometryTrgeometry wraps MEOS C function aintersects_trgeometry_trgeometry.
-func AintersectsTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) int {
+func AintersectsTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.aintersects_trgeometry_trgeometry(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EdwithinTrgeometryTrgeometry wraps MEOS C function edwithin_trgeometry_trgeometry.
-func EdwithinTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal, dist float64) int {
+func EdwithinTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal, dist float64) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.edwithin_trgeometry_trgeometry(temp1._inner, temp2._inner, C.double(dist))
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AdwithinTrgeometryTrgeometry wraps MEOS C function adwithin_trgeometry_trgeometry.
-func AdwithinTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal, dist float64) int {
+func AdwithinTrgeometryTrgeometry(temp1 *Temporal, temp2 *Temporal, dist float64) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.adwithin_trgeometry_trgeometry(temp1._inner, temp2._inner, C.double(dist))
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 

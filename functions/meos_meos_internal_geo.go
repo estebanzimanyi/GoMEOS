@@ -86,576 +86,896 @@ import (
 var _ = unsafe.Pointer(nil)
 
 // ProjGetContext wraps MEOS C function proj_get_context.
-func ProjGetContext() *PJContext {
+func ProjGetContext() (_r0 *PJContext, _err error) {
+	C.meos_errno_reset()
 	_cret := C.proj_get_context()
-	return &PJContext{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &PJContext{_inner: _cret}, nil
 }
 
 
 // PointRound wraps MEOS C function point_round.
-func PointRound(gs *Geom, maxdd int) *Geom {
+func PointRound(gs *Geom, maxdd int) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.point_round(gs._inner, C.int(maxdd))
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // GeoSetSRIDInt wraps MEOS C function geo_set_srid_int.
-func GeoSetSRIDInt(gs *Geom, srid int32) {
+func GeoSetSRIDInt(gs *Geom, srid int32) (_err error) {
+	C.meos_errno_reset()
 	C.geo_set_srid_int(gs._inner, C.int32_t(srid))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return nil
 }
 
 
 // STBOXSet wraps MEOS C function stbox_set.
-func STBOXSet(hasx bool, hasz bool, geodetic bool, srid int32, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, s *Span) *STBox {
+func STBOXSet(hasx bool, hasz bool, geodetic bool, srid int32, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, s *Span) (_r0 *STBox, _err error) {
 	var _out_result C.STBox
+	C.meos_errno_reset()
 	C.stbox_set(C.bool(hasx), C.bool(hasz), C.bool(geodetic), C.int32(srid), C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), s._inner, &_out_result)
-	return &STBox{_inner: &_out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: &_out_result}, nil
 }
 
 
 // GboxSetSTBOX wraps MEOS C function gbox_set_stbox.
-func GboxSetSTBOX(box *GBox, srid int32) *STBox {
+func GboxSetSTBOX(box *GBox, srid int32) (_r0 *STBox, _err error) {
 	var _out_result C.STBox
+	C.meos_errno_reset()
 	C.gbox_set_stbox(box._inner, C.int32_t(srid), &_out_result)
-	return &STBox{_inner: &_out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: &_out_result}, nil
 }
 
 
 // GeoSetSTBOX wraps MEOS C function geo_set_stbox.
-func GeoSetSTBOX(gs *Geom) (bool, *STBox) {
+func GeoSetSTBOX(gs *Geom) (_r0 bool, _r1 *STBox, _err error) {
 	var _out_result C.STBox
+	C.meos_errno_reset()
 	_cret := C.geo_set_stbox(gs._inner, &_out_result)
-	return bool(_cret), &STBox{_inner: &_out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), &STBox{_inner: &_out_result}, nil
 }
 
 
 // SpatialsetSetSTBOX wraps MEOS C function spatialset_set_stbox.
-func SpatialsetSetSTBOX(set *Set) *STBox {
+func SpatialsetSetSTBOX(set *Set) (_r0 *STBox, _err error) {
 	var _out_result C.STBox
+	C.meos_errno_reset()
 	C.spatialset_set_stbox(set._inner, &_out_result)
-	return &STBox{_inner: &_out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: &_out_result}, nil
 }
 
 
 // STBOXSetBox3d wraps MEOS C function stbox_set_box3d.
-func STBOXSetBox3d(box *STBox) *Box3D {
+func STBOXSetBox3d(box *STBox) (_r0 *Box3D, _err error) {
 	var _out_result C.BOX3D
+	C.meos_errno_reset()
 	C.stbox_set_box3d(box._inner, &_out_result)
-	return &Box3D{_inner: &_out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Box3D{_inner: &_out_result}, nil
 }
 
 
 // STBOXSetGbox wraps MEOS C function stbox_set_gbox.
-func STBOXSetGbox(box *STBox) *GBox {
+func STBOXSetGbox(box *STBox) (_r0 *GBox, _err error) {
 	var _out_result C.GBOX
+	C.meos_errno_reset()
 	C.stbox_set_gbox(box._inner, &_out_result)
-	return &GBox{_inner: &_out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &GBox{_inner: &_out_result}, nil
 }
 
 
 // TstzsetSetSTBOX wraps MEOS C function tstzset_set_stbox.
-func TstzsetSetSTBOX(s *Set) *STBox {
+func TstzsetSetSTBOX(s *Set) (_r0 *STBox, _err error) {
 	var _out_result C.STBox
+	C.meos_errno_reset()
 	C.tstzset_set_stbox(s._inner, &_out_result)
-	return &STBox{_inner: &_out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: &_out_result}, nil
 }
 
 
 // TimestamptzSetSTBOX wraps MEOS C function timestamptz_set_stbox.
-func TimestamptzSetSTBOX(t int64) *STBox {
+func TimestamptzSetSTBOX(t int64) (_r0 *STBox, _err error) {
 	var _out_result C.STBox
+	C.meos_errno_reset()
 	C.timestamptz_set_stbox(C.TimestampTz(t), &_out_result)
-	return &STBox{_inner: &_out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: &_out_result}, nil
 }
 
 
 // TstzspanSetSTBOX wraps MEOS C function tstzspan_set_stbox.
-func TstzspanSetSTBOX(s *Span) *STBox {
+func TstzspanSetSTBOX(s *Span) (_r0 *STBox, _err error) {
 	var _out_result C.STBox
+	C.meos_errno_reset()
 	C.tstzspan_set_stbox(s._inner, &_out_result)
-	return &STBox{_inner: &_out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: &_out_result}, nil
 }
 
 
 // TstzspansetSetSTBOX wraps MEOS C function tstzspanset_set_stbox.
-func TstzspansetSetSTBOX(s *SpanSet) *STBox {
+func TstzspansetSetSTBOX(s *SpanSet) (_r0 *STBox, _err error) {
 	var _out_result C.STBox
+	C.meos_errno_reset()
 	C.tstzspanset_set_stbox(s._inner, &_out_result)
-	return &STBox{_inner: &_out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: &_out_result}, nil
 }
 
 
 // STBOXExpand wraps MEOS C function stbox_expand.
-func STBOXExpand(box1 *STBox, box2 *STBox) {
+func STBOXExpand(box1 *STBox, box2 *STBox) (_err error) {
+	C.meos_errno_reset()
 	C.stbox_expand(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return nil
 }
 
 
 // STBOXExpandSpaceSet wraps MEOS C function stbox_expand_space_set.
-func STBOXExpandSpaceSet(box *STBox, d float64) (bool, *STBox) {
+func STBOXExpandSpaceSet(box *STBox, d float64) (_r0 bool, _r1 *STBox, _err error) {
 	var _out_result C.STBox
+	C.meos_errno_reset()
 	_cret := C.stbox_expand_space_set(box._inner, C.double(d), &_out_result)
-	return bool(_cret), &STBox{_inner: &_out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), &STBox{_inner: &_out_result}, nil
 }
 
 
 // InterSTBOXSTBOX wraps MEOS C function inter_stbox_stbox.
-func InterSTBOXSTBOX(box1 *STBox, box2 *STBox) (bool, *STBox) {
+func InterSTBOXSTBOX(box1 *STBox, box2 *STBox) (_r0 bool, _r1 *STBox, _err error) {
 	var _out_result C.STBox
+	C.meos_errno_reset()
 	_cret := C.inter_stbox_stbox(box1._inner, box2._inner, &_out_result)
-	return bool(_cret), &STBox{_inner: &_out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), &STBox{_inner: &_out_result}, nil
 }
 
 
 // TgeogpointinstIn wraps MEOS C function tgeogpointinst_in.
-func TgeogpointinstIn(str string) *TInstant {
+func TgeogpointinstIn(str string) (_r0 *TInstant, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tgeogpointinst_in(_c_str)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TgeogpointseqIn wraps MEOS C function tgeogpointseq_in.
-func TgeogpointseqIn(str string, interp Interpolation) *TSequence {
+func TgeogpointseqIn(str string, interp Interpolation) (_r0 *TSequence, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tgeogpointseq_in(_c_str, C.interpType(interp))
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TgeogpointseqsetIn wraps MEOS C function tgeogpointseqset_in.
-func TgeogpointseqsetIn(str string) *TSequenceSet {
+func TgeogpointseqsetIn(str string) (_r0 *TSequenceSet, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tgeogpointseqset_in(_c_str)
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TgeompointinstIn wraps MEOS C function tgeompointinst_in.
-func TgeompointinstIn(str string) *TInstant {
+func TgeompointinstIn(str string) (_r0 *TInstant, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tgeompointinst_in(_c_str)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TgeompointseqIn wraps MEOS C function tgeompointseq_in.
-func TgeompointseqIn(str string, interp Interpolation) *TSequence {
+func TgeompointseqIn(str string, interp Interpolation) (_r0 *TSequence, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tgeompointseq_in(_c_str, C.interpType(interp))
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TgeompointseqsetIn wraps MEOS C function tgeompointseqset_in.
-func TgeompointseqsetIn(str string) *TSequenceSet {
+func TgeompointseqsetIn(str string) (_r0 *TSequenceSet, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tgeompointseqset_in(_c_str)
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TgeographyinstIn wraps MEOS C function tgeographyinst_in.
-func TgeographyinstIn(str string) *TInstant {
+func TgeographyinstIn(str string) (_r0 *TInstant, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tgeographyinst_in(_c_str)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TgeographyseqIn wraps MEOS C function tgeographyseq_in.
-func TgeographyseqIn(str string, interp Interpolation) *TSequence {
+func TgeographyseqIn(str string, interp Interpolation) (_r0 *TSequence, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tgeographyseq_in(_c_str, C.interpType(interp))
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TgeographyseqsetIn wraps MEOS C function tgeographyseqset_in.
-func TgeographyseqsetIn(str string) *TSequenceSet {
+func TgeographyseqsetIn(str string) (_r0 *TSequenceSet, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tgeographyseqset_in(_c_str)
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TgeometryinstIn wraps MEOS C function tgeometryinst_in.
-func TgeometryinstIn(str string) *TInstant {
+func TgeometryinstIn(str string) (_r0 *TInstant, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tgeometryinst_in(_c_str)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TgeometryseqIn wraps MEOS C function tgeometryseq_in.
-func TgeometryseqIn(str string, interp Interpolation) *TSequence {
+func TgeometryseqIn(str string, interp Interpolation) (_r0 *TSequence, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tgeometryseq_in(_c_str, C.interpType(interp))
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TgeometryseqsetIn wraps MEOS C function tgeometryseqset_in.
-func TgeometryseqsetIn(str string) *TSequenceSet {
+func TgeometryseqsetIn(str string) (_r0 *TSequenceSet, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tgeometryseqset_in(_c_str)
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TspatialSetSTBOX wraps MEOS C function tspatial_set_stbox.
-func TspatialSetSTBOX(temp *Temporal) *STBox {
+func TspatialSetSTBOX(temp *Temporal) (_r0 *STBox, _err error) {
 	var _out_result C.STBox
+	C.meos_errno_reset()
 	C.tspatial_set_stbox(temp._inner, &_out_result)
-	return &STBox{_inner: &_out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: &_out_result}, nil
 }
 
 
 // TspatialseqSetSTBOX wraps MEOS C function tspatialseq_set_stbox.
-func TspatialseqSetSTBOX(seq *TSequence, box *STBox) {
+func TspatialseqSetSTBOX(seq *TSequence, box *STBox) (_err error) {
+	C.meos_errno_reset()
 	C.tspatialseq_set_stbox(seq._inner, box._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return nil
 }
 
 
 // TspatialseqsetSetSTBOX wraps MEOS C function tspatialseqset_set_stbox.
-func TspatialseqsetSetSTBOX(ss *TSequenceSet, box *STBox) {
+func TspatialseqsetSetSTBOX(ss *TSequenceSet, box *STBox) (_err error) {
+	C.meos_errno_reset()
 	C.tspatialseqset_set_stbox(ss._inner, box._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return nil
 }
 
 
 // TgeoRestrictElevation wraps MEOS C function tgeo_restrict_elevation.
-func TgeoRestrictElevation(temp *Temporal, s *Span, atfunc bool) *Temporal {
+func TgeoRestrictElevation(temp *Temporal, s *Span, atfunc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeo_restrict_elevation(temp._inner, s._inner, C.bool(atfunc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TgeoRestrictGeom wraps MEOS C function tgeo_restrict_geom.
-func TgeoRestrictGeom(temp *Temporal, gs *Geom, atfunc bool) *Temporal {
+func TgeoRestrictGeom(temp *Temporal, gs *Geom, atfunc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeo_restrict_geom(temp._inner, gs._inner, C.bool(atfunc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TgeoRestrictSTBOX wraps MEOS C function tgeo_restrict_stbox.
-func TgeoRestrictSTBOX(temp *Temporal, box *STBox, border_inc bool, atfunc bool) *Temporal {
+func TgeoRestrictSTBOX(temp *Temporal, box *STBox, border_inc bool, atfunc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeo_restrict_stbox(temp._inner, box._inner, C.bool(border_inc), C.bool(atfunc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TgeoinstRestrictGeom wraps MEOS C function tgeoinst_restrict_geom.
-func TgeoinstRestrictGeom(inst *TInstant, gs *Geom, atfunc bool) *TInstant {
+func TgeoinstRestrictGeom(inst *TInstant, gs *Geom, atfunc bool) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeoinst_restrict_geom(inst._inner, gs._inner, C.bool(atfunc))
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TgeoinstRestrictSTBOX wraps MEOS C function tgeoinst_restrict_stbox.
-func TgeoinstRestrictSTBOX(inst *TInstant, box *STBox, border_inc bool, atfunc bool) *TInstant {
+func TgeoinstRestrictSTBOX(inst *TInstant, box *STBox, border_inc bool, atfunc bool) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeoinst_restrict_stbox(inst._inner, box._inner, C.bool(border_inc), C.bool(atfunc))
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TgeoseqRestrictGeom wraps MEOS C function tgeoseq_restrict_geom.
-func TgeoseqRestrictGeom(seq *TSequence, gs *Geom, atfunc bool) *Temporal {
+func TgeoseqRestrictGeom(seq *TSequence, gs *Geom, atfunc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeoseq_restrict_geom(seq._inner, gs._inner, C.bool(atfunc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TgeoseqRestrictSTBOX wraps MEOS C function tgeoseq_restrict_stbox.
-func TgeoseqRestrictSTBOX(seq *TSequence, box *STBox, border_inc bool, atfunc bool) *Temporal {
+func TgeoseqRestrictSTBOX(seq *TSequence, box *STBox, border_inc bool, atfunc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeoseq_restrict_stbox(seq._inner, box._inner, C.bool(border_inc), C.bool(atfunc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TgeoseqsetRestrictGeom wraps MEOS C function tgeoseqset_restrict_geom.
-func TgeoseqsetRestrictGeom(ss *TSequenceSet, gs *Geom, atfunc bool) *TSequenceSet {
+func TgeoseqsetRestrictGeom(ss *TSequenceSet, gs *Geom, atfunc bool) (_r0 *TSequenceSet, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeoseqset_restrict_geom(ss._inner, gs._inner, C.bool(atfunc))
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TgeoseqsetRestrictSTBOX wraps MEOS C function tgeoseqset_restrict_stbox.
-func TgeoseqsetRestrictSTBOX(ss *TSequenceSet, box *STBox, border_inc bool, atfunc bool) *TSequenceSet {
+func TgeoseqsetRestrictSTBOX(ss *TSequenceSet, box *STBox, border_inc bool, atfunc bool) (_r0 *TSequenceSet, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeoseqset_restrict_stbox(ss._inner, box._inner, C.bool(border_inc), C.bool(atfunc))
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // GeoClipCtxMake wraps MEOS C function geo_clip_ctx_make.
-func GeoClipCtxMake(gs *Geom) unsafe.Pointer {
+func GeoClipCtxMake(gs *Geom) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.geo_clip_ctx_make(gs._inner)
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // GeoClipCtxFree wraps MEOS C function geo_clip_ctx_free.
-func GeoClipCtxFree(ctx unsafe.Pointer) {
+func GeoClipCtxFree(ctx unsafe.Pointer) (_err error) {
+	C.meos_errno_reset()
 	C.geo_clip_ctx_free(unsafe.Pointer(ctx))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return nil
 }
 
 
 // GeoIntersects2d wraps MEOS C function geo_intersects2d.
-func GeoIntersects2d(gs1 *Geom, gs2 *Geom) bool {
+func GeoIntersects2d(gs1 *Geom, gs2 *Geom) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.geo_intersects2d(gs1._inner, gs2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // GeoIntersects2dCtx wraps MEOS C function geo_intersects2d_ctx.
-func GeoIntersects2dCtx(gs *Geom, ctx unsafe.Pointer) bool {
+func GeoIntersects2dCtx(gs *Geom, ctx unsafe.Pointer) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.geo_intersects2d_ctx(gs._inner, unsafe.Pointer(ctx))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // GeoCovers2d wraps MEOS C function geo_covers2d.
-func GeoCovers2d(gs1 *Geom, gs2 *Geom) bool {
+func GeoCovers2d(gs1 *Geom, gs2 *Geom) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.geo_covers2d(gs1._inner, gs2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TpointLinearInterGeom wraps MEOS C function tpoint_linear_inter_geom.
-func TpointLinearInterGeom(temp *Temporal, gs *Geom, clip bool) *Temporal {
+func TpointLinearInterGeom(temp *Temporal, gs *Geom, clip bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpoint_linear_inter_geom(temp._inner, gs._inner, C.bool(clip))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TpointLinearInterGeomCtx wraps MEOS C function tpoint_linear_inter_geom_ctx.
-func TpointLinearInterGeomCtx(temp *Temporal, ctx unsafe.Pointer, clip bool) *Temporal {
+func TpointLinearInterGeomCtx(temp *Temporal, ctx unsafe.Pointer, clip bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpoint_linear_inter_geom_ctx(temp._inner, unsafe.Pointer(ctx), C.bool(clip))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TpointLinearDwithinGeom wraps MEOS C function tpoint_linear_dwithin_geom.
-func TpointLinearDwithinGeom(temp *Temporal, gs *Geom, dist float64) *Temporal {
+func TpointLinearDwithinGeom(temp *Temporal, gs *Geom, dist float64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpoint_linear_dwithin_geom(temp._inner, gs._inner, C.double(dist))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TpointLinearDwithinGeomCtx wraps MEOS C function tpoint_linear_dwithin_geom_ctx.
-func TpointLinearDwithinGeomCtx(temp *Temporal, ctx unsafe.Pointer, dist float64) *Temporal {
+func TpointLinearDwithinGeomCtx(temp *Temporal, ctx unsafe.Pointer, dist float64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpoint_linear_dwithin_geom_ctx(temp._inner, unsafe.Pointer(ctx), C.double(dist))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TpointLinearDistanceGeom wraps MEOS C function tpoint_linear_distance_geom.
-func TpointLinearDistanceGeom(temp *Temporal, gs *Geom) *Temporal {
+func TpointLinearDistanceGeom(temp *Temporal, gs *Geom) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpoint_linear_distance_geom(temp._inner, gs._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TpointLinearRestrictGeom wraps MEOS C function tpoint_linear_restrict_geom.
-func TpointLinearRestrictGeom(temp *Temporal, gs *Geom, atfunc bool) *Temporal {
+func TpointLinearRestrictGeom(temp *Temporal, gs *Geom, atfunc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpoint_linear_restrict_geom(temp._inner, gs._inner, C.bool(atfunc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // GeomClipSupported wraps MEOS C function geom_clip_supported.
-func GeomClipSupported(geom unsafe.Pointer) bool {
+func GeomClipSupported(geom unsafe.Pointer) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.geom_clip_supported((*C.LWGEOM)(unsafe.Pointer(geom)))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TspatialinstSRID wraps MEOS C function tspatialinst_srid.
-func TspatialinstSRID(inst *TInstant) int {
+func TspatialinstSRID(inst *TInstant) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tspatialinst_srid(inst._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // TpointseqAzimuth wraps MEOS C function tpointseq_azimuth.
-func TpointseqAzimuth(seq *TSequence) *TSequenceSet {
+func TpointseqAzimuth(seq *TSequence) (_r0 *TSequenceSet, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointseq_azimuth(seq._inner)
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TpointseqCumulativeLength wraps MEOS C function tpointseq_cumulative_length.
-func TpointseqCumulativeLength(seq *TSequence, prevlength float64) *TSequence {
+func TpointseqCumulativeLength(seq *TSequence, prevlength float64) (_r0 *TSequence, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointseq_cumulative_length(seq._inner, C.double(prevlength))
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TpointseqIsSimple wraps MEOS C function tpointseq_is_simple.
-func TpointseqIsSimple(seq *TSequence) bool {
+func TpointseqIsSimple(seq *TSequence) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointseq_is_simple(seq._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TpointseqLength wraps MEOS C function tpointseq_length.
-func TpointseqLength(seq *TSequence) float64 {
+func TpointseqLength(seq *TSequence) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointseq_length(seq._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // TpointseqLinearTrajectory wraps MEOS C function tpointseq_linear_trajectory.
-func TpointseqLinearTrajectory(seq *TSequence, unary_union bool) *Geom {
+func TpointseqLinearTrajectory(seq *TSequence, unary_union bool) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointseq_linear_trajectory(seq._inner, C.bool(unary_union))
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // TgeoseqStboxes wraps MEOS C function tgeoseq_stboxes.
-func TgeoseqStboxes(seq *TSequence, count unsafe.Pointer) *STBox {
+func TgeoseqStboxes(seq *TSequence, count unsafe.Pointer) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeoseq_stboxes(seq._inner, (*C.int)(unsafe.Pointer(count)))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // TgeoseqSplitNStboxes wraps MEOS C function tgeoseq_split_n_stboxes.
-func TgeoseqSplitNStboxes(seq *TSequence, max_count int, count unsafe.Pointer) *STBox {
+func TgeoseqSplitNStboxes(seq *TSequence, max_count int, count unsafe.Pointer) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeoseq_split_n_stboxes(seq._inner, C.int(max_count), (*C.int)(unsafe.Pointer(count)))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // TpointseqsetAzimuth wraps MEOS C function tpointseqset_azimuth.
-func TpointseqsetAzimuth(ss *TSequenceSet) *TSequenceSet {
+func TpointseqsetAzimuth(ss *TSequenceSet) (_r0 *TSequenceSet, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointseqset_azimuth(ss._inner)
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TpointseqsetCumulativeLength wraps MEOS C function tpointseqset_cumulative_length.
-func TpointseqsetCumulativeLength(ss *TSequenceSet) *TSequenceSet {
+func TpointseqsetCumulativeLength(ss *TSequenceSet) (_r0 *TSequenceSet, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointseqset_cumulative_length(ss._inner)
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TpointseqsetIsSimple wraps MEOS C function tpointseqset_is_simple.
-func TpointseqsetIsSimple(ss *TSequenceSet) bool {
+func TpointseqsetIsSimple(ss *TSequenceSet) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointseqset_is_simple(ss._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TpointseqsetLength wraps MEOS C function tpointseqset_length.
-func TpointseqsetLength(ss *TSequenceSet) float64 {
+func TpointseqsetLength(ss *TSequenceSet) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointseqset_length(ss._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // TgeoseqsetStboxes wraps MEOS C function tgeoseqset_stboxes.
-func TgeoseqsetStboxes(ss *TSequenceSet, count unsafe.Pointer) *STBox {
+func TgeoseqsetStboxes(ss *TSequenceSet, count unsafe.Pointer) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeoseqset_stboxes(ss._inner, (*C.int)(unsafe.Pointer(count)))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // TgeoseqsetSplitNStboxes wraps MEOS C function tgeoseqset_split_n_stboxes.
-func TgeoseqsetSplitNStboxes(ss *TSequenceSet, max_count int, count unsafe.Pointer) *STBox {
+func TgeoseqsetSplitNStboxes(ss *TSequenceSet, max_count int, count unsafe.Pointer) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeoseqset_split_n_stboxes(ss._inner, C.int(max_count), (*C.int)(unsafe.Pointer(count)))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // TgeominstTgeoginst wraps MEOS C function tgeominst_tgeoginst.
-func TgeominstTgeoginst(inst *TInstant, oper bool) *TInstant {
+func TgeominstTgeoginst(inst *TInstant, oper bool) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeominst_tgeoginst(inst._inner, C.bool(oper))
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TgeomseqTgeogseq wraps MEOS C function tgeomseq_tgeogseq.
-func TgeomseqTgeogseq(seq *TSequence, oper bool) *TSequence {
+func TgeomseqTgeogseq(seq *TSequence, oper bool) (_r0 *TSequence, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeomseq_tgeogseq(seq._inner, C.bool(oper))
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TgeomseqsetTgeogseqset wraps MEOS C function tgeomseqset_tgeogseqset.
-func TgeomseqsetTgeogseqset(ss *TSequenceSet, oper bool) *TSequenceSet {
+func TgeomseqsetTgeogseqset(ss *TSequenceSet, oper bool) (_r0 *TSequenceSet, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeomseqset_tgeogseqset(ss._inner, C.bool(oper))
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TgeomTgeog wraps MEOS C function tgeom_tgeog.
-func TgeomTgeog(temp *Temporal, oper bool) *Temporal {
+func TgeomTgeog(temp *Temporal, oper bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeom_tgeog(temp._inner, C.bool(oper))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TgeoTpoint wraps MEOS C function tgeo_tpoint.
-func TgeoTpoint(temp *Temporal, oper bool) *Temporal {
+func TgeoTpoint(temp *Temporal, oper bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeo_tpoint(temp._inner, C.bool(oper))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TspatialinstSetSRID wraps MEOS C function tspatialinst_set_srid.
-func TspatialinstSetSRID(inst *TInstant, srid int32) {
+func TspatialinstSetSRID(inst *TInstant, srid int32) (_err error) {
+	C.meos_errno_reset()
 	C.tspatialinst_set_srid(inst._inner, C.int32_t(srid))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return nil
 }
 
 
 // TpointseqMakeSimple wraps MEOS C function tpointseq_make_simple.
-func TpointseqMakeSimple(seq *TSequence, count unsafe.Pointer) unsafe.Pointer {
+func TpointseqMakeSimple(seq *TSequence, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointseq_make_simple(seq._inner, (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // TspatialseqSetSRID wraps MEOS C function tspatialseq_set_srid.
-func TspatialseqSetSRID(seq *TSequence, srid int32) {
+func TspatialseqSetSRID(seq *TSequence, srid int32) (_err error) {
+	C.meos_errno_reset()
 	C.tspatialseq_set_srid(seq._inner, C.int32_t(srid))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return nil
 }
 
 
 // TpointseqsetMakeSimple wraps MEOS C function tpointseqset_make_simple.
-func TpointseqsetMakeSimple(ss *TSequenceSet, count unsafe.Pointer) unsafe.Pointer {
+func TpointseqsetMakeSimple(ss *TSequenceSet, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointseqset_make_simple(ss._inner, (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // TspatialseqsetSetSRID wraps MEOS C function tspatialseqset_set_srid.
-func TspatialseqsetSetSRID(ss *TSequenceSet, srid int32) {
+func TspatialseqsetSetSRID(ss *TSequenceSet, srid int32) (_err error) {
+	C.meos_errno_reset()
 	C.tspatialseqset_set_srid(ss._inner, C.int32_t(srid))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return nil
 }
 
 
 // TpointseqTwcentroid wraps MEOS C function tpointseq_twcentroid.
-func TpointseqTwcentroid(seq *TSequence) *Geom {
+func TpointseqTwcentroid(seq *TSequence) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointseq_twcentroid(seq._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // TpointseqsetTwcentroid wraps MEOS C function tpointseqset_twcentroid.
-func TpointseqsetTwcentroid(ss *TSequenceSet) *Geom {
+func TpointseqsetTwcentroid(ss *TSequenceSet) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointseqset_twcentroid(ss._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
