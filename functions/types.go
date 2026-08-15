@@ -106,6 +106,11 @@ const (
 	RTreeSearchOp_RTREE_CONTAINS RTreeSearchOp = 1
 	RTreeSearchOp_RTREE_CONTAINED_BY RTreeSearchOp = 2
 )
+type SPTreeKind C.SPTreeKind
+const (
+	SPTreeKind_SPTREE_QUADTREE SPTreeKind = 0
+	SPTreeKind_SPTREE_KDTREE SPTreeKind = 1
+)
 type MeosType C.MeosType
 const (
 	MeosType_T_UNKNOWN MeosType = 0

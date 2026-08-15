@@ -230,8 +230,9 @@ func CbufferarrRound(cbarr unsafe.Pointer, count int, maxdd int) unsafe.Pointer 
 
 
 // CbufferSetSRID wraps MEOS C function cbuffer_set_srid.
-func CbufferSetSRID(cb *Cbuffer, srid int32) {
-	C.cbuffer_set_srid(cb._inner, C.int32_t(srid))
+func CbufferSetSRID(cb *Cbuffer, srid int32) *Cbuffer {
+	_cret := C.cbuffer_set_srid(cb._inner, C.int32_t(srid))
+	return &Cbuffer{_inner: _cret}
 }
 
 
@@ -960,6 +961,13 @@ func AcontainsTcbufferGeo(temp *Temporal, gs *Geom) int {
 }
 
 
+// AcontainsTcbufferTcbuffer wraps MEOS C function acontains_tcbuffer_tcbuffer.
+func AcontainsTcbufferTcbuffer(temp1 *Temporal, temp2 *Temporal) int {
+	_cret := C.acontains_tcbuffer_tcbuffer(temp1._inner, temp2._inner)
+	return int(_cret)
+}
+
+
 // AcoversCbufferTcbuffer wraps MEOS C function acovers_cbuffer_tcbuffer.
 func AcoversCbufferTcbuffer(cb *Cbuffer, temp *Temporal) int {
 	_cret := C.acovers_cbuffer_tcbuffer(cb._inner, temp._inner)
@@ -1096,6 +1104,13 @@ func EcontainsTcbufferCbuffer(temp *Temporal, cb *Cbuffer) int {
 // EcontainsTcbufferGeo wraps MEOS C function econtains_tcbuffer_geo.
 func EcontainsTcbufferGeo(temp *Temporal, gs *Geom) int {
 	_cret := C.econtains_tcbuffer_geo(temp._inner, gs._inner)
+	return int(_cret)
+}
+
+
+// EcontainsTcbufferTcbuffer wraps MEOS C function econtains_tcbuffer_tcbuffer.
+func EcontainsTcbufferTcbuffer(temp1 *Temporal, temp2 *Temporal) int {
+	_cret := C.econtains_tcbuffer_tcbuffer(temp1._inner, temp2._inner)
 	return int(_cret)
 }
 

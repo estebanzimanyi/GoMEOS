@@ -773,18 +773,18 @@ func JsonbsetDeleteArray(set *Set, keys unsafe.Pointer, count int) *Set {
 
 
 // JsonbsetExists wraps MEOS C function jsonbset_exists.
-func JsonbsetExists(set *Set, key string) *Set {
+func JsonbsetExists(set *Set, key string, count unsafe.Pointer) unsafe.Pointer {
 	_c_key := C.cstring_to_text(C.CString(key))
 	defer C.free(unsafe.Pointer(_c_key))
-	_cret := C.jsonbset_exists(set._inner, _c_key)
-	return &Set{_inner: _cret}
+	_cret := C.jsonbset_exists(set._inner, _c_key, (*C.int)(unsafe.Pointer(count)))
+	return unsafe.Pointer(_cret)
 }
 
 
 // JsonbsetExistsArray wraps MEOS C function jsonbset_exists_array.
-func JsonbsetExistsArray(set *Set, keys unsafe.Pointer, count int, any bool) *Set {
-	_cret := C.jsonbset_exists_array(set._inner, (**C.text)(unsafe.Pointer(keys)), C.int(count), C.bool(any))
-	return &Set{_inner: _cret}
+func JsonbsetExistsArray(set *Set, keys unsafe.Pointer, count int, any bool, rescount unsafe.Pointer) unsafe.Pointer {
+	_cret := C.jsonbset_exists_array(set._inner, (**C.text)(unsafe.Pointer(keys)), C.int(count), C.bool(any), (*C.int)(unsafe.Pointer(rescount)))
+	return unsafe.Pointer(_cret)
 }
 
 
@@ -811,6 +811,15 @@ func JsonbsetToIntset(set *Set, key string, null_handle NullHandleType) *Set {
 	_c_key := C.CString(key)
 	defer C.free(unsafe.Pointer(_c_key))
 	_cret := C.jsonbset_to_intset(set._inner, _c_key, C.nullHandleType(null_handle))
+	return &Set{_inner: _cret}
+}
+
+
+// JsonbsetToBigintset wraps MEOS C function jsonbset_to_bigintset.
+func JsonbsetToBigintset(set *Set, key string, null_handle NullHandleType) *Set {
+	_c_key := C.CString(key)
+	defer C.free(unsafe.Pointer(_c_key))
+	_cret := C.jsonbset_to_bigintset(set._inner, _c_key, C.nullHandleType(null_handle))
 	return &Set{_inner: _cret}
 }
 
@@ -869,16 +878,16 @@ func JsonbsetInsert(set *Set, path_elems unsafe.Pointer, path_len int, newjb *Js
 
 
 // JsonbsetPathExists wraps MEOS C function jsonbset_path_exists.
-func JsonbsetPathExists(set *Set, jp *JsonPath, vars *Jsonb, silent bool, tz bool) *Set {
-	_cret := C.jsonbset_path_exists(set._inner, jp._inner, vars._inner, C.bool(silent), C.bool(tz))
-	return &Set{_inner: _cret}
+func JsonbsetPathExists(set *Set, jp *JsonPath, vars *Jsonb, silent bool, tz bool, count unsafe.Pointer) unsafe.Pointer {
+	_cret := C.jsonbset_path_exists(set._inner, jp._inner, vars._inner, C.bool(silent), C.bool(tz), (*C.int)(unsafe.Pointer(count)))
+	return unsafe.Pointer(_cret)
 }
 
 
 // JsonbsetPathMatch wraps MEOS C function jsonbset_path_match.
-func JsonbsetPathMatch(set *Set, jp *JsonPath, vars *Jsonb, silent bool, tz bool) *Set {
-	_cret := C.jsonbset_path_match(set._inner, jp._inner, vars._inner, C.bool(silent), C.bool(tz))
-	return &Set{_inner: _cret}
+func JsonbsetPathMatch(set *Set, jp *JsonPath, vars *Jsonb, silent bool, tz bool, count unsafe.Pointer) unsafe.Pointer {
+	_cret := C.jsonbset_path_match(set._inner, jp._inner, vars._inner, C.bool(silent), C.bool(tz), (*C.int)(unsafe.Pointer(count)))
+	return unsafe.Pointer(_cret)
 }
 
 
@@ -1220,6 +1229,20 @@ func TjsonbExists(temp *Temporal, key string) *Temporal {
 	_c_key := C.cstring_to_text(C.CString(key))
 	defer C.free(unsafe.Pointer(_c_key))
 	_cret := C.tjsonb_exists(temp._inner, _c_key)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TjsonbExistsAll wraps MEOS C function tjsonb_exists_all.
+func TjsonbExistsAll(temp *Temporal, keys unsafe.Pointer, count int) *Temporal {
+	_cret := C.tjsonb_exists_all(temp._inner, (**C.text)(unsafe.Pointer(keys)), C.int(count))
+	return &Temporal{_inner: _cret}
+}
+
+
+// TjsonbExistsAny wraps MEOS C function tjsonb_exists_any.
+func TjsonbExistsAny(temp *Temporal, keys unsafe.Pointer, count int) *Temporal {
+	_cret := C.tjsonb_exists_any(temp._inner, (**C.text)(unsafe.Pointer(keys)), C.int(count))
 	return &Temporal{_inner: _cret}
 }
 

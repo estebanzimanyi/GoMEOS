@@ -177,6 +177,20 @@ func TposeAsGeopose(temp *Temporal, conformance int, precision int) string {
 }
 
 
+// TposeAsGeoposeStreamHeader wraps MEOS C function tpose_as_geopose_stream_header.
+func TposeAsGeoposeStreamHeader(temp *Temporal, precision int) string {
+	_cret := C.tpose_as_geopose_stream_header(temp._inner, C.int(precision))
+	return C.GoString(_cret)
+}
+
+
+// TposeAsGeoposeStreamElement wraps MEOS C function tpose_as_geopose_stream_element.
+func TposeAsGeoposeStreamElement(temp *Temporal, inst *TInstant, precision int) string {
+	_cret := C.tpose_as_geopose_stream_element(temp._inner, inst._inner, C.int(precision))
+	return C.GoString(_cret)
+}
+
+
 // PoseApplyGeo wraps MEOS C function pose_apply_geo.
 func PoseApplyGeo(pose *Pose, body *Geom) *Geom {
 	_cret := C.pose_apply_geo(pose._inner, body._inner)
@@ -318,8 +332,9 @@ func PosearrRound(posearr unsafe.Pointer, count int, maxdd int) unsafe.Pointer {
 
 
 // PoseSetSRID wraps MEOS C function pose_set_srid.
-func PoseSetSRID(pose *Pose, srid int32) {
-	C.pose_set_srid(pose._inner, C.int32_t(srid))
+func PoseSetSRID(pose *Pose, srid int32) *Pose {
+	_cret := C.pose_set_srid(pose._inner, C.int32_t(srid))
+	return &Pose{_inner: _cret}
 }
 
 

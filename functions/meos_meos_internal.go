@@ -275,6 +275,13 @@ func SpanExpand(s1 *Span, s2 *Span) {
 }
 
 
+// SuperUnionSpanSpan wraps MEOS C function super_union_span_span.
+func SuperUnionSpanSpan(s1 *Span, s2 *Span) *Span {
+	_cret := C.super_union_span_span(s1._inner, s2._inner)
+	return &Span{_inner: _cret}
+}
+
+
 // SpansetCompact wraps MEOS C function spanset_compact.
 func SpansetCompact(ss *SpanSet) *SpanSet {
 	_cret := C.spanset_compact(ss._inner)
@@ -343,6 +350,20 @@ func TemporalBboxEq(box1 unsafe.Pointer, box2 unsafe.Pointer, temptype MeosType)
 func TemporalBboxCmp(box1 unsafe.Pointer, box2 unsafe.Pointer, temptype MeosType) int {
 	_cret := C.temporal_bbox_cmp(unsafe.Pointer(box1), unsafe.Pointer(box2), C.MeosType(temptype))
 	return int(_cret)
+}
+
+
+// EnsureBboxTemporalCompatible wraps MEOS C function ensure_bbox_temporal_compatible.
+func EnsureBboxTemporalCompatible(bboxtype MeosType, temp *Temporal) bool {
+	_cret := C.ensure_bbox_temporal_compatible(C.MeosType(bboxtype), temp._inner)
+	return bool(_cret)
+}
+
+
+// BboxTemporalSplitBoxes wraps MEOS C function bbox_temporal_split_boxes.
+func BboxTemporalSplitBoxes(bboxtype MeosType, boxsize uint, temp *Temporal, maxboxes int, count unsafe.Pointer) unsafe.Pointer {
+	_cret := C.bbox_temporal_split_boxes(C.MeosType(bboxtype), C.size_t(boxsize), temp._inner, C.int(maxboxes), (*C.int)(unsafe.Pointer(count)))
+	return unsafe.Pointer(_cret)
 }
 
 
@@ -700,6 +721,13 @@ func TemporalSetTstzspan(temp *Temporal, s *Span) {
 }
 
 
+// TemporalTimeOverlaps wraps MEOS C function temporal_time_overlaps.
+func TemporalTimeOverlaps(temp1 *Temporal, temp2 *Temporal) bool {
+	_cret := C.temporal_time_overlaps(temp1._inner, temp2._inner)
+	return bool(_cret)
+}
+
+
 // TinstantSetTstzspan wraps MEOS C function tinstant_set_tstzspan.
 func TinstantSetTstzspan(inst *TInstant, s *Span) {
 	C.tinstant_set_tstzspan(inst._inner, s._inner)
@@ -811,6 +839,13 @@ func TinstantHash(inst *TInstant) uint32 {
 }
 
 
+// TinstantHashExtended wraps MEOS C function tinstant_hash_extended.
+func TinstantHashExtended(inst *TInstant, seed uint64) uint64 {
+	_cret := C.tinstant_hash_extended(inst._inner, C.uint64_t(seed))
+	return uint64(_cret)
+}
+
+
 // TinstantInsts wraps MEOS C function tinstant_insts.
 func TinstantInsts(inst *TInstant, count unsafe.Pointer) unsafe.Pointer {
 	_cret := C.tinstant_insts(inst._inner, (*C.int)(unsafe.Pointer(count)))
@@ -900,6 +935,13 @@ func TsequenceHash(seq *TSequence) uint32 {
 }
 
 
+// TsequenceHashExtended wraps MEOS C function tsequence_hash_extended.
+func TsequenceHashExtended(seq *TSequence, seed uint64) uint64 {
+	_cret := C.tsequence_hash_extended(seq._inner, C.uint64_t(seed))
+	return uint64(_cret)
+}
+
+
 // TsequenceInstsP wraps MEOS C function tsequence_insts_p.
 func TsequenceInstsP(seq *TSequence, count unsafe.Pointer) unsafe.Pointer {
 	_cret := C.tsequence_insts_p(seq._inner, (*C.int)(unsafe.Pointer(count)))
@@ -974,6 +1016,13 @@ func TsequencesetEndTimestamptz(ss *TSequenceSet) int64 {
 func TsequencesetHash(ss *TSequenceSet) uint32 {
 	_cret := C.tsequenceset_hash(ss._inner)
 	return uint32(_cret)
+}
+
+
+// TsequencesetHashExtended wraps MEOS C function tsequenceset_hash_extended.
+func TsequencesetHashExtended(ss *TSequenceSet, seed uint64) uint64 {
+	_cret := C.tsequenceset_hash_extended(ss._inner, C.uint64_t(seed))
+	return uint64(_cret)
 }
 
 
@@ -1089,9 +1138,9 @@ func TinstantShiftTime(inst *TInstant, interv *Interval) *TInstant {
 }
 
 
-// TinstantToTsequence wraps MEOS C function tinstant_to_tsequence.
-func TinstantToTsequence(inst *TInstant, interp Interpolation) *TSequence {
-	_cret := C.tinstant_to_tsequence(inst._inner, C.interpType(interp))
+// TinstantAsTsequence wraps MEOS C function tinstant_as_tsequence.
+func TinstantAsTsequence(inst *TInstant, interp Interpolation) *TSequence {
+	_cret := C.tinstant_as_tsequence(inst._inner, C.interpType(interp))
 	return &TSequence{_inner: _cret}
 }
 
@@ -1103,9 +1152,9 @@ func TinstantToTsequenceFree(inst *TInstant, interp Interpolation) *TSequence {
 }
 
 
-// TinstantToTsequenceset wraps MEOS C function tinstant_to_tsequenceset.
-func TinstantToTsequenceset(inst *TInstant, interp Interpolation) *TSequenceSet {
-	_cret := C.tinstant_to_tsequenceset(inst._inner, C.interpType(interp))
+// TinstantAsTsequenceset wraps MEOS C function tinstant_as_tsequenceset.
+func TinstantAsTsequenceset(inst *TInstant, interp Interpolation) *TSequenceSet {
+	_cret := C.tinstant_as_tsequenceset(inst._inner, C.interpType(interp))
 	return &TSequenceSet{_inner: _cret}
 }
 
@@ -1137,16 +1186,16 @@ func TsequenceSubseq(seq *TSequence, from int, to int, lower_inc bool, upper_inc
 }
 
 
-// TsequenceToTinstant wraps MEOS C function tsequence_to_tinstant.
-func TsequenceToTinstant(seq *TSequence) *TInstant {
-	_cret := C.tsequence_to_tinstant(seq._inner)
+// TsequenceAsTinstant wraps MEOS C function tsequence_as_tinstant.
+func TsequenceAsTinstant(seq *TSequence) *TInstant {
+	_cret := C.tsequence_as_tinstant(seq._inner)
 	return &TInstant{_inner: _cret}
 }
 
 
-// TsequenceToTsequenceset wraps MEOS C function tsequence_to_tsequenceset.
-func TsequenceToTsequenceset(seq *TSequence) *TSequenceSet {
-	_cret := C.tsequence_to_tsequenceset(seq._inner)
+// TsequenceAsTsequenceset wraps MEOS C function tsequence_as_tsequenceset.
+func TsequenceAsTsequenceset(seq *TSequence) *TSequenceSet {
+	_cret := C.tsequence_as_tsequenceset(seq._inner)
 	return &TSequenceSet{_inner: _cret}
 }
 
@@ -1206,16 +1255,16 @@ func TsequencesetToStep(ss *TSequenceSet) *TSequenceSet {
 }
 
 
-// TsequencesetToTinstant wraps MEOS C function tsequenceset_to_tinstant.
-func TsequencesetToTinstant(ss *TSequenceSet) *TInstant {
-	_cret := C.tsequenceset_to_tinstant(ss._inner)
+// TsequencesetAsTinstant wraps MEOS C function tsequenceset_as_tinstant.
+func TsequencesetAsTinstant(ss *TSequenceSet) *TInstant {
+	_cret := C.tsequenceset_as_tinstant(ss._inner)
 	return &TInstant{_inner: _cret}
 }
 
 
-// TsequencesetToTsequence wraps MEOS C function tsequenceset_to_tsequence.
-func TsequencesetToTsequence(ss *TSequenceSet) *TSequence {
-	_cret := C.tsequenceset_to_tsequence(ss._inner)
+// TsequencesetAsTsequence wraps MEOS C function tsequenceset_as_tsequence.
+func TsequencesetAsTsequence(ss *TSequenceSet) *TSequence {
+	_cret := C.tsequenceset_as_tsequence(ss._inner)
 	return &TSequence{_inner: _cret}
 }
 
@@ -1738,27 +1787,6 @@ func TnumberseqsetAngularDifference(ss *TSequenceSet) *TSequence {
 func TnumberseqsetDeltaValue(ss *TSequenceSet) *TSequenceSet {
 	_cret := C.tnumberseqset_delta_value(ss._inner)
 	return &TSequenceSet{_inner: _cret}
-}
-
-
-// NadTBOXTBOX wraps MEOS C function nad_tbox_tbox.
-func NadTBOXTBOX(box1 *TBox, box2 *TBox) float64 {
-	_cret := C.nad_tbox_tbox(box1._inner, box2._inner)
-	return float64(_cret)
-}
-
-
-// NadTnumberTBOX wraps MEOS C function nad_tnumber_tbox.
-func NadTnumberTBOX(temp *Temporal, box *TBox) float64 {
-	_cret := C.nad_tnumber_tbox(temp._inner, box._inner)
-	return float64(_cret)
-}
-
-
-// NadTnumberTnumber wraps MEOS C function nad_tnumber_tnumber.
-func NadTnumberTnumber(temp1 *Temporal, temp2 *Temporal) float64 {
-	_cret := C.nad_tnumber_tnumber(temp1._inner, temp2._inner)
-	return float64(_cret)
 }
 
 

@@ -99,6 +99,12 @@ func PointRound(gs *Geom, maxdd int) *Geom {
 }
 
 
+// GeoSetSRIDInt wraps MEOS C function geo_set_srid_int.
+func GeoSetSRIDInt(gs *Geom, srid int32) {
+	C.geo_set_srid_int(gs._inner, C.int32_t(srid))
+}
+
+
 // STBOXSet wraps MEOS C function stbox_set.
 func STBOXSet(hasx bool, hasz bool, geodetic bool, srid int32, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, s *Span) *STBox {
 	var _out_result C.STBox
@@ -155,6 +161,14 @@ func TstzsetSetSTBOX(s *Set) *STBox {
 }
 
 
+// TimestamptzSetSTBOX wraps MEOS C function timestamptz_set_stbox.
+func TimestamptzSetSTBOX(t int64) *STBox {
+	var _out_result C.STBox
+	C.timestamptz_set_stbox(C.TimestampTz(t), &_out_result)
+	return &STBox{_inner: &_out_result}
+}
+
+
 // TstzspanSetSTBOX wraps MEOS C function tstzspan_set_stbox.
 func TstzspanSetSTBOX(s *Span) *STBox {
 	var _out_result C.STBox
@@ -177,18 +191,19 @@ func STBOXExpand(box1 *STBox, box2 *STBox) {
 }
 
 
+// STBOXExpandSpaceSet wraps MEOS C function stbox_expand_space_set.
+func STBOXExpandSpaceSet(box *STBox, d float64) (bool, *STBox) {
+	var _out_result C.STBox
+	_cret := C.stbox_expand_space_set(box._inner, C.double(d), &_out_result)
+	return bool(_cret), &STBox{_inner: &_out_result}
+}
+
+
 // InterSTBOXSTBOX wraps MEOS C function inter_stbox_stbox.
 func InterSTBOXSTBOX(box1 *STBox, box2 *STBox) (bool, *STBox) {
 	var _out_result C.STBox
 	_cret := C.inter_stbox_stbox(box1._inner, box2._inner, &_out_result)
 	return bool(_cret), &STBox{_inner: &_out_result}
-}
-
-
-// STBOXGeo wraps MEOS C function stbox_geo.
-func STBOXGeo(box *STBox) *Geom {
-	_cret := C.stbox_geo(box._inner)
-	return &Geom{_inner: _cret}
 }
 
 
@@ -308,12 +323,6 @@ func TspatialSetSTBOX(temp *Temporal) *STBox {
 }
 
 
-// TgeoinstSetSTBOX wraps MEOS C function tgeoinst_set_stbox.
-func TgeoinstSetSTBOX(inst *TInstant, box *STBox) {
-	C.tgeoinst_set_stbox(inst._inner, box._inner)
-}
-
-
 // TspatialseqSetSTBOX wraps MEOS C function tspatialseq_set_stbox.
 func TspatialseqSetSTBOX(seq *TSequence, box *STBox) {
 	C.tspatialseq_set_stbox(seq._inner, box._inner)
@@ -389,6 +398,40 @@ func TgeoseqsetRestrictSTBOX(ss *TSequenceSet, box *STBox, border_inc bool, atfu
 }
 
 
+// GeoClipCtxMake wraps MEOS C function geo_clip_ctx_make.
+func GeoClipCtxMake(gs *Geom) unsafe.Pointer {
+	_cret := C.geo_clip_ctx_make(gs._inner)
+	return unsafe.Pointer(_cret)
+}
+
+
+// GeoClipCtxFree wraps MEOS C function geo_clip_ctx_free.
+func GeoClipCtxFree(ctx unsafe.Pointer) {
+	C.geo_clip_ctx_free(unsafe.Pointer(ctx))
+}
+
+
+// GeoIntersects2d wraps MEOS C function geo_intersects2d.
+func GeoIntersects2d(gs1 *Geom, gs2 *Geom) bool {
+	_cret := C.geo_intersects2d(gs1._inner, gs2._inner)
+	return bool(_cret)
+}
+
+
+// GeoIntersects2dCtx wraps MEOS C function geo_intersects2d_ctx.
+func GeoIntersects2dCtx(gs *Geom, ctx unsafe.Pointer) bool {
+	_cret := C.geo_intersects2d_ctx(gs._inner, unsafe.Pointer(ctx))
+	return bool(_cret)
+}
+
+
+// GeoCovers2d wraps MEOS C function geo_covers2d.
+func GeoCovers2d(gs1 *Geom, gs2 *Geom) bool {
+	_cret := C.geo_covers2d(gs1._inner, gs2._inner)
+	return bool(_cret)
+}
+
+
 // TpointLinearInterGeom wraps MEOS C function tpoint_linear_inter_geom.
 func TpointLinearInterGeom(temp *Temporal, gs *Geom, clip bool) *Temporal {
 	_cret := C.tpoint_linear_inter_geom(temp._inner, gs._inner, C.bool(clip))
@@ -396,9 +439,23 @@ func TpointLinearInterGeom(temp *Temporal, gs *Geom, clip bool) *Temporal {
 }
 
 
+// TpointLinearInterGeomCtx wraps MEOS C function tpoint_linear_inter_geom_ctx.
+func TpointLinearInterGeomCtx(temp *Temporal, ctx unsafe.Pointer, clip bool) *Temporal {
+	_cret := C.tpoint_linear_inter_geom_ctx(temp._inner, unsafe.Pointer(ctx), C.bool(clip))
+	return &Temporal{_inner: _cret}
+}
+
+
 // TpointLinearDwithinGeom wraps MEOS C function tpoint_linear_dwithin_geom.
 func TpointLinearDwithinGeom(temp *Temporal, gs *Geom, dist float64) *Temporal {
 	_cret := C.tpoint_linear_dwithin_geom(temp._inner, gs._inner, C.double(dist))
+	return &Temporal{_inner: _cret}
+}
+
+
+// TpointLinearDwithinGeomCtx wraps MEOS C function tpoint_linear_dwithin_geom_ctx.
+func TpointLinearDwithinGeomCtx(temp *Temporal, ctx unsafe.Pointer, dist float64) *Temporal {
+	_cret := C.tpoint_linear_dwithin_geom_ctx(temp._inner, unsafe.Pointer(ctx), C.double(dist))
 	return &Temporal{_inner: _cret}
 }
 
@@ -519,13 +576,6 @@ func TgeoseqsetStboxes(ss *TSequenceSet, count unsafe.Pointer) *STBox {
 func TgeoseqsetSplitNStboxes(ss *TSequenceSet, max_count int, count unsafe.Pointer) *STBox {
 	_cret := C.tgeoseqset_split_n_stboxes(ss._inner, C.int(max_count), (*C.int)(unsafe.Pointer(count)))
 	return &STBox{_inner: _cret}
-}
-
-
-// TpointGetCoord wraps MEOS C function tpoint_get_coord.
-func TpointGetCoord(temp *Temporal, coord int) *Temporal {
-	_cret := C.tpoint_get_coord(temp._inner, C.int(coord))
-	return &Temporal{_inner: _cret}
 }
 
 

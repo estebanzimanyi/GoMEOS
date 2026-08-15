@@ -85,231 +85,6 @@ import (
 
 var _ = unsafe.Pointer(nil)
 
-// BoolIn wraps MEOS C function bool_in.
-func BoolIn(str string) bool {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	_cret := C.bool_in(_c_str)
-	return bool(_cret)
-}
-
-
-// BoolOut wraps MEOS C function bool_out.
-func BoolOut(b bool) string {
-	_cret := C.bool_out(C.bool(b))
-	return C.GoString(_cret)
-}
-
-
-// Float8Out wraps MEOS C function float8_out.
-func Float8Out(num float64, maxdd int) string {
-	_cret := C.float8_out(C.double(num), C.int(maxdd))
-	return C.GoString(_cret)
-}
-
-
-// DateIn wraps MEOS C function date_in.
-func DateIn(str string) int32 {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	_cret := C.date_in(_c_str)
-	return int32(_cret)
-}
-
-
-// DateOut wraps MEOS C function date_out.
-func DateOut(date int32) string {
-	_cret := C.date_out(C.DateADT(date))
-	return C.GoString(_cret)
-}
-
-
-// IntervalCmp wraps MEOS C function interval_cmp.
-func IntervalCmp(interv1 *Interval, interv2 *Interval) int {
-	_cret := C.interval_cmp(interv1._inner, interv2._inner)
-	return int(_cret)
-}
-
-
-// IntervalIn wraps MEOS C function interval_in.
-func IntervalIn(str string, typmod int32) *Interval {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	_cret := C.interval_in(_c_str, C.int32(typmod))
-	return &Interval{_inner: _cret}
-}
-
-
-// IntervalOut wraps MEOS C function interval_out.
-func IntervalOut(interv *Interval) string {
-	_cret := C.interval_out(interv._inner)
-	return C.GoString(_cret)
-}
-
-
-// TimeIn wraps MEOS C function time_in.
-func TimeIn(str string, typmod int32) int64 {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	_cret := C.time_in(_c_str, C.int32(typmod))
-	return int64(_cret)
-}
-
-
-// TimeOut wraps MEOS C function time_out.
-func TimeOut(time int64) string {
-	_cret := C.time_out(C.TimeADT(time))
-	return C.GoString(_cret)
-}
-
-
-// TimestampIn wraps MEOS C function timestamp_in.
-func TimestampIn(str string, typmod int32) int64 {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	_cret := C.timestamp_in(_c_str, C.int32(typmod))
-	return int64(_cret)
-}
-
-
-// TimestampOut wraps MEOS C function timestamp_out.
-func TimestampOut(ts int64) string {
-	_cret := C.timestamp_out(C.Timestamp(ts))
-	return C.GoString(_cret)
-}
-
-
-// TimestamptzIn wraps MEOS C function timestamptz_in.
-func TimestamptzIn(str string, typmod int32) int64 {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	_cret := C.timestamptz_in(_c_str, C.int32(typmod))
-	return int64(_cret)
-}
-
-
-// TimestamptzOut wraps MEOS C function timestamptz_out.
-func TimestamptzOut(tstz int64) string {
-	_cret := C.timestamptz_out(C.TimestampTz(tstz))
-	return C.GoString(_cret)
-}
-
-
-// CstringToText wraps MEOS C function cstring_to_text.
-func CstringToText(str string) string {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	_cret := C.cstring_to_text(_c_str)
-	return C.GoString(C.text_to_cstring(_cret))
-}
-
-
-// TextToCstring wraps MEOS C function text_to_cstring.
-func TextToCstring(txt string) string {
-	_c_txt := C.cstring_to_text(C.CString(txt))
-	defer C.free(unsafe.Pointer(_c_txt))
-	_cret := C.text_to_cstring(_c_txt)
-	return C.GoString(_cret)
-}
-
-
-// TextIn wraps MEOS C function text_in.
-func TextIn(str string) string {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	_cret := C.text_in(_c_str)
-	return C.GoString(C.text_to_cstring(_cret))
-}
-
-
-// TextOut wraps MEOS C function text_out.
-func TextOut(txt string) string {
-	_c_txt := C.cstring_to_text(C.CString(txt))
-	defer C.free(unsafe.Pointer(_c_txt))
-	_cret := C.text_out(_c_txt)
-	return C.GoString(_cret)
-}
-
-
-// TODO text_cmp: unsupported param Oid
-// func TextCmp(...) { /* not yet handled by codegen */ }
-
-
-// TextCopy wraps MEOS C function text_copy.
-func TextCopy(txt string) string {
-	_c_txt := C.cstring_to_text(C.CString(txt))
-	defer C.free(unsafe.Pointer(_c_txt))
-	_cret := C.text_copy(_c_txt)
-	return C.GoString(C.text_to_cstring(_cret))
-}
-
-
-// TextInitcap wraps MEOS C function text_initcap.
-func TextInitcap(txt string) string {
-	_c_txt := C.cstring_to_text(C.CString(txt))
-	defer C.free(unsafe.Pointer(_c_txt))
-	_cret := C.text_initcap(_c_txt)
-	return C.GoString(C.text_to_cstring(_cret))
-}
-
-
-// TextLower wraps MEOS C function text_lower.
-func TextLower(txt string) string {
-	_c_txt := C.cstring_to_text(C.CString(txt))
-	defer C.free(unsafe.Pointer(_c_txt))
-	_cret := C.text_lower(_c_txt)
-	return C.GoString(C.text_to_cstring(_cret))
-}
-
-
-// TextUpper wraps MEOS C function text_upper.
-func TextUpper(txt string) string {
-	_c_txt := C.cstring_to_text(C.CString(txt))
-	defer C.free(unsafe.Pointer(_c_txt))
-	_cret := C.text_upper(_c_txt)
-	return C.GoString(C.text_to_cstring(_cret))
-}
-
-
-// TextcatTextText wraps MEOS C function textcat_text_text.
-func TextcatTextText(txt1 string, txt2 string) string {
-	_c_txt1 := C.cstring_to_text(C.CString(txt1))
-	defer C.free(unsafe.Pointer(_c_txt1))
-	_c_txt2 := C.cstring_to_text(C.CString(txt2))
-	defer C.free(unsafe.Pointer(_c_txt2))
-	_cret := C.textcat_text_text(_c_txt1, _c_txt2)
-	return C.GoString(C.text_to_cstring(_cret))
-}
-
-
-// MeosErrno wraps MEOS C function meos_errno.
-func MeosErrno() int {
-	_cret := C.meos_errno()
-	return int(_cret)
-}
-
-
-// MeosErrnoSet wraps MEOS C function meos_errno_set.
-func MeosErrnoSet(err int) int {
-	_cret := C.meos_errno_set(C.int(err))
-	return int(_cret)
-}
-
-
-// MeosErrnoRestore wraps MEOS C function meos_errno_restore.
-func MeosErrnoRestore(err int) int {
-	_cret := C.meos_errno_restore(C.int(err))
-	return int(_cret)
-}
-
-
-// MeosErrnoReset wraps MEOS C function meos_errno_reset.
-func MeosErrnoReset() int {
-	_cret := C.meos_errno_reset()
-	return int(_cret)
-}
-
-
 // MeosArrayCreate wraps MEOS C function meos_array_create.
 func MeosArrayCreate(elem_size int) *MeosArray {
 	_cret := C.meos_array_create(C.int(elem_size))
@@ -449,6 +224,14 @@ func RtreeSearch(rtree *RTree, op RTreeSearchOp, query unsafe.Pointer) (int, *Me
 }
 
 
+// RtreeJoin wraps MEOS C function rtree_join.
+func RtreeJoin(rtree1 *RTree, rtree2 *RTree, op RTreeSearchOp) (int, *MeosArray) {
+	var _out_result C.MeosArray
+	_cret := C.rtree_join(rtree1._inner, rtree2._inner, C.RTreeSearchOp(op), &_out_result)
+	return int(_cret), &MeosArray{_inner: &_out_result}
+}
+
+
 // RtreeSearchTemporal wraps MEOS C function rtree_search_temporal.
 func RtreeSearchTemporal(rtree *RTree, op RTreeSearchOp, temp *Temporal) (int, *MeosArray) {
 	var _out_result C.MeosArray
@@ -462,6 +245,126 @@ func RtreeSearchTemporalDedup(rtree *RTree, op RTreeSearchOp, temp *Temporal, ma
 	var _out_result C.MeosArray
 	_cret := C.rtree_search_temporal_dedup(rtree._inner, C.RTreeSearchOp(op), temp._inner, C.int(maxboxes), &_out_result)
 	return int(_cret), &MeosArray{_inner: &_out_result}
+}
+
+
+// RtreeNnCursorOpen wraps MEOS C function rtree_nn_cursor_open.
+func RtreeNnCursorOpen(rtree *RTree, query unsafe.Pointer) unsafe.Pointer {
+	_cret := C.rtree_nn_cursor_open(rtree._inner, unsafe.Pointer(query))
+	return unsafe.Pointer(_cret)
+}
+
+
+// RtreeNnCursorNext wraps MEOS C function rtree_nn_cursor_next.
+func RtreeNnCursorNext(cursor unsafe.Pointer, id_out unsafe.Pointer, dist_out unsafe.Pointer) bool {
+	_cret := C.rtree_nn_cursor_next((*C.RTreeNNCursor)(unsafe.Pointer(cursor)), (*C.int)(unsafe.Pointer(id_out)), (*C.double)(unsafe.Pointer(dist_out)))
+	return bool(_cret)
+}
+
+
+// RtreeNnCursorClose wraps MEOS C function rtree_nn_cursor_close.
+func RtreeNnCursorClose(cursor unsafe.Pointer) {
+	C.rtree_nn_cursor_close((*C.RTreeNNCursor)(unsafe.Pointer(cursor)))
+}
+
+
+// TODO sptree_create_intspan: unsupported param SPTreeKind
+// func SptreeCreateIntspan(...) { /* not yet handled by codegen */ }
+
+
+// TODO sptree_create_bigintspan: unsupported param SPTreeKind
+// func SptreeCreateBigintspan(...) { /* not yet handled by codegen */ }
+
+
+// TODO sptree_create_floatspan: unsupported param SPTreeKind
+// func SptreeCreateFloatspan(...) { /* not yet handled by codegen */ }
+
+
+// TODO sptree_create_datespan: unsupported param SPTreeKind
+// func SptreeCreateDatespan(...) { /* not yet handled by codegen */ }
+
+
+// TODO sptree_create_tstzspan: unsupported param SPTreeKind
+// func SptreeCreateTstzspan(...) { /* not yet handled by codegen */ }
+
+
+// TODO sptree_create_tbox: unsupported param SPTreeKind
+// func SptreeCreateTBOX(...) { /* not yet handled by codegen */ }
+
+
+// TODO sptree_create_stbox: unsupported param SPTreeKind
+// func SptreeCreateSTBOX(...) { /* not yet handled by codegen */ }
+
+
+// TODO sptree_create_tpcbox: unsupported param SPTreeKind
+// func SptreeCreateTpcbox(...) { /* not yet handled by codegen */ }
+
+
+// SptreeFree wraps MEOS C function sptree_free.
+func SptreeFree(sptree unsafe.Pointer) {
+	C.sptree_free((*C.SPTree)(unsafe.Pointer(sptree)))
+}
+
+
+// SptreeInsert wraps MEOS C function sptree_insert.
+func SptreeInsert(sptree unsafe.Pointer, box unsafe.Pointer, id int) {
+	C.sptree_insert((*C.SPTree)(unsafe.Pointer(sptree)), unsafe.Pointer(box), C.int(id))
+}
+
+
+// SptreeInsertTemporal wraps MEOS C function sptree_insert_temporal.
+func SptreeInsertTemporal(sptree unsafe.Pointer, temp *Temporal, id int) {
+	C.sptree_insert_temporal((*C.SPTree)(unsafe.Pointer(sptree)), temp._inner, C.int(id))
+}
+
+
+// SptreeInsertTemporalSplit wraps MEOS C function sptree_insert_temporal_split.
+func SptreeInsertTemporalSplit(sptree unsafe.Pointer, temp *Temporal, id int, maxboxes int) {
+	C.sptree_insert_temporal_split((*C.SPTree)(unsafe.Pointer(sptree)), temp._inner, C.int(id), C.int(maxboxes))
+}
+
+
+// SptreeSearch wraps MEOS C function sptree_search.
+func SptreeSearch(sptree unsafe.Pointer, op RTreeSearchOp, query unsafe.Pointer) (int, *MeosArray) {
+	var _out_result C.MeosArray
+	_cret := C.sptree_search((*C.SPTree)(unsafe.Pointer(sptree)), C.RTreeSearchOp(op), unsafe.Pointer(query), &_out_result)
+	return int(_cret), &MeosArray{_inner: &_out_result}
+}
+
+
+// SptreeSearchTemporal wraps MEOS C function sptree_search_temporal.
+func SptreeSearchTemporal(sptree unsafe.Pointer, op RTreeSearchOp, temp *Temporal) (int, *MeosArray) {
+	var _out_result C.MeosArray
+	_cret := C.sptree_search_temporal((*C.SPTree)(unsafe.Pointer(sptree)), C.RTreeSearchOp(op), temp._inner, &_out_result)
+	return int(_cret), &MeosArray{_inner: &_out_result}
+}
+
+
+// SptreeSearchTemporalDedup wraps MEOS C function sptree_search_temporal_dedup.
+func SptreeSearchTemporalDedup(sptree unsafe.Pointer, op RTreeSearchOp, temp *Temporal, maxboxes int) (int, *MeosArray) {
+	var _out_result C.MeosArray
+	_cret := C.sptree_search_temporal_dedup((*C.SPTree)(unsafe.Pointer(sptree)), C.RTreeSearchOp(op), temp._inner, C.int(maxboxes), &_out_result)
+	return int(_cret), &MeosArray{_inner: &_out_result}
+}
+
+
+// SptreeNnCursorOpen wraps MEOS C function sptree_nn_cursor_open.
+func SptreeNnCursorOpen(sptree unsafe.Pointer, query unsafe.Pointer) unsafe.Pointer {
+	_cret := C.sptree_nn_cursor_open((*C.SPTree)(unsafe.Pointer(sptree)), unsafe.Pointer(query))
+	return unsafe.Pointer(_cret)
+}
+
+
+// SptreeNnCursorNext wraps MEOS C function sptree_nn_cursor_next.
+func SptreeNnCursorNext(cursor unsafe.Pointer, id_out unsafe.Pointer, dist_out unsafe.Pointer) bool {
+	_cret := C.sptree_nn_cursor_next((*C.SPNNCursor)(unsafe.Pointer(cursor)), (*C.int)(unsafe.Pointer(id_out)), (*C.double)(unsafe.Pointer(dist_out)))
+	return bool(_cret)
+}
+
+
+// SptreeNnCursorClose wraps MEOS C function sptree_nn_cursor_close.
+func SptreeNnCursorClose(cursor unsafe.Pointer) {
+	C.sptree_nn_cursor_close((*C.SPNNCursor)(unsafe.Pointer(cursor)))
 }
 
 
@@ -576,6 +479,34 @@ func MeosInitialize() {
 // MeosFinalize wraps MEOS C function meos_finalize.
 func MeosFinalize() {
 	C.meos_finalize()
+}
+
+
+// MeosVersion wraps MEOS C function meos_version.
+func MeosVersion() string {
+	_cret := C.meos_version()
+	return C.GoString(_cret)
+}
+
+
+// MeosFullVersion wraps MEOS C function meos_full_version.
+func MeosFullVersion() string {
+	_cret := C.meos_full_version()
+	return C.GoString(_cret)
+}
+
+
+// MobilitydbVersion wraps MEOS C function mobilitydb_version.
+func MobilitydbVersion() string {
+	_cret := C.mobilitydb_version()
+	return C.GoString(_cret)
+}
+
+
+// MobilitydbFullVersion wraps MEOS C function mobilitydb_full_version.
+func MobilitydbFullVersion() string {
+	_cret := C.mobilitydb_full_version()
+	return C.GoString(_cret)
 }
 
 
@@ -1448,6 +1379,13 @@ func DatespansetEndDate(ss *SpanSet) int32 {
 }
 
 
+// DatespansetLower wraps MEOS C function datespanset_lower.
+func DatespansetLower(ss *SpanSet) int32 {
+	_cret := C.datespanset_lower(ss._inner)
+	return int32(_cret)
+}
+
+
 // DatespansetNumDates wraps MEOS C function datespanset_num_dates.
 func DatespansetNumDates(ss *SpanSet) int {
 	_cret := C.datespanset_num_dates(ss._inner)
@@ -1458,6 +1396,13 @@ func DatespansetNumDates(ss *SpanSet) int {
 // DatespansetStartDate wraps MEOS C function datespanset_start_date.
 func DatespansetStartDate(ss *SpanSet) int32 {
 	_cret := C.datespanset_start_date(ss._inner)
+	return int32(_cret)
+}
+
+
+// DatespansetUpper wraps MEOS C function datespanset_upper.
+func DatespansetUpper(ss *SpanSet) int32 {
+	_cret := C.datespanset_upper(ss._inner)
 	return int32(_cret)
 }
 
@@ -2377,6 +2322,41 @@ func AdjacentSpanSpanset(s *Span, ss *SpanSet) bool {
 // AdjacentSpanTimestamptz wraps MEOS C function adjacent_span_timestamptz.
 func AdjacentSpanTimestamptz(s *Span, t int64) bool {
 	_cret := C.adjacent_span_timestamptz(s._inner, C.TimestampTz(t))
+	return bool(_cret)
+}
+
+
+// AdjacentBigintSpan wraps MEOS C function adjacent_bigint_span.
+func AdjacentBigintSpan(i int64, s *Span) bool {
+	_cret := C.adjacent_bigint_span(C.int64_t(i), s._inner)
+	return bool(_cret)
+}
+
+
+// AdjacentDateSpan wraps MEOS C function adjacent_date_span.
+func AdjacentDateSpan(d int32, s *Span) bool {
+	_cret := C.adjacent_date_span(C.DateADT(d), s._inner)
+	return bool(_cret)
+}
+
+
+// AdjacentFloatSpan wraps MEOS C function adjacent_float_span.
+func AdjacentFloatSpan(d float64, s *Span) bool {
+	_cret := C.adjacent_float_span(C.double(d), s._inner)
+	return bool(_cret)
+}
+
+
+// AdjacentIntSpan wraps MEOS C function adjacent_int_span.
+func AdjacentIntSpan(i int, s *Span) bool {
+	_cret := C.adjacent_int_span(C.int(i), s._inner)
+	return bool(_cret)
+}
+
+
+// AdjacentTimestamptzSpan wraps MEOS C function adjacent_timestamptz_span.
+func AdjacentTimestamptzSpan(t int64, s *Span) bool {
+	_cret := C.adjacent_timestamptz_span(C.TimestampTz(t), s._inner)
 	return bool(_cret)
 }
 
@@ -4286,8 +4266,8 @@ func UnionBigintSet(i int64, s *Set) *Set {
 
 
 // UnionBigintSpan wraps MEOS C function union_bigint_span.
-func UnionBigintSpan(s *Span, i int64) *SpanSet {
-	_cret := C.gunion_bigint_span(s._inner, C.int64_t(i))
+func UnionBigintSpan(i int64, s *Span) *SpanSet {
+	_cret := C.gunion_bigint_span(C.int64_t(i), s._inner)
 	return &SpanSet{_inner: _cret}
 }
 
@@ -4307,8 +4287,8 @@ func UnionDateSet(d int32, s *Set) *Set {
 
 
 // UnionDateSpan wraps MEOS C function union_date_span.
-func UnionDateSpan(s *Span, d int32) *SpanSet {
-	_cret := C.gunion_date_span(s._inner, C.DateADT(d))
+func UnionDateSpan(d int32, s *Span) *SpanSet {
+	_cret := C.gunion_date_span(C.DateADT(d), s._inner)
 	return &SpanSet{_inner: _cret}
 }
 
@@ -4328,8 +4308,8 @@ func UnionFloatSet(d float64, s *Set) *Set {
 
 
 // UnionFloatSpan wraps MEOS C function union_float_span.
-func UnionFloatSpan(s *Span, d float64) *SpanSet {
-	_cret := C.gunion_float_span(s._inner, C.double(d))
+func UnionFloatSpan(d float64, s *Span) *SpanSet {
+	_cret := C.gunion_float_span(C.double(d), s._inner)
 	return &SpanSet{_inner: _cret}
 }
 
@@ -4445,13 +4425,6 @@ func UnionSpanInt(s *Span, i int) *SpanSet {
 func UnionSpanSpan(s1 *Span, s2 *Span) *SpanSet {
 	_cret := C.gunion_span_span(s1._inner, s2._inner)
 	return &SpanSet{_inner: _cret}
-}
-
-
-// SuperUnionSpanSpan wraps MEOS C function super_union_span_span.
-func SuperUnionSpanSpan(s1 *Span, s2 *Span) *Span {
-	_cret := C.super_union_span_span(s1._inner, s2._inner)
-	return &Span{_inner: _cret}
 }
 
 
@@ -5631,6 +5604,15 @@ func TemporalAsWKB(temp *Temporal, variant uint8, size_out unsafe.Pointer) unsaf
 }
 
 
+// WKBVariantFromEndian wraps MEOS C function wkb_variant_from_endian.
+func WKBVariantFromEndian(endian string) uint8 {
+	_c_endian := C.CString(endian)
+	defer C.free(unsafe.Pointer(_c_endian))
+	_cret := C.wkb_variant_from_endian(_c_endian)
+	return uint8(_cret)
+}
+
+
 // TemporalFromHexwkb wraps MEOS C function temporal_from_hexwkb.
 func TemporalFromHexwkb(hexwkb string) *Temporal {
 	_c_hexwkb := C.CString(hexwkb)
@@ -6102,6 +6084,13 @@ func TemporalHash(temp *Temporal) uint32 {
 }
 
 
+// TemporalHashExtended wraps MEOS C function temporal_hash_extended.
+func TemporalHashExtended(temp *Temporal, seed uint64) uint64 {
+	_cret := C.temporal_hash_extended(temp._inner, C.uint64_t(seed))
+	return uint64(_cret)
+}
+
+
 // TemporalInstantN wraps MEOS C function temporal_instant_n.
 func TemporalInstantN(temp *Temporal, n int) *TInstant {
 	_cret := C.temporal_instant_n(temp._inner, C.int(n))
@@ -6545,23 +6534,23 @@ func TemporalShiftTime(temp *Temporal, shift *Interval) *Temporal {
 }
 
 
-// TemporalToTinstant wraps MEOS C function temporal_to_tinstant.
-func TemporalToTinstant(temp *Temporal) *TInstant {
-	_cret := C.temporal_to_tinstant(temp._inner)
+// TemporalAsTinstant wraps MEOS C function temporal_as_tinstant.
+func TemporalAsTinstant(temp *Temporal) *TInstant {
+	_cret := C.temporal_as_tinstant(temp._inner)
 	return &TInstant{_inner: _cret}
 }
 
 
-// TemporalToTsequence wraps MEOS C function temporal_to_tsequence.
-func TemporalToTsequence(temp *Temporal, interp Interpolation) *TSequence {
-	_cret := C.temporal_to_tsequence(temp._inner, C.interpType(interp))
+// TemporalAsTsequence wraps MEOS C function temporal_as_tsequence.
+func TemporalAsTsequence(temp *Temporal, interp Interpolation) *TSequence {
+	_cret := C.temporal_as_tsequence(temp._inner, C.interpType(interp))
 	return &TSequence{_inner: _cret}
 }
 
 
-// TemporalToTsequenceset wraps MEOS C function temporal_to_tsequenceset.
-func TemporalToTsequenceset(temp *Temporal, interp Interpolation) *TSequenceSet {
-	_cret := C.temporal_to_tsequenceset(temp._inner, C.interpType(interp))
+// TemporalAsTsequenceset wraps MEOS C function temporal_as_tsequenceset.
+func TemporalAsTsequenceset(temp *Temporal, interp Interpolation) *TSequenceSet {
+	_cret := C.temporal_as_tsequenceset(temp._inner, C.interpType(interp))
 	return &TSequenceSet{_inner: _cret}
 }
 
@@ -9264,6 +9253,34 @@ func NadTfloatTBOX(temp *Temporal, box *TBox) float64 {
 }
 
 
+// NadTbigintBigint wraps MEOS C function nad_tbigint_bigint.
+func NadTbigintBigint(temp *Temporal, i int64) int64 {
+	_cret := C.nad_tbigint_bigint(temp._inner, C.int64_t(i))
+	return int64(_cret)
+}
+
+
+// NadTbigintTBOX wraps MEOS C function nad_tbigint_tbox.
+func NadTbigintTBOX(temp *Temporal, box *TBox) int64 {
+	_cret := C.nad_tbigint_tbox(temp._inner, box._inner)
+	return int64(_cret)
+}
+
+
+// NadTbigintTbigint wraps MEOS C function nad_tbigint_tbigint.
+func NadTbigintTbigint(temp1 *Temporal, temp2 *Temporal) int64 {
+	_cret := C.nad_tbigint_tbigint(temp1._inner, temp2._inner)
+	return int64(_cret)
+}
+
+
+// NadTboxbigintTboxbigint wraps MEOS C function nad_tboxbigint_tboxbigint.
+func NadTboxbigintTboxbigint(box1 *TBox, box2 *TBox) int64 {
+	_cret := C.nad_tboxbigint_tboxbigint(box1._inner, box2._inner)
+	return int64(_cret)
+}
+
+
 // NadTintInt wraps MEOS C function nad_tint_int.
 func NadTintInt(temp *Temporal, i int) int {
 	_cret := C.nad_tint_int(temp._inner, C.int(i))
@@ -9282,6 +9299,69 @@ func NadTintTBOX(temp *Temporal, box *TBox) int {
 func NadTintTint(temp1 *Temporal, temp2 *Temporal) int {
 	_cret := C.nad_tint_tint(temp1._inner, temp2._inner)
 	return int(_cret)
+}
+
+
+// TbigintTmaxTransfn wraps MEOS C function tbigint_tmax_transfn.
+func TbigintTmaxTransfn(state *SkipList, temp *Temporal) *SkipList {
+	_cret := C.tbigint_tmax_transfn(state._inner, temp._inner)
+	return &SkipList{_inner: _cret}
+}
+
+
+// TbigintTmaxCombinefn wraps MEOS C function tbigint_tmax_combinefn.
+func TbigintTmaxCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	_cret := C.tbigint_tmax_combinefn(state1._inner, state2._inner)
+	return &SkipList{_inner: _cret}
+}
+
+
+// TbigintTminTransfn wraps MEOS C function tbigint_tmin_transfn.
+func TbigintTminTransfn(state *SkipList, temp *Temporal) *SkipList {
+	_cret := C.tbigint_tmin_transfn(state._inner, temp._inner)
+	return &SkipList{_inner: _cret}
+}
+
+
+// TbigintTminCombinefn wraps MEOS C function tbigint_tmin_combinefn.
+func TbigintTminCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	_cret := C.tbigint_tmin_combinefn(state1._inner, state2._inner)
+	return &SkipList{_inner: _cret}
+}
+
+
+// TbigintTsumTransfn wraps MEOS C function tbigint_tsum_transfn.
+func TbigintTsumTransfn(state *SkipList, temp *Temporal) *SkipList {
+	_cret := C.tbigint_tsum_transfn(state._inner, temp._inner)
+	return &SkipList{_inner: _cret}
+}
+
+
+// TbigintTsumCombinefn wraps MEOS C function tbigint_tsum_combinefn.
+func TbigintTsumCombinefn(state1 *SkipList, state2 *SkipList) *SkipList {
+	_cret := C.tbigint_tsum_combinefn(state1._inner, state2._inner)
+	return &SkipList{_inner: _cret}
+}
+
+
+// TbigintWmaxTransfn wraps MEOS C function tbigint_wmax_transfn.
+func TbigintWmaxTransfn(state *SkipList, temp *Temporal, interv *Interval) *SkipList {
+	_cret := C.tbigint_wmax_transfn(state._inner, temp._inner, interv._inner)
+	return &SkipList{_inner: _cret}
+}
+
+
+// TbigintWminTransfn wraps MEOS C function tbigint_wmin_transfn.
+func TbigintWminTransfn(state *SkipList, temp *Temporal, interv *Interval) *SkipList {
+	_cret := C.tbigint_wmin_transfn(state._inner, temp._inner, interv._inner)
+	return &SkipList{_inner: _cret}
+}
+
+
+// TbigintWsumTransfn wraps MEOS C function tbigint_wsum_transfn.
+func TbigintWsumTransfn(state *SkipList, temp *Temporal, interv *Interval) *SkipList {
+	_cret := C.tbigint_wsum_transfn(state._inner, temp._inner, interv._inner)
+	return &SkipList{_inner: _cret}
 }
 
 

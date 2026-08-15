@@ -85,124 +85,11 @@ import (
 
 var _ = unsafe.Pointer(nil)
 
-// QuadbinIsValidIndex wraps MEOS C function quadbin_is_valid_index.
-func QuadbinIsValidIndex(index uint64) bool {
-	_cret := C.quadbin_is_valid_index(C.uint64_t(index))
-	return bool(_cret)
-}
-
-
-// QuadbinIsValidCell wraps MEOS C function quadbin_is_valid_cell.
-func QuadbinIsValidCell(cell uint64) bool {
-	_cret := C.quadbin_is_valid_cell(C.uint64_t(cell))
-	return bool(_cret)
-}
-
-
-// QuadbinTileToCell wraps MEOS C function quadbin_tile_to_cell.
-func QuadbinTileToCell(x uint32, y uint32, z uint32) uint64 {
-	_cret := C.quadbin_tile_to_cell(C.uint32_t(x), C.uint32_t(y), C.uint32_t(z))
-	return uint64(_cret)
-}
-
-
-// QuadbinCellToTile wraps MEOS C function quadbin_cell_to_tile.
-func QuadbinCellToTile(cell uint64, x unsafe.Pointer, y unsafe.Pointer, z unsafe.Pointer) {
-	C.quadbin_cell_to_tile(C.uint64_t(cell), (*C.uint32_t)(unsafe.Pointer(x)), (*C.uint32_t)(unsafe.Pointer(y)), (*C.uint32_t)(unsafe.Pointer(z)))
-}
-
-
-// QuadbinGetResolution wraps MEOS C function quadbin_get_resolution.
-func QuadbinGetResolution(cell uint64) uint32 {
-	_cret := C.quadbin_get_resolution(C.uint64_t(cell))
-	return uint32(_cret)
-}
-
-
-// QuadbinCellToParent wraps MEOS C function quadbin_cell_to_parent.
-func QuadbinCellToParent(cell uint64, parent_resolution uint32) uint64 {
-	_cret := C.quadbin_cell_to_parent(C.uint64_t(cell), C.uint32_t(parent_resolution))
-	return uint64(_cret)
-}
-
-
-// QuadbinCellToChildren wraps MEOS C function quadbin_cell_to_children.
-func QuadbinCellToChildren(cell uint64, children_resolution uint32, count unsafe.Pointer) unsafe.Pointer {
-	_cret := C.quadbin_cell_to_children(C.uint64_t(cell), C.uint32_t(children_resolution), (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
-}
-
-
-// QuadbinCellSibling wraps MEOS C function quadbin_cell_sibling.
-func QuadbinCellSibling(cell uint64, direction string) uint64 {
-	_c_direction := C.CString(direction)
-	defer C.free(unsafe.Pointer(_c_direction))
-	_cret := C.quadbin_cell_sibling(C.uint64_t(cell), _c_direction)
-	return uint64(_cret)
-}
-
-
-// QuadbinKRing wraps MEOS C function quadbin_k_ring.
-func QuadbinKRing(cell uint64, k int, count unsafe.Pointer) unsafe.Pointer {
-	_cret := C.quadbin_k_ring(C.uint64_t(cell), C.int(k), (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
-}
-
-
-// QuadbinPointToCell wraps MEOS C function quadbin_point_to_cell.
-func QuadbinPointToCell(longitude float64, latitude float64, resolution uint32) uint64 {
-	_cret := C.quadbin_point_to_cell(C.double(longitude), C.double(latitude), C.uint32_t(resolution))
-	return uint64(_cret)
-}
-
-
-// QuadbinCellToPoint wraps MEOS C function quadbin_cell_to_point.
-func QuadbinCellToPoint(cell uint64, longitude unsafe.Pointer, latitude unsafe.Pointer) {
-	C.quadbin_cell_to_point(C.uint64_t(cell), (*C.double)(unsafe.Pointer(longitude)), (*C.double)(unsafe.Pointer(latitude)))
-}
-
-
-// QuadbinCellToBoundingBox wraps MEOS C function quadbin_cell_to_bounding_box.
-func QuadbinCellToBoundingBox(cell uint64, xmin unsafe.Pointer, ymin unsafe.Pointer, xmax unsafe.Pointer, ymax unsafe.Pointer) {
-	C.quadbin_cell_to_bounding_box(C.uint64_t(cell), (*C.double)(unsafe.Pointer(xmin)), (*C.double)(unsafe.Pointer(ymin)), (*C.double)(unsafe.Pointer(xmax)), (*C.double)(unsafe.Pointer(ymax)))
-}
-
-
-// QuadbinCellArea wraps MEOS C function quadbin_cell_area.
-func QuadbinCellArea(cell uint64) float64 {
-	_cret := C.quadbin_cell_area(C.uint64_t(cell))
-	return float64(_cret)
-}
-
-
-// QuadbinIndexToString wraps MEOS C function quadbin_index_to_string.
-func QuadbinIndexToString(index uint64) string {
-	_cret := C.quadbin_index_to_string(C.uint64_t(index))
-	return C.GoString(_cret)
-}
-
-
-// QuadbinStringToIndex wraps MEOS C function quadbin_string_to_index.
-func QuadbinStringToIndex(str string) uint64 {
+// QuadbinIn wraps MEOS C function quadbin_in.
+func QuadbinIn(str string) uint64 {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
-	_cret := C.quadbin_string_to_index(_c_str)
-	return uint64(_cret)
-}
-
-
-// QuadbinCellToQuadkey wraps MEOS C function quadbin_cell_to_quadkey.
-func QuadbinCellToQuadkey(cell uint64) string {
-	_cret := C.quadbin_cell_to_quadkey(C.uint64_t(cell))
-	return C.GoString(_cret)
-}
-
-
-// QuadbinParse wraps MEOS C function quadbin_parse.
-func QuadbinParse(str string) uint64 {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	_cret := C.quadbin_parse(_c_str)
+	_cret := C.quadbin_in(_c_str)
 	return uint64(_cret)
 }
 
@@ -260,6 +147,157 @@ func QuadbinCmp(a uint64, b uint64) int {
 func QuadbinHash(cell uint64) uint32 {
 	_cret := C.quadbin_hash(C.uint64_t(cell))
 	return uint32(_cret)
+}
+
+
+// QuadbinHashExtended wraps MEOS C function quadbin_hash_extended.
+func QuadbinHashExtended(cell uint64, seed uint64) uint64 {
+	_cret := C.quadbin_hash_extended(C.uint64_t(cell), C.uint64_t(seed))
+	return uint64(_cret)
+}
+
+
+// QuadbinIsValidIndex wraps MEOS C function quadbin_is_valid_index.
+func QuadbinIsValidIndex(index uint64) bool {
+	_cret := C.quadbin_is_valid_index(C.uint64_t(index))
+	return bool(_cret)
+}
+
+
+// QuadbinIsValidCell wraps MEOS C function quadbin_is_valid_cell.
+func QuadbinIsValidCell(cell uint64) bool {
+	_cret := C.quadbin_is_valid_cell(C.uint64_t(cell))
+	return bool(_cret)
+}
+
+
+// QuadbinTileToCell wraps MEOS C function quadbin_tile_to_cell.
+func QuadbinTileToCell(x uint32, y uint32, z uint32) uint64 {
+	_cret := C.quadbin_tile_to_cell(C.uint32_t(x), C.uint32_t(y), C.uint32_t(z))
+	return uint64(_cret)
+}
+
+
+// QuadbinCellToTile wraps MEOS C function quadbin_cell_to_tile.
+func QuadbinCellToTile(cell uint64, x unsafe.Pointer, y unsafe.Pointer, z unsafe.Pointer) bool {
+	_cret := C.quadbin_cell_to_tile(C.uint64_t(cell), (*C.uint32_t)(unsafe.Pointer(x)), (*C.uint32_t)(unsafe.Pointer(y)), (*C.uint32_t)(unsafe.Pointer(z)))
+	return bool(_cret)
+}
+
+
+// QuadbinGetResolution wraps MEOS C function quadbin_get_resolution.
+func QuadbinGetResolution(cell uint64) uint32 {
+	_cret := C.quadbin_get_resolution(C.uint64_t(cell))
+	return uint32(_cret)
+}
+
+
+// QuadbinCellToParent wraps MEOS C function quadbin_cell_to_parent.
+func QuadbinCellToParent(cell uint64, parent_resolution uint32) uint64 {
+	_cret := C.quadbin_cell_to_parent(C.uint64_t(cell), C.uint32_t(parent_resolution))
+	return uint64(_cret)
+}
+
+
+// QuadbinCellToChildren wraps MEOS C function quadbin_cell_to_children.
+func QuadbinCellToChildren(cell uint64, children_resolution uint32, count unsafe.Pointer) unsafe.Pointer {
+	_cret := C.quadbin_cell_to_children(C.uint64_t(cell), C.uint32_t(children_resolution), (*C.int)(unsafe.Pointer(count)))
+	return unsafe.Pointer(_cret)
+}
+
+
+// QuadbinCellSibling wraps MEOS C function quadbin_cell_sibling.
+func QuadbinCellSibling(cell uint64, direction string) uint64 {
+	_c_direction := C.CString(direction)
+	defer C.free(unsafe.Pointer(_c_direction))
+	_cret := C.quadbin_cell_sibling(C.uint64_t(cell), _c_direction)
+	return uint64(_cret)
+}
+
+
+// QuadbinKRing wraps MEOS C function quadbin_k_ring.
+func QuadbinKRing(cell uint64, k int, count unsafe.Pointer) unsafe.Pointer {
+	_cret := C.quadbin_k_ring(C.uint64_t(cell), C.int(k), (*C.int)(unsafe.Pointer(count)))
+	return unsafe.Pointer(_cret)
+}
+
+
+// QuadbinPointToCell wraps MEOS C function quadbin_point_to_cell.
+func QuadbinPointToCell(longitude float64, latitude float64, resolution uint32) uint64 {
+	_cret := C.quadbin_point_to_cell(C.double(longitude), C.double(latitude), C.uint32_t(resolution))
+	return uint64(_cret)
+}
+
+
+// GeoToQuadbinCell wraps MEOS C function geo_to_quadbin_cell.
+func GeoToQuadbinCell(point *Geom, resolution int32) uint64 {
+	_cret := C.geo_to_quadbin_cell(point._inner, C.int32(resolution))
+	return uint64(_cret)
+}
+
+
+// QuadbinCellToGeompoint wraps MEOS C function quadbin_cell_to_geompoint.
+func QuadbinCellToGeompoint(cell uint64) *Geom {
+	_cret := C.quadbin_cell_to_geompoint(C.uint64_t(cell))
+	return &Geom{_inner: _cret}
+}
+
+
+// QuadbinCellToGeom wraps MEOS C function quadbin_cell_to_geom.
+func QuadbinCellToGeom(cell uint64) *Geom {
+	_cret := C.quadbin_cell_to_geom(C.uint64_t(cell))
+	return &Geom{_inner: _cret}
+}
+
+
+// QuadbinToSTBOX wraps MEOS C function quadbin_to_stbox.
+func QuadbinToSTBOX(cell uint64) *STBox {
+	_cret := C.quadbin_to_stbox(C.uint64_t(cell))
+	return &STBox{_inner: _cret}
+}
+
+
+// QuadbinTimestamptzToSTBOX wraps MEOS C function quadbin_timestamptz_to_stbox.
+func QuadbinTimestamptzToSTBOX(cell uint64, t int64) *STBox {
+	_cret := C.quadbin_timestamptz_to_stbox(C.uint64_t(cell), C.TimestampTz(t))
+	return &STBox{_inner: _cret}
+}
+
+
+// QuadbinTstzspanToSTBOX wraps MEOS C function quadbin_tstzspan_to_stbox.
+func QuadbinTstzspanToSTBOX(cell uint64, s *Span) *STBox {
+	_cret := C.quadbin_tstzspan_to_stbox(C.uint64_t(cell), s._inner)
+	return &STBox{_inner: _cret}
+}
+
+
+// QuadbinCellArea wraps MEOS C function quadbin_cell_area.
+func QuadbinCellArea(cell uint64) float64 {
+	_cret := C.quadbin_cell_area(C.uint64_t(cell))
+	return float64(_cret)
+}
+
+
+// QuadbinIndexToString wraps MEOS C function quadbin_index_to_string.
+func QuadbinIndexToString(index uint64) string {
+	_cret := C.quadbin_index_to_string(C.uint64_t(index))
+	return C.GoString(_cret)
+}
+
+
+// QuadbinStringToIndex wraps MEOS C function quadbin_string_to_index.
+func QuadbinStringToIndex(str string) uint64 {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	_cret := C.quadbin_string_to_index(_c_str)
+	return uint64(_cret)
+}
+
+
+// QuadbinCellToQuadkey wraps MEOS C function quadbin_cell_to_quadkey.
+func QuadbinCellToQuadkey(cell uint64) string {
+	_cret := C.quadbin_cell_to_quadkey(C.uint64_t(cell))
+	return C.GoString(_cret)
 }
 
 

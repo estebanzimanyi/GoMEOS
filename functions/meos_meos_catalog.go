@@ -359,6 +359,13 @@ func TpointcloudTemptype(type_ MeosType) bool {
 }
 
 
+// EnsureTpointcloudTemptype wraps MEOS C function ensure_tpointcloud_temptype.
+func EnsureTpointcloudTemptype(type_ MeosType) bool {
+	_cret := C.ensure_tpointcloud_temptype(C.MeosType(type_))
+	return bool(_cret)
+}
+
+
 // SpanBasetype wraps MEOS C function span_basetype.
 func SpanBasetype(type_ MeosType) bool {
 	_cret := C.span_basetype(C.MeosType(type_))
