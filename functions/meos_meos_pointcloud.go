@@ -791,12 +791,6 @@ func TpcboxToSTBOX(box *TPCBox) *STBox {
 }
 
 
-// TpcboxExpand wraps MEOS C function tpcbox_expand.
-func TpcboxExpand(box1 *TPCBox, box2 *TPCBox) {
-	C.tpcbox_expand(box1._inner, box2._inner)
-}
-
-
 // TpcboxRound wraps MEOS C function tpcbox_round.
 func TpcboxRound(box *TPCBox, maxdd int) *TPCBox {
 	_cret := C.tpcbox_round(box._inner, C.int(maxdd))
@@ -1036,10 +1030,406 @@ func EnsureSamePcidTpcbox(box1 *TPCBox, box2 *TPCBox) bool {
 }
 
 
-// TpointcloudinstMake wraps MEOS C function tpointcloudinst_make.
-func TpointcloudinstMake(pt *Pcpoint, t int64) *TInstant {
-	_cret := C.tpointcloudinst_make(pt._inner, C.TimestampTz(t))
+// TpointcloudToTgeompoint wraps MEOS C function tpointcloud_to_tgeompoint.
+func TpointcloudToTgeompoint(temp *Temporal) *Temporal {
+	_cret := C.tpointcloud_to_tgeompoint(temp._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TpcpointinstMake wraps MEOS C function tpcpointinst_make.
+func TpcpointinstMake(pt *Pcpoint, t int64) *TInstant {
+	_cret := C.tpcpointinst_make(pt._inner, C.TimestampTz(t))
 	return &TInstant{_inner: _cret}
+}
+
+
+// TpcpointseqFromBaseTstzset wraps MEOS C function tpcpointseq_from_base_tstzset.
+func TpcpointseqFromBaseTstzset(pt *Pcpoint, s *Set) *TSequence {
+	_cret := C.tpcpointseq_from_base_tstzset(pt._inner, s._inner)
+	return &TSequence{_inner: _cret}
+}
+
+
+// TpcpointseqFromBaseTstzspan wraps MEOS C function tpcpointseq_from_base_tstzspan.
+func TpcpointseqFromBaseTstzspan(pt *Pcpoint, sp *Span) *TSequence {
+	_cret := C.tpcpointseq_from_base_tstzspan(pt._inner, sp._inner)
+	return &TSequence{_inner: _cret}
+}
+
+
+// TpcpointseqsetFromBaseTstzspanset wraps MEOS C function tpcpointseqset_from_base_tstzspanset.
+func TpcpointseqsetFromBaseTstzspanset(pt *Pcpoint, ss *SpanSet) *TSequenceSet {
+	_cret := C.tpcpointseqset_from_base_tstzspanset(pt._inner, ss._inner)
+	return &TSequenceSet{_inner: _cret}
+}
+
+
+// TpcpointFromBaseTemp wraps MEOS C function tpcpoint_from_base_temp.
+func TpcpointFromBaseTemp(pt *Pcpoint, temp *Temporal) *Temporal {
+	_cret := C.tpcpoint_from_base_temp(pt._inner, temp._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TpcpointStartValue wraps MEOS C function tpcpoint_start_value.
+func TpcpointStartValue(temp *Temporal) *Pcpoint {
+	_cret := C.tpcpoint_start_value(temp._inner)
+	return &Pcpoint{_inner: _cret}
+}
+
+
+// TpcpointEndValue wraps MEOS C function tpcpoint_end_value.
+func TpcpointEndValue(temp *Temporal) *Pcpoint {
+	_cret := C.tpcpoint_end_value(temp._inner)
+	return &Pcpoint{_inner: _cret}
+}
+
+
+// TpcpointValueN wraps MEOS C function tpcpoint_value_n.
+func TpcpointValueN(temp *Temporal, n int) (bool, *Pcpoint) {
+	var _out_result *C.Pcpoint
+	_cret := C.tpcpoint_value_n(temp._inner, C.int(n), &_out_result)
+	return bool(_cret), &Pcpoint{_inner: _out_result}
+}
+
+
+// TpcpointValues wraps MEOS C function tpcpoint_values.
+func TpcpointValues(temp *Temporal, count unsafe.Pointer) unsafe.Pointer {
+	_cret := C.tpcpoint_values(temp._inner, (*C.int)(unsafe.Pointer(count)))
+	return unsafe.Pointer(_cret)
+}
+
+
+// TpcpointValueAtTimestamptz wraps MEOS C function tpcpoint_value_at_timestamptz.
+func TpcpointValueAtTimestamptz(temp *Temporal, t int64, strict bool) (bool, *Pcpoint) {
+	var _out_value *C.Pcpoint
+	_cret := C.tpcpoint_value_at_timestamptz(temp._inner, C.TimestampTz(t), C.bool(strict), &_out_value)
+	return bool(_cret), &Pcpoint{_inner: _out_value}
+}
+
+
+// TpcpointAtValue wraps MEOS C function tpcpoint_at_value.
+func TpcpointAtValue(temp *Temporal, pt *Pcpoint) *Temporal {
+	_cret := C.tpcpoint_at_value(temp._inner, pt._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TpcpointMinusValue wraps MEOS C function tpcpoint_minus_value.
+func TpcpointMinusValue(temp *Temporal, pt *Pcpoint) *Temporal {
+	_cret := C.tpcpoint_minus_value(temp._inner, pt._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TpcpatchinstMake wraps MEOS C function tpcpatchinst_make.
+func TpcpatchinstMake(pa *Pcpatch, t int64) *TInstant {
+	_cret := C.tpcpatchinst_make(pa._inner, C.TimestampTz(t))
+	return &TInstant{_inner: _cret}
+}
+
+
+// TpcpatchseqFromBaseTstzset wraps MEOS C function tpcpatchseq_from_base_tstzset.
+func TpcpatchseqFromBaseTstzset(pa *Pcpatch, s *Set) *TSequence {
+	_cret := C.tpcpatchseq_from_base_tstzset(pa._inner, s._inner)
+	return &TSequence{_inner: _cret}
+}
+
+
+// TpcpatchseqFromBaseTstzspan wraps MEOS C function tpcpatchseq_from_base_tstzspan.
+func TpcpatchseqFromBaseTstzspan(pa *Pcpatch, sp *Span) *TSequence {
+	_cret := C.tpcpatchseq_from_base_tstzspan(pa._inner, sp._inner)
+	return &TSequence{_inner: _cret}
+}
+
+
+// TpcpatchseqsetFromBaseTstzspanset wraps MEOS C function tpcpatchseqset_from_base_tstzspanset.
+func TpcpatchseqsetFromBaseTstzspanset(pa *Pcpatch, ss *SpanSet) *TSequenceSet {
+	_cret := C.tpcpatchseqset_from_base_tstzspanset(pa._inner, ss._inner)
+	return &TSequenceSet{_inner: _cret}
+}
+
+
+// TpcpatchFromBaseTemp wraps MEOS C function tpcpatch_from_base_temp.
+func TpcpatchFromBaseTemp(pa *Pcpatch, temp *Temporal) *Temporal {
+	_cret := C.tpcpatch_from_base_temp(pa._inner, temp._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TpcpatchStartValue wraps MEOS C function tpcpatch_start_value.
+func TpcpatchStartValue(temp *Temporal) *Pcpatch {
+	_cret := C.tpcpatch_start_value(temp._inner)
+	return &Pcpatch{_inner: _cret}
+}
+
+
+// TpcpatchEndValue wraps MEOS C function tpcpatch_end_value.
+func TpcpatchEndValue(temp *Temporal) *Pcpatch {
+	_cret := C.tpcpatch_end_value(temp._inner)
+	return &Pcpatch{_inner: _cret}
+}
+
+
+// TpcpatchValueN wraps MEOS C function tpcpatch_value_n.
+func TpcpatchValueN(temp *Temporal, n int) (bool, *Pcpatch) {
+	var _out_result *C.Pcpatch
+	_cret := C.tpcpatch_value_n(temp._inner, C.int(n), &_out_result)
+	return bool(_cret), &Pcpatch{_inner: _out_result}
+}
+
+
+// TpcpatchValues wraps MEOS C function tpcpatch_values.
+func TpcpatchValues(temp *Temporal, count unsafe.Pointer) unsafe.Pointer {
+	_cret := C.tpcpatch_values(temp._inner, (*C.int)(unsafe.Pointer(count)))
+	return unsafe.Pointer(_cret)
+}
+
+
+// TpcpatchValueAtTimestamptz wraps MEOS C function tpcpatch_value_at_timestamptz.
+func TpcpatchValueAtTimestamptz(temp *Temporal, t int64, strict bool) (bool, *Pcpatch) {
+	var _out_value *C.Pcpatch
+	_cret := C.tpcpatch_value_at_timestamptz(temp._inner, C.TimestampTz(t), C.bool(strict), &_out_value)
+	return bool(_cret), &Pcpatch{_inner: _out_value}
+}
+
+
+// TpcpatchAtValue wraps MEOS C function tpcpatch_at_value.
+func TpcpatchAtValue(temp *Temporal, pa *Pcpatch) *Temporal {
+	_cret := C.tpcpatch_at_value(temp._inner, pa._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TpcpatchMinusValue wraps MEOS C function tpcpatch_minus_value.
+func TpcpatchMinusValue(temp *Temporal, pa *Pcpatch) *Temporal {
+	_cret := C.tpcpatch_minus_value(temp._inner, pa._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// EverEqPcpointTpcpoint wraps MEOS C function ever_eq_pcpoint_tpcpoint.
+func EverEqPcpointTpcpoint(pt *Pcpoint, temp *Temporal) int {
+	_cret := C.ever_eq_pcpoint_tpcpoint(pt._inner, temp._inner)
+	return int(_cret)
+}
+
+
+// EverEqTpcpointPcpoint wraps MEOS C function ever_eq_tpcpoint_pcpoint.
+func EverEqTpcpointPcpoint(temp *Temporal, pt *Pcpoint) int {
+	_cret := C.ever_eq_tpcpoint_pcpoint(temp._inner, pt._inner)
+	return int(_cret)
+}
+
+
+// EverEqTpcpointTpcpoint wraps MEOS C function ever_eq_tpcpoint_tpcpoint.
+func EverEqTpcpointTpcpoint(temp1 *Temporal, temp2 *Temporal) int {
+	_cret := C.ever_eq_tpcpoint_tpcpoint(temp1._inner, temp2._inner)
+	return int(_cret)
+}
+
+
+// EverNePcpointTpcpoint wraps MEOS C function ever_ne_pcpoint_tpcpoint.
+func EverNePcpointTpcpoint(pt *Pcpoint, temp *Temporal) int {
+	_cret := C.ever_ne_pcpoint_tpcpoint(pt._inner, temp._inner)
+	return int(_cret)
+}
+
+
+// EverNeTpcpointPcpoint wraps MEOS C function ever_ne_tpcpoint_pcpoint.
+func EverNeTpcpointPcpoint(temp *Temporal, pt *Pcpoint) int {
+	_cret := C.ever_ne_tpcpoint_pcpoint(temp._inner, pt._inner)
+	return int(_cret)
+}
+
+
+// EverNeTpcpointTpcpoint wraps MEOS C function ever_ne_tpcpoint_tpcpoint.
+func EverNeTpcpointTpcpoint(temp1 *Temporal, temp2 *Temporal) int {
+	_cret := C.ever_ne_tpcpoint_tpcpoint(temp1._inner, temp2._inner)
+	return int(_cret)
+}
+
+
+// AlwaysEqPcpointTpcpoint wraps MEOS C function always_eq_pcpoint_tpcpoint.
+func AlwaysEqPcpointTpcpoint(pt *Pcpoint, temp *Temporal) int {
+	_cret := C.always_eq_pcpoint_tpcpoint(pt._inner, temp._inner)
+	return int(_cret)
+}
+
+
+// AlwaysEqTpcpointPcpoint wraps MEOS C function always_eq_tpcpoint_pcpoint.
+func AlwaysEqTpcpointPcpoint(temp *Temporal, pt *Pcpoint) int {
+	_cret := C.always_eq_tpcpoint_pcpoint(temp._inner, pt._inner)
+	return int(_cret)
+}
+
+
+// AlwaysEqTpcpointTpcpoint wraps MEOS C function always_eq_tpcpoint_tpcpoint.
+func AlwaysEqTpcpointTpcpoint(temp1 *Temporal, temp2 *Temporal) int {
+	_cret := C.always_eq_tpcpoint_tpcpoint(temp1._inner, temp2._inner)
+	return int(_cret)
+}
+
+
+// AlwaysNePcpointTpcpoint wraps MEOS C function always_ne_pcpoint_tpcpoint.
+func AlwaysNePcpointTpcpoint(pt *Pcpoint, temp *Temporal) int {
+	_cret := C.always_ne_pcpoint_tpcpoint(pt._inner, temp._inner)
+	return int(_cret)
+}
+
+
+// AlwaysNeTpcpointPcpoint wraps MEOS C function always_ne_tpcpoint_pcpoint.
+func AlwaysNeTpcpointPcpoint(temp *Temporal, pt *Pcpoint) int {
+	_cret := C.always_ne_tpcpoint_pcpoint(temp._inner, pt._inner)
+	return int(_cret)
+}
+
+
+// AlwaysNeTpcpointTpcpoint wraps MEOS C function always_ne_tpcpoint_tpcpoint.
+func AlwaysNeTpcpointTpcpoint(temp1 *Temporal, temp2 *Temporal) int {
+	_cret := C.always_ne_tpcpoint_tpcpoint(temp1._inner, temp2._inner)
+	return int(_cret)
+}
+
+
+// EverEqPcpatchTpcpatch wraps MEOS C function ever_eq_pcpatch_tpcpatch.
+func EverEqPcpatchTpcpatch(pa *Pcpatch, temp *Temporal) int {
+	_cret := C.ever_eq_pcpatch_tpcpatch(pa._inner, temp._inner)
+	return int(_cret)
+}
+
+
+// EverEqTpcpatchPcpatch wraps MEOS C function ever_eq_tpcpatch_pcpatch.
+func EverEqTpcpatchPcpatch(temp *Temporal, pa *Pcpatch) int {
+	_cret := C.ever_eq_tpcpatch_pcpatch(temp._inner, pa._inner)
+	return int(_cret)
+}
+
+
+// EverEqTpcpatchTpcpatch wraps MEOS C function ever_eq_tpcpatch_tpcpatch.
+func EverEqTpcpatchTpcpatch(temp1 *Temporal, temp2 *Temporal) int {
+	_cret := C.ever_eq_tpcpatch_tpcpatch(temp1._inner, temp2._inner)
+	return int(_cret)
+}
+
+
+// EverNePcpatchTpcpatch wraps MEOS C function ever_ne_pcpatch_tpcpatch.
+func EverNePcpatchTpcpatch(pa *Pcpatch, temp *Temporal) int {
+	_cret := C.ever_ne_pcpatch_tpcpatch(pa._inner, temp._inner)
+	return int(_cret)
+}
+
+
+// EverNeTpcpatchPcpatch wraps MEOS C function ever_ne_tpcpatch_pcpatch.
+func EverNeTpcpatchPcpatch(temp *Temporal, pa *Pcpatch) int {
+	_cret := C.ever_ne_tpcpatch_pcpatch(temp._inner, pa._inner)
+	return int(_cret)
+}
+
+
+// EverNeTpcpatchTpcpatch wraps MEOS C function ever_ne_tpcpatch_tpcpatch.
+func EverNeTpcpatchTpcpatch(temp1 *Temporal, temp2 *Temporal) int {
+	_cret := C.ever_ne_tpcpatch_tpcpatch(temp1._inner, temp2._inner)
+	return int(_cret)
+}
+
+
+// AlwaysEqPcpatchTpcpatch wraps MEOS C function always_eq_pcpatch_tpcpatch.
+func AlwaysEqPcpatchTpcpatch(pa *Pcpatch, temp *Temporal) int {
+	_cret := C.always_eq_pcpatch_tpcpatch(pa._inner, temp._inner)
+	return int(_cret)
+}
+
+
+// AlwaysEqTpcpatchPcpatch wraps MEOS C function always_eq_tpcpatch_pcpatch.
+func AlwaysEqTpcpatchPcpatch(temp *Temporal, pa *Pcpatch) int {
+	_cret := C.always_eq_tpcpatch_pcpatch(temp._inner, pa._inner)
+	return int(_cret)
+}
+
+
+// AlwaysEqTpcpatchTpcpatch wraps MEOS C function always_eq_tpcpatch_tpcpatch.
+func AlwaysEqTpcpatchTpcpatch(temp1 *Temporal, temp2 *Temporal) int {
+	_cret := C.always_eq_tpcpatch_tpcpatch(temp1._inner, temp2._inner)
+	return int(_cret)
+}
+
+
+// AlwaysNePcpatchTpcpatch wraps MEOS C function always_ne_pcpatch_tpcpatch.
+func AlwaysNePcpatchTpcpatch(pa *Pcpatch, temp *Temporal) int {
+	_cret := C.always_ne_pcpatch_tpcpatch(pa._inner, temp._inner)
+	return int(_cret)
+}
+
+
+// AlwaysNeTpcpatchPcpatch wraps MEOS C function always_ne_tpcpatch_pcpatch.
+func AlwaysNeTpcpatchPcpatch(temp *Temporal, pa *Pcpatch) int {
+	_cret := C.always_ne_tpcpatch_pcpatch(temp._inner, pa._inner)
+	return int(_cret)
+}
+
+
+// AlwaysNeTpcpatchTpcpatch wraps MEOS C function always_ne_tpcpatch_tpcpatch.
+func AlwaysNeTpcpatchTpcpatch(temp1 *Temporal, temp2 *Temporal) int {
+	_cret := C.always_ne_tpcpatch_tpcpatch(temp1._inner, temp2._inner)
+	return int(_cret)
+}
+
+
+// TeqPcpointTpcpoint wraps MEOS C function teq_pcpoint_tpcpoint.
+func TeqPcpointTpcpoint(pt *Pcpoint, temp *Temporal) *Temporal {
+	_cret := C.teq_pcpoint_tpcpoint(pt._inner, temp._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TeqTpcpointPcpoint wraps MEOS C function teq_tpcpoint_pcpoint.
+func TeqTpcpointPcpoint(temp *Temporal, pt *Pcpoint) *Temporal {
+	_cret := C.teq_tpcpoint_pcpoint(temp._inner, pt._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TnePcpointTpcpoint wraps MEOS C function tne_pcpoint_tpcpoint.
+func TnePcpointTpcpoint(pt *Pcpoint, temp *Temporal) *Temporal {
+	_cret := C.tne_pcpoint_tpcpoint(pt._inner, temp._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TneTpcpointPcpoint wraps MEOS C function tne_tpcpoint_pcpoint.
+func TneTpcpointPcpoint(temp *Temporal, pt *Pcpoint) *Temporal {
+	_cret := C.tne_tpcpoint_pcpoint(temp._inner, pt._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TeqPcpatchTpcpatch wraps MEOS C function teq_pcpatch_tpcpatch.
+func TeqPcpatchTpcpatch(pa *Pcpatch, temp *Temporal) *Temporal {
+	_cret := C.teq_pcpatch_tpcpatch(pa._inner, temp._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TeqTpcpatchPcpatch wraps MEOS C function teq_tpcpatch_pcpatch.
+func TeqTpcpatchPcpatch(temp *Temporal, pa *Pcpatch) *Temporal {
+	_cret := C.teq_tpcpatch_pcpatch(temp._inner, pa._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TnePcpatchTpcpatch wraps MEOS C function tne_pcpatch_tpcpatch.
+func TnePcpatchTpcpatch(pa *Pcpatch, temp *Temporal) *Temporal {
+	_cret := C.tne_pcpatch_tpcpatch(pa._inner, temp._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TneTpcpatchPcpatch wraps MEOS C function tne_tpcpatch_pcpatch.
+func TneTpcpatchPcpatch(temp *Temporal, pa *Pcpatch) *Temporal {
+	_cret := C.tne_tpcpatch_pcpatch(temp._inner, pa._inner)
+	return &Temporal{_inner: _cret}
 }
 
 

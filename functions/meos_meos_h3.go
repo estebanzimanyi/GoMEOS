@@ -85,22 +85,6 @@ import (
 
 var _ = unsafe.Pointer(nil)
 
-// H3indexIn wraps MEOS C function h3index_in.
-func H3indexIn(str string) uint64 {
-	_c_str := C.CString(str)
-	defer C.free(unsafe.Pointer(_c_str))
-	_cret := C.h3index_in(_c_str)
-	return uint64(_cret)
-}
-
-
-// H3indexOut wraps MEOS C function h3index_out.
-func H3indexOut(cell uint64) string {
-	_cret := C.h3index_out(C.uint64_t(cell))
-	return C.GoString(_cret)
-}
-
-
 // H3indexFromWKB wraps MEOS C function h3index_from_wkb.
 func H3indexFromWKB(wkb unsafe.Pointer, size uint) uint64 {
 	_cret := C.h3index_from_wkb((*C.uint8_t)(unsafe.Pointer(wkb)), C.size_t(size))
@@ -128,90 +112,6 @@ func H3indexAsWKB(cell uint64, variant uint8, size_out unsafe.Pointer) unsafe.Po
 func H3indexAsHexwkb(cell uint64, variant uint8, size_out unsafe.Pointer) string {
 	_cret := C.h3index_as_hexwkb(C.uint64_t(cell), C.uint8_t(variant), (*C.size_t)(unsafe.Pointer(size_out)))
 	return C.GoString(_cret)
-}
-
-
-// H3indexEq wraps MEOS C function h3index_eq.
-func H3indexEq(a uint64, b uint64) bool {
-	_cret := C.h3index_eq(C.uint64_t(a), C.uint64_t(b))
-	return bool(_cret)
-}
-
-
-// H3indexNe wraps MEOS C function h3index_ne.
-func H3indexNe(a uint64, b uint64) bool {
-	_cret := C.h3index_ne(C.uint64_t(a), C.uint64_t(b))
-	return bool(_cret)
-}
-
-
-// H3indexLt wraps MEOS C function h3index_lt.
-func H3indexLt(a uint64, b uint64) bool {
-	_cret := C.h3index_lt(C.uint64_t(a), C.uint64_t(b))
-	return bool(_cret)
-}
-
-
-// H3indexLe wraps MEOS C function h3index_le.
-func H3indexLe(a uint64, b uint64) bool {
-	_cret := C.h3index_le(C.uint64_t(a), C.uint64_t(b))
-	return bool(_cret)
-}
-
-
-// H3indexGt wraps MEOS C function h3index_gt.
-func H3indexGt(a uint64, b uint64) bool {
-	_cret := C.h3index_gt(C.uint64_t(a), C.uint64_t(b))
-	return bool(_cret)
-}
-
-
-// H3indexGe wraps MEOS C function h3index_ge.
-func H3indexGe(a uint64, b uint64) bool {
-	_cret := C.h3index_ge(C.uint64_t(a), C.uint64_t(b))
-	return bool(_cret)
-}
-
-
-// H3indexCmp wraps MEOS C function h3index_cmp.
-func H3indexCmp(a uint64, b uint64) int {
-	_cret := C.h3index_cmp(C.uint64_t(a), C.uint64_t(b))
-	return int(_cret)
-}
-
-
-// H3indexHash wraps MEOS C function h3index_hash.
-func H3indexHash(cell uint64) uint32 {
-	_cret := C.h3index_hash(C.uint64_t(cell))
-	return uint32(_cret)
-}
-
-
-// H3GridDisk wraps MEOS C function h3_grid_disk.
-func H3GridDisk(origin uint64, k int) *Set {
-	_cret := C.h3_grid_disk(C.uint64_t(origin), C.int(k))
-	return &Set{_inner: _cret}
-}
-
-
-// H3CellToChildren wraps MEOS C function h3_cell_to_children.
-func H3CellToChildren(origin uint64, childRes int) *Set {
-	_cret := C.h3_cell_to_children(C.uint64_t(origin), C.int(childRes))
-	return &Set{_inner: _cret}
-}
-
-
-// H3CompactCells wraps MEOS C function h3_compact_cells.
-func H3CompactCells(cells *Set) *Set {
-	_cret := C.h3_compact_cells(cells._inner)
-	return &Set{_inner: _cret}
-}
-
-
-// H3UncompactCells wraps MEOS C function h3_uncompact_cells.
-func H3UncompactCells(cells *Set, res int) *Set {
-	_cret := C.h3_uncompact_cells(cells._inner, C.int(res))
-	return &Set{_inner: _cret}
 }
 
 
@@ -568,9 +468,9 @@ func Th3indexCellToBoundary(temp *Temporal) *Temporal {
 }
 
 
-// H3GsPointToCell wraps MEOS C function h3_gs_point_to_cell.
-func H3GsPointToCell(point *Geom, resolution int32) uint64 {
-	_cret := C.h3_gs_point_to_cell(point._inner, C.int32(resolution))
+// GeoToH3indexCell wraps MEOS C function geo_to_h3index_cell.
+func GeoToH3indexCell(point *Geom, resolution int32) uint64 {
+	_cret := C.geo_to_h3index_cell(point._inner, C.int32(resolution))
 	return uint64(_cret)
 }
 
@@ -579,6 +479,27 @@ func H3GsPointToCell(point *Geom, resolution int32) uint64 {
 func GeoToH3indexSet(gs *Geom, resolution int32) *Set {
 	_cret := C.geo_to_h3index_set(gs._inner, C.int32(resolution))
 	return &Set{_inner: _cret}
+}
+
+
+// H3indexToSTBOX wraps MEOS C function h3index_to_stbox.
+func H3indexToSTBOX(cell uint64) *STBox {
+	_cret := C.h3index_to_stbox(C.uint64_t(cell))
+	return &STBox{_inner: _cret}
+}
+
+
+// H3indexTimestamptzToSTBOX wraps MEOS C function h3index_timestamptz_to_stbox.
+func H3indexTimestamptzToSTBOX(cell uint64, t int64) *STBox {
+	_cret := C.h3index_timestamptz_to_stbox(C.uint64_t(cell), C.TimestampTz(t))
+	return &STBox{_inner: _cret}
+}
+
+
+// H3indexTstzspanToSTBOX wraps MEOS C function h3index_tstzspan_to_stbox.
+func H3indexTstzspanToSTBOX(cell uint64, s *Span) *STBox {
+	_cret := C.h3index_tstzspan_to_stbox(C.uint64_t(cell), s._inner)
+	return &STBox{_inner: _cret}
 }
 
 

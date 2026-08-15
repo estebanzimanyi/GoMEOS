@@ -85,9 +85,41 @@ import (
 
 var _ = unsafe.Pointer(nil)
 
+// TrgeometryIn wraps MEOS C function trgeometry_in.
+func TrgeometryIn(str string) *Temporal {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	_cret := C.trgeometry_in(_c_str)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TrgeometryFromMFJSON wraps MEOS C function trgeometry_from_mfjson.
+func TrgeometryFromMFJSON(mfjson string) *Temporal {
+	_c_mfjson := C.CString(mfjson)
+	defer C.free(unsafe.Pointer(_c_mfjson))
+	_cret := C.trgeometry_from_mfjson(_c_mfjson)
+	return &Temporal{_inner: _cret}
+}
+
+
 // TrgeometryOut wraps MEOS C function trgeometry_out.
 func TrgeometryOut(temp *Temporal) string {
 	_cret := C.trgeometry_out(temp._inner)
+	return C.GoString(_cret)
+}
+
+
+// TrgeometryAsText wraps MEOS C function trgeometry_as_text.
+func TrgeometryAsText(temp *Temporal, maxdd int) string {
+	_cret := C.trgeometry_as_text(temp._inner, C.int(maxdd))
+	return C.GoString(_cret)
+}
+
+
+// TrgeometryAsEWKT wraps MEOS C function trgeometry_as_ewkt.
+func TrgeometryAsEWKT(temp *Temporal, maxdd int) string {
+	_cret := C.trgeometry_as_ewkt(temp._inner, C.int(maxdd))
 	return C.GoString(_cret)
 }
 
@@ -99,9 +131,30 @@ func TrgeometryinstMake(geom *Geom, pose *Pose, t int64) *TInstant {
 }
 
 
-// GeoTposeToTrgeometry wraps MEOS C function geo_tpose_to_trgeometry.
-func GeoTposeToTrgeometry(gs *Geom, temp *Temporal) *Temporal {
-	_cret := C.geo_tpose_to_trgeometry(gs._inner, temp._inner)
+// TrgeometryseqMake wraps MEOS C function trgeometryseq_make.
+func TrgeometryseqMake(geom *Geom, instants unsafe.Pointer, count int, lower_inc bool, upper_inc bool, interp Interpolation, normalize bool) *TSequence {
+	_cret := C.trgeometryseq_make(geom._inner, (**C.TInstant)(unsafe.Pointer(instants)), C.int(count), C.bool(lower_inc), C.bool(upper_inc), C.interpType(interp), C.bool(normalize))
+	return &TSequence{_inner: _cret}
+}
+
+
+// TrgeometryseqsetMake wraps MEOS C function trgeometryseqset_make.
+func TrgeometryseqsetMake(geom *Geom, sequences unsafe.Pointer, count int, normalize bool) *TSequenceSet {
+	_cret := C.trgeometryseqset_make(geom._inner, (**C.TSequence)(unsafe.Pointer(sequences)), C.int(count), C.bool(normalize))
+	return &TSequenceSet{_inner: _cret}
+}
+
+
+// TrgeometryseqsetMakeGaps wraps MEOS C function trgeometryseqset_make_gaps.
+func TrgeometryseqsetMakeGaps(geom *Geom, instants unsafe.Pointer, count int, interp Interpolation, maxt *Interval, maxdist float64) *TSequenceSet {
+	_cret := C.trgeometryseqset_make_gaps(geom._inner, (**C.TInstant)(unsafe.Pointer(instants)), C.int(count), C.interpType(interp), maxt._inner, C.double(maxdist))
+	return &TSequenceSet{_inner: _cret}
+}
+
+
+// GeometryTposeToTrgeometry wraps MEOS C function geometry_tpose_to_trgeometry.
+func GeometryTposeToTrgeometry(gs *Geom, temp *Temporal) *Temporal {
+	_cret := C.geometry_tpose_to_trgeometry(gs._inner, temp._inner)
 	return &Temporal{_inner: _cret}
 }
 
@@ -113,9 +166,9 @@ func TrgeometryToTpose(temp *Temporal) *Temporal {
 }
 
 
-// TrgeometryToTpoint wraps MEOS C function trgeometry_to_tpoint.
-func TrgeometryToTpoint(temp *Temporal) *Temporal {
-	_cret := C.trgeometry_to_tpoint(temp._inner)
+// TrgeometryToTgeompoint wraps MEOS C function trgeometry_to_tgeompoint.
+func TrgeometryToTgeompoint(temp *Temporal) *Temporal {
+	_cret := C.trgeometry_to_tgeompoint(temp._inner)
 	return &Temporal{_inner: _cret}
 }
 
@@ -415,10 +468,28 @@ func TrgeometrySetInterp(temp *Temporal, interp Interpolation) *Temporal {
 }
 
 
-// TrgeometryToTinstant wraps MEOS C function trgeometry_to_tinstant.
-func TrgeometryToTinstant(temp *Temporal) *TInstant {
-	_cret := C.trgeometry_to_tinstant(temp._inner)
+// TrgeometryAsTinstant wraps MEOS C function trgeometry_as_tinstant.
+func TrgeometryAsTinstant(temp *Temporal) *TInstant {
+	_cret := C.trgeometry_as_tinstant(temp._inner)
 	return &TInstant{_inner: _cret}
+}
+
+
+// TrgeometryAsTsequence wraps MEOS C function trgeometry_as_tsequence.
+func TrgeometryAsTsequence(temp *Temporal, interp_str string) *TSequence {
+	_c_interp_str := C.CString(interp_str)
+	defer C.free(unsafe.Pointer(_c_interp_str))
+	_cret := C.trgeometry_as_tsequence(temp._inner, _c_interp_str)
+	return &TSequence{_inner: _cret}
+}
+
+
+// TrgeometryAsTsequenceset wraps MEOS C function trgeometry_as_tsequenceset.
+func TrgeometryAsTsequenceset(temp *Temporal, interp_str string) *TSequenceSet {
+	_c_interp_str := C.CString(interp_str)
+	defer C.free(unsafe.Pointer(_c_interp_str))
+	_cret := C.trgeometry_as_tsequenceset(temp._inner, _c_interp_str)
+	return &TSequenceSet{_inner: _cret}
 }
 
 
@@ -495,6 +566,90 @@ func TrgeometryAtSTBOX(temp *Temporal, box *STBox, border_inc bool) *Temporal {
 // TrgeometryMinusSTBOX wraps MEOS C function trgeometry_minus_stbox.
 func TrgeometryMinusSTBOX(temp *Temporal, box *STBox, border_inc bool) *Temporal {
 	_cret := C.trgeometry_minus_stbox(temp._inner, box._inner, C.bool(border_inc))
+	return &Temporal{_inner: _cret}
+}
+
+
+// TrgeometryAtValue wraps MEOS C function trgeometry_at_value.
+func TrgeometryAtValue(temp *Temporal, pose *Pose) *Temporal {
+	_cret := C.trgeometry_at_value(temp._inner, pose._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TrgeometryMinusValue wraps MEOS C function trgeometry_minus_value.
+func TrgeometryMinusValue(temp *Temporal, pose *Pose) *Temporal {
+	_cret := C.trgeometry_minus_value(temp._inner, pose._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TrgeometryAtValues wraps MEOS C function trgeometry_at_values.
+func TrgeometryAtValues(temp *Temporal, s *Set) *Temporal {
+	_cret := C.trgeometry_at_values(temp._inner, s._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TrgeometryMinusValues wraps MEOS C function trgeometry_minus_values.
+func TrgeometryMinusValues(temp *Temporal, s *Set) *Temporal {
+	_cret := C.trgeometry_minus_values(temp._inner, s._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TrgeometryAtTimestamptz wraps MEOS C function trgeometry_at_timestamptz.
+func TrgeometryAtTimestamptz(temp *Temporal, t int64) *Temporal {
+	_cret := C.trgeometry_at_timestamptz(temp._inner, C.TimestampTz(t))
+	return &Temporal{_inner: _cret}
+}
+
+
+// TrgeometryMinusTimestamptz wraps MEOS C function trgeometry_minus_timestamptz.
+func TrgeometryMinusTimestamptz(temp *Temporal, t int64) *Temporal {
+	_cret := C.trgeometry_minus_timestamptz(temp._inner, C.TimestampTz(t))
+	return &Temporal{_inner: _cret}
+}
+
+
+// TrgeometryAtTstzset wraps MEOS C function trgeometry_at_tstzset.
+func TrgeometryAtTstzset(temp *Temporal, s *Set) *Temporal {
+	_cret := C.trgeometry_at_tstzset(temp._inner, s._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TrgeometryMinusTstzset wraps MEOS C function trgeometry_minus_tstzset.
+func TrgeometryMinusTstzset(temp *Temporal, s *Set) *Temporal {
+	_cret := C.trgeometry_minus_tstzset(temp._inner, s._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TrgeometryAtTstzspan wraps MEOS C function trgeometry_at_tstzspan.
+func TrgeometryAtTstzspan(temp *Temporal, s *Span) *Temporal {
+	_cret := C.trgeometry_at_tstzspan(temp._inner, s._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TrgeometryMinusTstzspan wraps MEOS C function trgeometry_minus_tstzspan.
+func TrgeometryMinusTstzspan(temp *Temporal, s *Span) *Temporal {
+	_cret := C.trgeometry_minus_tstzspan(temp._inner, s._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TrgeometryAtTstzspanset wraps MEOS C function trgeometry_at_tstzspanset.
+func TrgeometryAtTstzspanset(temp *Temporal, ss *SpanSet) *Temporal {
+	_cret := C.trgeometry_at_tstzspanset(temp._inner, ss._inner)
+	return &Temporal{_inner: _cret}
+}
+
+
+// TrgeometryMinusTstzspanset wraps MEOS C function trgeometry_minus_tstzspanset.
+func TrgeometryMinusTstzspanset(temp *Temporal, ss *SpanSet) *Temporal {
+	_cret := C.trgeometry_minus_tstzspanset(temp._inner, ss._inner)
 	return &Temporal{_inner: _cret}
 }
 

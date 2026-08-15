@@ -953,17 +953,26 @@ def _todo_stub(c_name: str, reason: str) -> str:
 _CGO_FILE = """package functions
 
 /*
-// Every optional MEOS family is enabled so the ``#if <FAMILY>``-guarded
-// declarations in the core headers (e.g. meos_initialize_pointcloud) are
-// visible -- matching the all-families libmeos the catalog is derived from, in
-// sync with MobilityDB CMakeLists.txt's ``if(ALL)`` loop (alphabetical). The
-// families expose external library types (H3's h3api.h) through their own
-// headers, so their include dirs are added too.
-#cgo darwin CFLAGS: -I/opt/homebrew/include -I/opt/homebrew/include/h3 -DMEOS=1 -DCBUFFER=1 -DH3=1 -DJSON=1 -DNPOINT=1 -DPOINTCLOUD=1 -DPOSE=1 -DQUADBIN=1 -DRASTER=1 -DRGEO=1
-#cgo darwin LDFLAGS: -L/opt/homebrew/lib -lmeos -Wl,-rpath,/opt/homebrew/lib
+// The installed libmeos describes itself: `pkg-config --cflags meos` reports
+// its include dir together with the family macros it is compiled with, and
+// `--libs` reports where to link it from. Both matter, because the public
+// headers gate declarations on those macros (meos.h holds #if MEOS, #if
+// POINTCLOUD and #if JSON blocks), so a hand-kept -D list that disagrees with
+// the library either declares a symbol that cannot link or hides a family the
+// library provides.
+//
+// Asking pkg-config also makes the binding relocatable: PKG_CONFIG_PATH selects
+// which libmeos to build against, so a build points at a private prefix rather
+// than inheriting whatever occupies a machine-wide directory. A prefix outside
+// the loader's default search path needs LD_LIBRARY_PATH (or ldconfig).
+#cgo pkg-config: meos
 
-#cgo linux CFLAGS: -I/usr/local/include/ -I/usr/include/h3 -DMEOS=1 -DCBUFFER=1 -DH3=1 -DJSON=1 -DNPOINT=1 -DPOINTCLOUD=1 -DPOSE=1 -DQUADBIN=1 -DRASTER=1 -DRGEO=1
-#cgo linux LDFLAGS: -L/usr/local/lib -lmeos -Wl,-rpath,/usr/local/lib
+// H3 ships no pkg-config file, so the one dependency whose header the public
+// MEOS headers expose (meos_h3.h includes <h3api.h>) names its include dir
+// here. GEOS and GSL, the other exposed dependencies, resolve from the default
+// include path.
+#cgo darwin CFLAGS: -I/opt/homebrew/include/h3
+#cgo linux CFLAGS: -I/usr/include/h3
 
 #include <stddef.h>
 #include "meos.h"

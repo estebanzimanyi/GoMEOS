@@ -85,13 +85,6 @@ import (
 
 var _ = unsafe.Pointer(nil)
 
-// Box3dFromGbox wraps MEOS C function box3d_from_gbox.
-func Box3dFromGbox(box *GBox) *Box3D {
-	_cret := C.box3d_from_gbox(box._inner)
-	return &Box3D{_inner: _cret}
-}
-
-
 // Box3dMake wraps MEOS C function box3d_make.
 func Box3dMake(xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, srid int32) *Box3D {
 	_cret := C.box3d_make(C.double(xmin), C.double(xmax), C.double(ymin), C.double(ymax), C.double(zmin), C.double(zmax), C.int32_t(srid))
@@ -2754,6 +2747,13 @@ func AtouchesTpointGeo(temp *Temporal, gs *Geom) int {
 }
 
 
+// AtouchesGeoTpoint wraps MEOS C function atouches_geo_tpoint.
+func AtouchesGeoTpoint(gs *Geom, temp *Temporal) int {
+	_cret := C.atouches_geo_tpoint(gs._inner, temp._inner)
+	return int(_cret)
+}
+
+
 // EcontainsGeoTgeo wraps MEOS C function econtains_geo_tgeo.
 func EcontainsGeoTgeo(gs *Geom, temp *Temporal) int {
 	_cret := C.econtains_geo_tgeo(gs._inner, temp._inner)
@@ -2883,6 +2883,13 @@ func EtouchesTgeoTgeo(temp1 *Temporal, temp2 *Temporal) int {
 // EtouchesTpointGeo wraps MEOS C function etouches_tpoint_geo.
 func EtouchesTpointGeo(temp *Temporal, gs *Geom) int {
 	_cret := C.etouches_tpoint_geo(temp._inner, gs._inner)
+	return int(_cret)
+}
+
+
+// EtouchesGeoTpoint wraps MEOS C function etouches_geo_tpoint.
+func EtouchesGeoTpoint(gs *Geom, temp *Temporal) int {
+	_cret := C.etouches_geo_tpoint(gs._inner, temp._inner)
 	return int(_cret)
 }
 
