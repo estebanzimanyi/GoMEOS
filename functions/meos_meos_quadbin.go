@@ -86,479 +86,743 @@ import (
 var _ = unsafe.Pointer(nil)
 
 // QuadbinIn wraps MEOS C function quadbin_in.
-func QuadbinIn(str string) uint64 {
+func QuadbinIn(str string) (_r0 uint64, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.quadbin_in(_c_str)
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // QuadbinEq wraps MEOS C function quadbin_eq.
-func QuadbinEq(a uint64, b uint64) bool {
+func QuadbinEq(a uint64, b uint64) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_eq(C.uint64_t(a), C.uint64_t(b))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // QuadbinNe wraps MEOS C function quadbin_ne.
-func QuadbinNe(a uint64, b uint64) bool {
+func QuadbinNe(a uint64, b uint64) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_ne(C.uint64_t(a), C.uint64_t(b))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // QuadbinLt wraps MEOS C function quadbin_lt.
-func QuadbinLt(a uint64, b uint64) bool {
+func QuadbinLt(a uint64, b uint64) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_lt(C.uint64_t(a), C.uint64_t(b))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // QuadbinLe wraps MEOS C function quadbin_le.
-func QuadbinLe(a uint64, b uint64) bool {
+func QuadbinLe(a uint64, b uint64) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_le(C.uint64_t(a), C.uint64_t(b))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // QuadbinGt wraps MEOS C function quadbin_gt.
-func QuadbinGt(a uint64, b uint64) bool {
+func QuadbinGt(a uint64, b uint64) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_gt(C.uint64_t(a), C.uint64_t(b))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // QuadbinGe wraps MEOS C function quadbin_ge.
-func QuadbinGe(a uint64, b uint64) bool {
+func QuadbinGe(a uint64, b uint64) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_ge(C.uint64_t(a), C.uint64_t(b))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // QuadbinCmp wraps MEOS C function quadbin_cmp.
-func QuadbinCmp(a uint64, b uint64) int {
+func QuadbinCmp(a uint64, b uint64) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_cmp(C.uint64_t(a), C.uint64_t(b))
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // QuadbinHash wraps MEOS C function quadbin_hash.
-func QuadbinHash(cell uint64) uint32 {
+func QuadbinHash(cell uint64) (_r0 uint32, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_hash(C.uint64_t(cell))
-	return uint32(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint32(_cret), nil
 }
 
 
 // QuadbinHashExtended wraps MEOS C function quadbin_hash_extended.
-func QuadbinHashExtended(cell uint64, seed uint64) uint64 {
+func QuadbinHashExtended(cell uint64, seed uint64) (_r0 uint64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_hash_extended(C.uint64_t(cell), C.uint64_t(seed))
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // QuadbinIsValidIndex wraps MEOS C function quadbin_is_valid_index.
-func QuadbinIsValidIndex(index uint64) bool {
+func QuadbinIsValidIndex(index uint64) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_is_valid_index(C.uint64_t(index))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // QuadbinIsValidCell wraps MEOS C function quadbin_is_valid_cell.
-func QuadbinIsValidCell(cell uint64) bool {
+func QuadbinIsValidCell(cell uint64) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_is_valid_cell(C.uint64_t(cell))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // QuadbinTileToCell wraps MEOS C function quadbin_tile_to_cell.
-func QuadbinTileToCell(x uint32, y uint32, z uint32) uint64 {
+func QuadbinTileToCell(x uint32, y uint32, z uint32) (_r0 uint64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_tile_to_cell(C.uint32_t(x), C.uint32_t(y), C.uint32_t(z))
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // QuadbinCellToTile wraps MEOS C function quadbin_cell_to_tile.
-func QuadbinCellToTile(cell uint64, x unsafe.Pointer, y unsafe.Pointer, z unsafe.Pointer) bool {
+func QuadbinCellToTile(cell uint64, x unsafe.Pointer, y unsafe.Pointer, z unsafe.Pointer) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_cell_to_tile(C.uint64_t(cell), (*C.uint32_t)(unsafe.Pointer(x)), (*C.uint32_t)(unsafe.Pointer(y)), (*C.uint32_t)(unsafe.Pointer(z)))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // QuadbinGetResolution wraps MEOS C function quadbin_get_resolution.
-func QuadbinGetResolution(cell uint64) uint32 {
+func QuadbinGetResolution(cell uint64) (_r0 uint32, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_get_resolution(C.uint64_t(cell))
-	return uint32(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint32(_cret), nil
 }
 
 
 // QuadbinCellToParent wraps MEOS C function quadbin_cell_to_parent.
-func QuadbinCellToParent(cell uint64, parent_resolution uint32) uint64 {
+func QuadbinCellToParent(cell uint64, parent_resolution uint32) (_r0 uint64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_cell_to_parent(C.uint64_t(cell), C.uint32_t(parent_resolution))
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // QuadbinCellToChildren wraps MEOS C function quadbin_cell_to_children.
-func QuadbinCellToChildren(cell uint64, children_resolution uint32, count unsafe.Pointer) unsafe.Pointer {
+func QuadbinCellToChildren(cell uint64, children_resolution uint32, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_cell_to_children(C.uint64_t(cell), C.uint32_t(children_resolution), (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // QuadbinCellSibling wraps MEOS C function quadbin_cell_sibling.
-func QuadbinCellSibling(cell uint64, direction string) uint64 {
+func QuadbinCellSibling(cell uint64, direction string) (_r0 uint64, _err error) {
 	_c_direction := C.CString(direction)
 	defer C.free(unsafe.Pointer(_c_direction))
+	C.meos_errno_reset()
 	_cret := C.quadbin_cell_sibling(C.uint64_t(cell), _c_direction)
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // QuadbinKRing wraps MEOS C function quadbin_k_ring.
-func QuadbinKRing(cell uint64, k int, count unsafe.Pointer) unsafe.Pointer {
+func QuadbinKRing(cell uint64, k int, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_k_ring(C.uint64_t(cell), C.int(k), (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // QuadbinPointToCell wraps MEOS C function quadbin_point_to_cell.
-func QuadbinPointToCell(longitude float64, latitude float64, resolution uint32) uint64 {
+func QuadbinPointToCell(longitude float64, latitude float64, resolution uint32) (_r0 uint64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_point_to_cell(C.double(longitude), C.double(latitude), C.uint32_t(resolution))
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // GeoToQuadbinCell wraps MEOS C function geo_to_quadbin_cell.
-func GeoToQuadbinCell(point *Geom, resolution int32) uint64 {
+func GeoToQuadbinCell(point *Geom, resolution int32) (_r0 uint64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.geo_to_quadbin_cell(point._inner, C.int32(resolution))
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // QuadbinCellToGeompoint wraps MEOS C function quadbin_cell_to_geompoint.
-func QuadbinCellToGeompoint(cell uint64) *Geom {
+func QuadbinCellToGeompoint(cell uint64) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_cell_to_geompoint(C.uint64_t(cell))
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // QuadbinCellToGeom wraps MEOS C function quadbin_cell_to_geom.
-func QuadbinCellToGeom(cell uint64) *Geom {
+func QuadbinCellToGeom(cell uint64) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_cell_to_geom(C.uint64_t(cell))
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // QuadbinToSTBOX wraps MEOS C function quadbin_to_stbox.
-func QuadbinToSTBOX(cell uint64) *STBox {
+func QuadbinToSTBOX(cell uint64) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_to_stbox(C.uint64_t(cell))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // QuadbinTimestamptzToSTBOX wraps MEOS C function quadbin_timestamptz_to_stbox.
-func QuadbinTimestamptzToSTBOX(cell uint64, t int64) *STBox {
+func QuadbinTimestamptzToSTBOX(cell uint64, t int64) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_timestamptz_to_stbox(C.uint64_t(cell), C.TimestampTz(t))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // QuadbinTstzspanToSTBOX wraps MEOS C function quadbin_tstzspan_to_stbox.
-func QuadbinTstzspanToSTBOX(cell uint64, s *Span) *STBox {
+func QuadbinTstzspanToSTBOX(cell uint64, s *Span) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_tstzspan_to_stbox(C.uint64_t(cell), s._inner)
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // QuadbinCellArea wraps MEOS C function quadbin_cell_area.
-func QuadbinCellArea(cell uint64) float64 {
+func QuadbinCellArea(cell uint64) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_cell_area(C.uint64_t(cell))
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // QuadbinIndexToString wraps MEOS C function quadbin_index_to_string.
-func QuadbinIndexToString(index uint64) string {
+func QuadbinIndexToString(index uint64) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_index_to_string(C.uint64_t(index))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // QuadbinStringToIndex wraps MEOS C function quadbin_string_to_index.
-func QuadbinStringToIndex(str string) uint64 {
+func QuadbinStringToIndex(str string) (_r0 uint64, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.quadbin_string_to_index(_c_str)
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // QuadbinCellToQuadkey wraps MEOS C function quadbin_cell_to_quadkey.
-func QuadbinCellToQuadkey(cell uint64) string {
+func QuadbinCellToQuadkey(cell uint64) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_cell_to_quadkey(C.uint64_t(cell))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // QuadbinGridDisk wraps MEOS C function quadbin_grid_disk.
-func QuadbinGridDisk(origin uint64, k int) *Set {
+func QuadbinGridDisk(origin uint64, k int) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_grid_disk(C.uint64_t(origin), C.int(k))
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // QuadbinCellToChildrenSet wraps MEOS C function quadbin_cell_to_children_set.
-func QuadbinCellToChildrenSet(origin uint64, children_resolution int) *Set {
+func QuadbinCellToChildrenSet(origin uint64, children_resolution int) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.quadbin_cell_to_children_set(C.uint64_t(origin), C.int(children_resolution))
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // TquadbinIn wraps MEOS C function tquadbin_in.
-func TquadbinIn(str string) *Temporal {
+func TquadbinIn(str string) (_r0 *Temporal, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tquadbin_in(_c_str)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TquadbininstIn wraps MEOS C function tquadbininst_in.
-func TquadbininstIn(str string) *TInstant {
+func TquadbininstIn(str string) (_r0 *TInstant, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tquadbininst_in(_c_str)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TquadbinseqIn wraps MEOS C function tquadbinseq_in.
-func TquadbinseqIn(str string, interp Interpolation) *TSequence {
+func TquadbinseqIn(str string, interp Interpolation) (_r0 *TSequence, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tquadbinseq_in(_c_str, C.interpType(interp))
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TquadbinseqsetIn wraps MEOS C function tquadbinseqset_in.
-func TquadbinseqsetIn(str string) *TSequenceSet {
+func TquadbinseqsetIn(str string) (_r0 *TSequenceSet, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tquadbinseqset_in(_c_str)
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TquadbinMake wraps MEOS C function tquadbin_make.
-func TquadbinMake(value uint64, t int64) *Temporal {
+func TquadbinMake(value uint64, t int64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tquadbin_make(C.uint64_t(value), C.TimestampTz(t))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TquadbininstMake wraps MEOS C function tquadbininst_make.
-func TquadbininstMake(value uint64, t int64) *TInstant {
+func TquadbininstMake(value uint64, t int64) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tquadbininst_make(C.uint64_t(value), C.TimestampTz(t))
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TquadbinseqMake wraps MEOS C function tquadbinseq_make.
-func TquadbinseqMake(values unsafe.Pointer, times unsafe.Pointer, count int, lower_inc bool, upper_inc bool) *TSequence {
+func TquadbinseqMake(values unsafe.Pointer, times unsafe.Pointer, count int, lower_inc bool, upper_inc bool) (_r0 *TSequence, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tquadbinseq_make((*C.uint64_t)(unsafe.Pointer(values)), (*C.TimestampTz)(unsafe.Pointer(times)), C.int(count), C.bool(lower_inc), C.bool(upper_inc))
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TquadbinseqsetMake wraps MEOS C function tquadbinseqset_make.
-func TquadbinseqsetMake(sequences unsafe.Pointer, count int) *TSequenceSet {
+func TquadbinseqsetMake(sequences unsafe.Pointer, count int) (_r0 *TSequenceSet, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tquadbinseqset_make((**C.TSequence)(unsafe.Pointer(sequences)), C.int(count))
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TquadbinStartValue wraps MEOS C function tquadbin_start_value.
-func TquadbinStartValue(temp *Temporal) uint64 {
+func TquadbinStartValue(temp *Temporal) (_r0 uint64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tquadbin_start_value(temp._inner)
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // TquadbinEndValue wraps MEOS C function tquadbin_end_value.
-func TquadbinEndValue(temp *Temporal) uint64 {
+func TquadbinEndValue(temp *Temporal) (_r0 uint64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tquadbin_end_value(temp._inner)
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // TquadbinValueN wraps MEOS C function tquadbin_value_n.
-func TquadbinValueN(temp *Temporal, n int) (bool, uint64) {
+func TquadbinValueN(temp *Temporal, n int) (_r0 bool, _r1 uint64, _err error) {
 	var _out_result C.uint64_t
+	C.meos_errno_reset()
 	_cret := C.tquadbin_value_n(temp._inner, C.int(n), &_out_result)
-	return bool(_cret), uint64(_out_result)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), uint64(_out_result), nil
 }
 
 
 // TquadbinValues wraps MEOS C function tquadbin_values.
-func TquadbinValues(temp *Temporal, count unsafe.Pointer) unsafe.Pointer {
+func TquadbinValues(temp *Temporal, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tquadbin_values(temp._inner, (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // TquadbinValueAtTimestamptz wraps MEOS C function tquadbin_value_at_timestamptz.
-func TquadbinValueAtTimestamptz(temp *Temporal, t int64, strict bool) (bool, uint64) {
+func TquadbinValueAtTimestamptz(temp *Temporal, t int64, strict bool) (_r0 bool, _r1 uint64, _err error) {
 	var _out_result C.uint64_t
+	C.meos_errno_reset()
 	_cret := C.tquadbin_value_at_timestamptz(temp._inner, C.TimestampTz(t), C.bool(strict), &_out_result)
-	return bool(_cret), uint64(_out_result)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), uint64(_out_result), nil
 }
 
 
 // TbigintToTquadbin wraps MEOS C function tbigint_to_tquadbin.
-func TbigintToTquadbin(temp *Temporal) *Temporal {
+func TbigintToTquadbin(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tbigint_to_tquadbin(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TquadbinToTbigint wraps MEOS C function tquadbin_to_tbigint.
-func TquadbinToTbigint(temp *Temporal) *Temporal {
+func TquadbinToTbigint(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tquadbin_to_tbigint(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // EverEqQuadbinTquadbin wraps MEOS C function ever_eq_quadbin_tquadbin.
-func EverEqQuadbinTquadbin(cell uint64, temp *Temporal) int {
+func EverEqQuadbinTquadbin(cell uint64, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_eq_quadbin_tquadbin(C.uint64_t(cell), temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverEqTquadbinQuadbin wraps MEOS C function ever_eq_tquadbin_quadbin.
-func EverEqTquadbinQuadbin(temp *Temporal, cell uint64) int {
+func EverEqTquadbinQuadbin(temp *Temporal, cell uint64) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_eq_tquadbin_quadbin(temp._inner, C.uint64_t(cell))
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverNeQuadbinTquadbin wraps MEOS C function ever_ne_quadbin_tquadbin.
-func EverNeQuadbinTquadbin(cell uint64, temp *Temporal) int {
+func EverNeQuadbinTquadbin(cell uint64, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_ne_quadbin_tquadbin(C.uint64_t(cell), temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverNeTquadbinQuadbin wraps MEOS C function ever_ne_tquadbin_quadbin.
-func EverNeTquadbinQuadbin(temp *Temporal, cell uint64) int {
+func EverNeTquadbinQuadbin(temp *Temporal, cell uint64) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_ne_tquadbin_quadbin(temp._inner, C.uint64_t(cell))
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysEqQuadbinTquadbin wraps MEOS C function always_eq_quadbin_tquadbin.
-func AlwaysEqQuadbinTquadbin(cell uint64, temp *Temporal) int {
+func AlwaysEqQuadbinTquadbin(cell uint64, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_eq_quadbin_tquadbin(C.uint64_t(cell), temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysEqTquadbinQuadbin wraps MEOS C function always_eq_tquadbin_quadbin.
-func AlwaysEqTquadbinQuadbin(temp *Temporal, cell uint64) int {
+func AlwaysEqTquadbinQuadbin(temp *Temporal, cell uint64) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_eq_tquadbin_quadbin(temp._inner, C.uint64_t(cell))
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysNeQuadbinTquadbin wraps MEOS C function always_ne_quadbin_tquadbin.
-func AlwaysNeQuadbinTquadbin(cell uint64, temp *Temporal) int {
+func AlwaysNeQuadbinTquadbin(cell uint64, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_ne_quadbin_tquadbin(C.uint64_t(cell), temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysNeTquadbinQuadbin wraps MEOS C function always_ne_tquadbin_quadbin.
-func AlwaysNeTquadbinQuadbin(temp *Temporal, cell uint64) int {
+func AlwaysNeTquadbinQuadbin(temp *Temporal, cell uint64) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_ne_tquadbin_quadbin(temp._inner, C.uint64_t(cell))
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverEqTquadbinTquadbin wraps MEOS C function ever_eq_tquadbin_tquadbin.
-func EverEqTquadbinTquadbin(temp1 *Temporal, temp2 *Temporal) int {
+func EverEqTquadbinTquadbin(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_eq_tquadbin_tquadbin(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverNeTquadbinTquadbin wraps MEOS C function ever_ne_tquadbin_tquadbin.
-func EverNeTquadbinTquadbin(temp1 *Temporal, temp2 *Temporal) int {
+func EverNeTquadbinTquadbin(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_ne_tquadbin_tquadbin(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysEqTquadbinTquadbin wraps MEOS C function always_eq_tquadbin_tquadbin.
-func AlwaysEqTquadbinTquadbin(temp1 *Temporal, temp2 *Temporal) int {
+func AlwaysEqTquadbinTquadbin(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_eq_tquadbin_tquadbin(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysNeTquadbinTquadbin wraps MEOS C function always_ne_tquadbin_tquadbin.
-func AlwaysNeTquadbinTquadbin(temp1 *Temporal, temp2 *Temporal) int {
+func AlwaysNeTquadbinTquadbin(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_ne_tquadbin_tquadbin(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // TeqQuadbinTquadbin wraps MEOS C function teq_quadbin_tquadbin.
-func TeqQuadbinTquadbin(cell uint64, temp *Temporal) *Temporal {
+func TeqQuadbinTquadbin(cell uint64, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.teq_quadbin_tquadbin(C.uint64_t(cell), temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TeqTquadbinQuadbin wraps MEOS C function teq_tquadbin_quadbin.
-func TeqTquadbinQuadbin(temp *Temporal, cell uint64) *Temporal {
+func TeqTquadbinQuadbin(temp *Temporal, cell uint64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.teq_tquadbin_quadbin(temp._inner, C.uint64_t(cell))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TeqTquadbinTquadbin wraps MEOS C function teq_tquadbin_tquadbin.
-func TeqTquadbinTquadbin(temp1 *Temporal, temp2 *Temporal) *Temporal {
+func TeqTquadbinTquadbin(temp1 *Temporal, temp2 *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.teq_tquadbin_tquadbin(temp1._inner, temp2._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TneQuadbinTquadbin wraps MEOS C function tne_quadbin_tquadbin.
-func TneQuadbinTquadbin(cell uint64, temp *Temporal) *Temporal {
+func TneQuadbinTquadbin(cell uint64, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tne_quadbin_tquadbin(C.uint64_t(cell), temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TneTquadbinQuadbin wraps MEOS C function tne_tquadbin_quadbin.
-func TneTquadbinQuadbin(temp *Temporal, cell uint64) *Temporal {
+func TneTquadbinQuadbin(temp *Temporal, cell uint64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tne_tquadbin_quadbin(temp._inner, C.uint64_t(cell))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TneTquadbinTquadbin wraps MEOS C function tne_tquadbin_tquadbin.
-func TneTquadbinTquadbin(temp1 *Temporal, temp2 *Temporal) *Temporal {
+func TneTquadbinTquadbin(temp1 *Temporal, temp2 *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tne_tquadbin_tquadbin(temp1._inner, temp2._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TquadbinCellToQuadkey wraps MEOS C function tquadbin_cell_to_quadkey.
-func TquadbinCellToQuadkey(temp *Temporal) *Temporal {
+func TquadbinCellToQuadkey(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tquadbin_cell_to_quadkey(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 

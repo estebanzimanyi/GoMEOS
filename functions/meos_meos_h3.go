@@ -86,537 +86,833 @@ import (
 var _ = unsafe.Pointer(nil)
 
 // H3indexFromWKB wraps MEOS C function h3index_from_wkb.
-func H3indexFromWKB(wkb unsafe.Pointer, size uint) uint64 {
+func H3indexFromWKB(wkb unsafe.Pointer, size uint) (_r0 uint64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.h3index_from_wkb((*C.uint8_t)(unsafe.Pointer(wkb)), C.size_t(size))
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // H3indexFromHexwkb wraps MEOS C function h3index_from_hexwkb.
-func H3indexFromHexwkb(hexwkb string) uint64 {
+func H3indexFromHexwkb(hexwkb string) (_r0 uint64, _err error) {
 	_c_hexwkb := C.CString(hexwkb)
 	defer C.free(unsafe.Pointer(_c_hexwkb))
+	C.meos_errno_reset()
 	_cret := C.h3index_from_hexwkb(_c_hexwkb)
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // H3indexAsWKB wraps MEOS C function h3index_as_wkb.
-func H3indexAsWKB(cell uint64, variant uint8, size_out unsafe.Pointer) unsafe.Pointer {
+func H3indexAsWKB(cell uint64, variant uint8, size_out unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.h3index_as_wkb(C.uint64_t(cell), C.uint8_t(variant), (*C.size_t)(unsafe.Pointer(size_out)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // H3indexAsHexwkb wraps MEOS C function h3index_as_hexwkb.
-func H3indexAsHexwkb(cell uint64, variant uint8, size_out unsafe.Pointer) string {
+func H3indexAsHexwkb(cell uint64, variant uint8, size_out unsafe.Pointer) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.h3index_as_hexwkb(C.uint64_t(cell), C.uint8_t(variant), (*C.size_t)(unsafe.Pointer(size_out)))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // Th3indexIn wraps MEOS C function th3index_in.
-func Th3indexIn(str string) *Temporal {
+func Th3indexIn(str string) (_r0 *Temporal, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.th3index_in(_c_str)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexinstIn wraps MEOS C function th3indexinst_in.
-func Th3indexinstIn(str string) *TInstant {
+func Th3indexinstIn(str string) (_r0 *TInstant, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.th3indexinst_in(_c_str)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // Th3indexseqIn wraps MEOS C function th3indexseq_in.
-func Th3indexseqIn(str string, interp Interpolation) *TSequence {
+func Th3indexseqIn(str string, interp Interpolation) (_r0 *TSequence, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.th3indexseq_in(_c_str, C.interpType(interp))
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // Th3indexseqsetIn wraps MEOS C function th3indexseqset_in.
-func Th3indexseqsetIn(str string) *TSequenceSet {
+func Th3indexseqsetIn(str string) (_r0 *TSequenceSet, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.th3indexseqset_in(_c_str)
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // Th3indexMake wraps MEOS C function th3index_make.
-func Th3indexMake(value uint64, t int64) *Temporal {
+func Th3indexMake(value uint64, t int64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_make(C.uint64_t(value), C.TimestampTz(t))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexinstMake wraps MEOS C function th3indexinst_make.
-func Th3indexinstMake(value uint64, t int64) *TInstant {
+func Th3indexinstMake(value uint64, t int64) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3indexinst_make(C.uint64_t(value), C.TimestampTz(t))
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // Th3indexseqMake wraps MEOS C function th3indexseq_make.
-func Th3indexseqMake(values unsafe.Pointer, times unsafe.Pointer, count int, lower_inc bool, upper_inc bool) *TSequence {
+func Th3indexseqMake(values unsafe.Pointer, times unsafe.Pointer, count int, lower_inc bool, upper_inc bool) (_r0 *TSequence, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3indexseq_make((*C.uint64_t)(unsafe.Pointer(values)), (*C.TimestampTz)(unsafe.Pointer(times)), C.int(count), C.bool(lower_inc), C.bool(upper_inc))
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // Th3indexseqsetMake wraps MEOS C function th3indexseqset_make.
-func Th3indexseqsetMake(sequences unsafe.Pointer, count int) *TSequenceSet {
+func Th3indexseqsetMake(sequences unsafe.Pointer, count int) (_r0 *TSequenceSet, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3indexseqset_make((**C.TSequence)(unsafe.Pointer(sequences)), C.int(count))
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // Th3indexStartValue wraps MEOS C function th3index_start_value.
-func Th3indexStartValue(temp *Temporal) uint64 {
+func Th3indexStartValue(temp *Temporal) (_r0 uint64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_start_value(temp._inner)
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // Th3indexEndValue wraps MEOS C function th3index_end_value.
-func Th3indexEndValue(temp *Temporal) uint64 {
+func Th3indexEndValue(temp *Temporal) (_r0 uint64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_end_value(temp._inner)
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // Th3indexValueN wraps MEOS C function th3index_value_n.
-func Th3indexValueN(temp *Temporal, n int) (bool, uint64) {
+func Th3indexValueN(temp *Temporal, n int) (_r0 bool, _r1 uint64, _err error) {
 	var _out_result C.uint64_t
+	C.meos_errno_reset()
 	_cret := C.th3index_value_n(temp._inner, C.int(n), &_out_result)
-	return bool(_cret), uint64(_out_result)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), uint64(_out_result), nil
 }
 
 
 // Th3indexValues wraps MEOS C function th3index_values.
-func Th3indexValues(temp *Temporal, count unsafe.Pointer) unsafe.Pointer {
+func Th3indexValues(temp *Temporal, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_values(temp._inner, (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // Th3indexValueAtTimestamptz wraps MEOS C function th3index_value_at_timestamptz.
-func Th3indexValueAtTimestamptz(temp *Temporal, t int64, strict bool) (bool, uint64) {
+func Th3indexValueAtTimestamptz(temp *Temporal, t int64, strict bool) (_r0 bool, _r1 uint64, _err error) {
 	var _out_result C.uint64_t
+	C.meos_errno_reset()
 	_cret := C.th3index_value_at_timestamptz(temp._inner, C.TimestampTz(t), C.bool(strict), &_out_result)
-	return bool(_cret), uint64(_out_result)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), uint64(_out_result), nil
 }
 
 
 // TbigintToTh3index wraps MEOS C function tbigint_to_th3index.
-func TbigintToTh3index(temp *Temporal) *Temporal {
+func TbigintToTh3index(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tbigint_to_th3index(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexToTbigint wraps MEOS C function th3index_to_tbigint.
-func Th3indexToTbigint(temp *Temporal) *Temporal {
+func Th3indexToTbigint(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_to_tbigint(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // EverEqH3indexTh3index wraps MEOS C function ever_eq_h3index_th3index.
-func EverEqH3indexTh3index(cell uint64, temp *Temporal) int {
+func EverEqH3indexTh3index(cell uint64, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_eq_h3index_th3index(C.uint64_t(cell), temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverEqTh3indexH3index wraps MEOS C function ever_eq_th3index_h3index.
-func EverEqTh3indexH3index(temp *Temporal, cell uint64) int {
+func EverEqTh3indexH3index(temp *Temporal, cell uint64) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_eq_th3index_h3index(temp._inner, C.uint64_t(cell))
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverNeH3indexTh3index wraps MEOS C function ever_ne_h3index_th3index.
-func EverNeH3indexTh3index(cell uint64, temp *Temporal) int {
+func EverNeH3indexTh3index(cell uint64, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_ne_h3index_th3index(C.uint64_t(cell), temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverNeTh3indexH3index wraps MEOS C function ever_ne_th3index_h3index.
-func EverNeTh3indexH3index(temp *Temporal, cell uint64) int {
+func EverNeTh3indexH3index(temp *Temporal, cell uint64) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_ne_th3index_h3index(temp._inner, C.uint64_t(cell))
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysEqH3indexTh3index wraps MEOS C function always_eq_h3index_th3index.
-func AlwaysEqH3indexTh3index(cell uint64, temp *Temporal) int {
+func AlwaysEqH3indexTh3index(cell uint64, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_eq_h3index_th3index(C.uint64_t(cell), temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysEqTh3indexH3index wraps MEOS C function always_eq_th3index_h3index.
-func AlwaysEqTh3indexH3index(temp *Temporal, cell uint64) int {
+func AlwaysEqTh3indexH3index(temp *Temporal, cell uint64) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_eq_th3index_h3index(temp._inner, C.uint64_t(cell))
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysNeH3indexTh3index wraps MEOS C function always_ne_h3index_th3index.
-func AlwaysNeH3indexTh3index(cell uint64, temp *Temporal) int {
+func AlwaysNeH3indexTh3index(cell uint64, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_ne_h3index_th3index(C.uint64_t(cell), temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysNeTh3indexH3index wraps MEOS C function always_ne_th3index_h3index.
-func AlwaysNeTh3indexH3index(temp *Temporal, cell uint64) int {
+func AlwaysNeTh3indexH3index(temp *Temporal, cell uint64) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_ne_th3index_h3index(temp._inner, C.uint64_t(cell))
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverEqTh3indexTh3index wraps MEOS C function ever_eq_th3index_th3index.
-func EverEqTh3indexTh3index(temp1 *Temporal, temp2 *Temporal) int {
+func EverEqTh3indexTh3index(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_eq_th3index_th3index(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverNeTh3indexTh3index wraps MEOS C function ever_ne_th3index_th3index.
-func EverNeTh3indexTh3index(temp1 *Temporal, temp2 *Temporal) int {
+func EverNeTh3indexTh3index(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_ne_th3index_th3index(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysEqTh3indexTh3index wraps MEOS C function always_eq_th3index_th3index.
-func AlwaysEqTh3indexTh3index(temp1 *Temporal, temp2 *Temporal) int {
+func AlwaysEqTh3indexTh3index(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_eq_th3index_th3index(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysNeTh3indexTh3index wraps MEOS C function always_ne_th3index_th3index.
-func AlwaysNeTh3indexTh3index(temp1 *Temporal, temp2 *Temporal) int {
+func AlwaysNeTh3indexTh3index(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_ne_th3index_th3index(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // TeqH3indexTh3index wraps MEOS C function teq_h3index_th3index.
-func TeqH3indexTh3index(cell uint64, temp *Temporal) *Temporal {
+func TeqH3indexTh3index(cell uint64, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.teq_h3index_th3index(C.uint64_t(cell), temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TeqTh3indexH3index wraps MEOS C function teq_th3index_h3index.
-func TeqTh3indexH3index(temp *Temporal, cell uint64) *Temporal {
+func TeqTh3indexH3index(temp *Temporal, cell uint64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.teq_th3index_h3index(temp._inner, C.uint64_t(cell))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TeqTh3indexTh3index wraps MEOS C function teq_th3index_th3index.
-func TeqTh3indexTh3index(temp1 *Temporal, temp2 *Temporal) *Temporal {
+func TeqTh3indexTh3index(temp1 *Temporal, temp2 *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.teq_th3index_th3index(temp1._inner, temp2._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TneH3indexTh3index wraps MEOS C function tne_h3index_th3index.
-func TneH3indexTh3index(cell uint64, temp *Temporal) *Temporal {
+func TneH3indexTh3index(cell uint64, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tne_h3index_th3index(C.uint64_t(cell), temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TneTh3indexH3index wraps MEOS C function tne_th3index_h3index.
-func TneTh3indexH3index(temp *Temporal, cell uint64) *Temporal {
+func TneTh3indexH3index(temp *Temporal, cell uint64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tne_th3index_h3index(temp._inner, C.uint64_t(cell))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TneTh3indexTh3index wraps MEOS C function tne_th3index_th3index.
-func TneTh3indexTh3index(temp1 *Temporal, temp2 *Temporal) *Temporal {
+func TneTh3indexTh3index(temp1 *Temporal, temp2 *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tne_th3index_th3index(temp1._inner, temp2._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexGetResolution wraps MEOS C function th3index_get_resolution.
-func Th3indexGetResolution(temp *Temporal) *Temporal {
+func Th3indexGetResolution(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_get_resolution(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexGetBaseCellNumber wraps MEOS C function th3index_get_base_cell_number.
-func Th3indexGetBaseCellNumber(temp *Temporal) *Temporal {
+func Th3indexGetBaseCellNumber(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_get_base_cell_number(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexIsValidCell wraps MEOS C function th3index_is_valid_cell.
-func Th3indexIsValidCell(temp *Temporal) *Temporal {
+func Th3indexIsValidCell(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_is_valid_cell(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexIsResClassIii wraps MEOS C function th3index_is_res_class_iii.
-func Th3indexIsResClassIii(temp *Temporal) *Temporal {
+func Th3indexIsResClassIii(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_is_res_class_iii(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexIsPentagon wraps MEOS C function th3index_is_pentagon.
-func Th3indexIsPentagon(temp *Temporal) *Temporal {
+func Th3indexIsPentagon(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_is_pentagon(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexCellToParent wraps MEOS C function th3index_cell_to_parent.
-func Th3indexCellToParent(temp *Temporal, resolution int32) *Temporal {
+func Th3indexCellToParent(temp *Temporal, resolution int32) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_cell_to_parent(temp._inner, C.int32(resolution))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexCellToParentNext wraps MEOS C function th3index_cell_to_parent_next.
-func Th3indexCellToParentNext(temp *Temporal) *Temporal {
+func Th3indexCellToParentNext(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_cell_to_parent_next(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexCellToCenterChild wraps MEOS C function th3index_cell_to_center_child.
-func Th3indexCellToCenterChild(temp *Temporal, resolution int32) *Temporal {
+func Th3indexCellToCenterChild(temp *Temporal, resolution int32) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_cell_to_center_child(temp._inner, C.int32(resolution))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexCellToCenterChildNext wraps MEOS C function th3index_cell_to_center_child_next.
-func Th3indexCellToCenterChildNext(temp *Temporal) *Temporal {
+func Th3indexCellToCenterChildNext(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_cell_to_center_child_next(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexCellToChildPos wraps MEOS C function th3index_cell_to_child_pos.
-func Th3indexCellToChildPos(temp *Temporal, parent_res int32) *Temporal {
+func Th3indexCellToChildPos(temp *Temporal, parent_res int32) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_cell_to_child_pos(temp._inner, C.int32(parent_res))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexChildPosToCell wraps MEOS C function th3index_child_pos_to_cell.
-func Th3indexChildPosToCell(child_pos *Temporal, parent *Temporal, child_res int32) *Temporal {
+func Th3indexChildPosToCell(child_pos *Temporal, parent *Temporal, child_res int32) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_child_pos_to_cell(child_pos._inner, parent._inner, C.int32(child_res))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TgeogpointToTh3index wraps MEOS C function tgeogpoint_to_th3index.
-func TgeogpointToTh3index(temp *Temporal, resolution int32) *Temporal {
+func TgeogpointToTh3index(temp *Temporal, resolution int32) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeogpoint_to_th3index(temp._inner, C.int32(resolution))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TgeompointToTh3index wraps MEOS C function tgeompoint_to_th3index.
-func TgeompointToTh3index(temp *Temporal, resolution int32) *Temporal {
+func TgeompointToTh3index(temp *Temporal, resolution int32) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeompoint_to_th3index(temp._inner, C.int32(resolution))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexToTgeogpoint wraps MEOS C function th3index_to_tgeogpoint.
-func Th3indexToTgeogpoint(temp *Temporal) *Temporal {
+func Th3indexToTgeogpoint(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_to_tgeogpoint(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexToTgeompoint wraps MEOS C function th3index_to_tgeompoint.
-func Th3indexToTgeompoint(temp *Temporal) *Temporal {
+func Th3indexToTgeompoint(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_to_tgeompoint(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexCellToBoundary wraps MEOS C function th3index_cell_to_boundary.
-func Th3indexCellToBoundary(temp *Temporal) *Temporal {
+func Th3indexCellToBoundary(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_cell_to_boundary(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // GeoToH3indexCell wraps MEOS C function geo_to_h3index_cell.
-func GeoToH3indexCell(point *Geom, resolution int32) uint64 {
+func GeoToH3indexCell(point *Geom, resolution int32) (_r0 uint64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.geo_to_h3index_cell(point._inner, C.int32(resolution))
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // GeoToH3indexSet wraps MEOS C function geo_to_h3index_set.
-func GeoToH3indexSet(gs *Geom, resolution int32) *Set {
+func GeoToH3indexSet(gs *Geom, resolution int32) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.geo_to_h3index_set(gs._inner, C.int32(resolution))
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // H3indexToSTBOX wraps MEOS C function h3index_to_stbox.
-func H3indexToSTBOX(cell uint64) *STBox {
+func H3indexToSTBOX(cell uint64) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.h3index_to_stbox(C.uint64_t(cell))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // H3indexTimestamptzToSTBOX wraps MEOS C function h3index_timestamptz_to_stbox.
-func H3indexTimestamptzToSTBOX(cell uint64, t int64) *STBox {
+func H3indexTimestamptzToSTBOX(cell uint64, t int64) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.h3index_timestamptz_to_stbox(C.uint64_t(cell), C.TimestampTz(t))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // H3indexTstzspanToSTBOX wraps MEOS C function h3index_tstzspan_to_stbox.
-func H3indexTstzspanToSTBOX(cell uint64, s *Span) *STBox {
+func H3indexTstzspanToSTBOX(cell uint64, s *Span) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.h3index_tstzspan_to_stbox(C.uint64_t(cell), s._inner)
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // EverEqH3indexsetTh3index wraps MEOS C function ever_eq_h3indexset_th3index.
-func EverEqH3indexsetTh3index(cells *Set, th3idx *Temporal) int {
+func EverEqH3indexsetTh3index(cells *Set, th3idx *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_eq_h3indexset_th3index(cells._inner, th3idx._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // Th3indexAreNeighborCells wraps MEOS C function th3index_are_neighbor_cells.
-func Th3indexAreNeighborCells(origin *Temporal, dest *Temporal) *Temporal {
+func Th3indexAreNeighborCells(origin *Temporal, dest *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_are_neighbor_cells(origin._inner, dest._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexCellsToDirectedEdge wraps MEOS C function th3index_cells_to_directed_edge.
-func Th3indexCellsToDirectedEdge(origin *Temporal, dest *Temporal) *Temporal {
+func Th3indexCellsToDirectedEdge(origin *Temporal, dest *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_cells_to_directed_edge(origin._inner, dest._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexIsValidDirectedEdge wraps MEOS C function th3index_is_valid_directed_edge.
-func Th3indexIsValidDirectedEdge(edge *Temporal) *Temporal {
+func Th3indexIsValidDirectedEdge(edge *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_is_valid_directed_edge(edge._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexGetDirectedEdgeOrigin wraps MEOS C function th3index_get_directed_edge_origin.
-func Th3indexGetDirectedEdgeOrigin(edge *Temporal) *Temporal {
+func Th3indexGetDirectedEdgeOrigin(edge *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_get_directed_edge_origin(edge._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexGetDirectedEdgeDestination wraps MEOS C function th3index_get_directed_edge_destination.
-func Th3indexGetDirectedEdgeDestination(edge *Temporal) *Temporal {
+func Th3indexGetDirectedEdgeDestination(edge *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_get_directed_edge_destination(edge._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexDirectedEdgeToBoundary wraps MEOS C function th3index_directed_edge_to_boundary.
-func Th3indexDirectedEdgeToBoundary(edge *Temporal) *Temporal {
+func Th3indexDirectedEdgeToBoundary(edge *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_directed_edge_to_boundary(edge._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexCellToVertex wraps MEOS C function th3index_cell_to_vertex.
-func Th3indexCellToVertex(temp *Temporal, vertex_num int32) *Temporal {
+func Th3indexCellToVertex(temp *Temporal, vertex_num int32) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_cell_to_vertex(temp._inner, C.int32(vertex_num))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexVertexToLatlng wraps MEOS C function th3index_vertex_to_latlng.
-func Th3indexVertexToLatlng(temp *Temporal) *Temporal {
+func Th3indexVertexToLatlng(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_vertex_to_latlng(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexIsValidVertex wraps MEOS C function th3index_is_valid_vertex.
-func Th3indexIsValidVertex(temp *Temporal) *Temporal {
+func Th3indexIsValidVertex(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_is_valid_vertex(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexGridDistance wraps MEOS C function th3index_grid_distance.
-func Th3indexGridDistance(origin *Temporal, dest *Temporal) *Temporal {
+func Th3indexGridDistance(origin *Temporal, dest *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_grid_distance(origin._inner, dest._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexCellToLocalIj wraps MEOS C function th3index_cell_to_local_ij.
-func Th3indexCellToLocalIj(origin *Temporal, cell *Temporal) *Temporal {
+func Th3indexCellToLocalIj(origin *Temporal, cell *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_cell_to_local_ij(origin._inner, cell._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexLocalIjToCell wraps MEOS C function th3index_local_ij_to_cell.
-func Th3indexLocalIjToCell(origin *Temporal, coord *Temporal) *Temporal {
+func Th3indexLocalIjToCell(origin *Temporal, coord *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.th3index_local_ij_to_cell(origin._inner, coord._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexCellArea wraps MEOS C function th3index_cell_area.
-func Th3indexCellArea(temp *Temporal, unit string) *Temporal {
+func Th3indexCellArea(temp *Temporal, unit string) (_r0 *Temporal, _err error) {
 	_c_unit := C.CString(unit)
 	defer C.free(unsafe.Pointer(_c_unit))
+	C.meos_errno_reset()
 	_cret := C.th3index_cell_area(temp._inner, _c_unit)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // Th3indexEdgeLength wraps MEOS C function th3index_edge_length.
-func Th3indexEdgeLength(temp *Temporal, unit string) *Temporal {
+func Th3indexEdgeLength(temp *Temporal, unit string) (_r0 *Temporal, _err error) {
 	_c_unit := C.CString(unit)
 	defer C.free(unsafe.Pointer(_c_unit))
+	C.meos_errno_reset()
 	_cret := C.th3index_edge_length(temp._inner, _c_unit)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TgeogpointGreatCircleDistance wraps MEOS C function tgeogpoint_great_circle_distance.
-func TgeogpointGreatCircleDistance(a *Temporal, b *Temporal, unit string) *Temporal {
+func TgeogpointGreatCircleDistance(a *Temporal, b *Temporal, unit string) (_r0 *Temporal, _err error) {
 	_c_unit := C.CString(unit)
 	defer C.free(unsafe.Pointer(_c_unit))
+	C.meos_errno_reset()
 	_cret := C.tgeogpoint_great_circle_distance(a._inner, b._inner, _c_unit)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 

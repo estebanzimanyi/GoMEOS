@@ -86,562 +86,878 @@ import (
 var _ = unsafe.Pointer(nil)
 
 // TemptypeSubtype wraps MEOS C function temptype_subtype.
-func TemptypeSubtype(subtype TempSubtype) bool {
+func TemptypeSubtype(subtype TempSubtype) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.temptype_subtype(C.tempSubtype(subtype))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TemptypeSubtypeAll wraps MEOS C function temptype_subtype_all.
-func TemptypeSubtypeAll(subtype TempSubtype) bool {
+func TemptypeSubtypeAll(subtype TempSubtype) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.temptype_subtype_all(C.tempSubtype(subtype))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TempsubtypeName wraps MEOS C function tempsubtype_name.
-func TempsubtypeName(subtype TempSubtype) string {
+func TempsubtypeName(subtype TempSubtype) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tempsubtype_name(C.tempSubtype(subtype))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // TempsubtypeFromString wraps MEOS C function tempsubtype_from_string.
-func TempsubtypeFromString(str string, subtype unsafe.Pointer) bool {
+func TempsubtypeFromString(str string, subtype unsafe.Pointer) (_r0 bool, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tempsubtype_from_string(_c_str, (*C.int16)(unsafe.Pointer(subtype)))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // MeosoperName wraps MEOS C function meosoper_name.
-func MeosoperName(oper MeosOper) string {
+func MeosoperName(oper MeosOper) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.meosoper_name(C.MeosOper(oper))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // MeosoperFromString wraps MEOS C function meosoper_from_string.
-func MeosoperFromString(name string) MeosOper {
+func MeosoperFromString(name string) (_r0 MeosOper, _err error) {
 	_c_name := C.CString(name)
 	defer C.free(unsafe.Pointer(_c_name))
+	C.meos_errno_reset()
 	_cret := C.meosoper_from_string(_c_name)
-	return MeosOper(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return MeosOper(_cret), nil
 }
 
 
 // InterptypeName wraps MEOS C function interptype_name.
-func InterptypeName(interp Interpolation) string {
+func InterptypeName(interp Interpolation) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.interptype_name(C.interpType(interp))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // InterptypeFromString wraps MEOS C function interptype_from_string.
-func InterptypeFromString(interp_str string) Interpolation {
+func InterptypeFromString(interp_str string) (_r0 Interpolation, _err error) {
 	_c_interp_str := C.CString(interp_str)
 	defer C.free(unsafe.Pointer(_c_interp_str))
+	C.meos_errno_reset()
 	_cret := C.interptype_from_string(_c_interp_str)
-	return Interpolation(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return Interpolation(_cret), nil
 }
 
 
 // MeosTypeofHexwkb wraps MEOS C function meos_typeof_hexwkb.
-func MeosTypeofHexwkb(hexwkb string) MeosType {
+func MeosTypeofHexwkb(hexwkb string) (_r0 MeosType, _err error) {
 	_c_hexwkb := C.CString(hexwkb)
 	defer C.free(unsafe.Pointer(_c_hexwkb))
+	C.meos_errno_reset()
 	_cret := C.meos_typeof_hexwkb(_c_hexwkb)
-	return MeosType(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return MeosType(_cret), nil
 }
 
 
 // MeostypeName wraps MEOS C function meostype_name.
-func MeostypeName(type_ MeosType) string {
+func MeostypeName(type_ MeosType) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.meostype_name(C.MeosType(type_))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // TemptypeBasetype wraps MEOS C function temptype_basetype.
-func TemptypeBasetype(type_ MeosType) MeosType {
+func TemptypeBasetype(type_ MeosType) (_r0 MeosType, _err error) {
+	C.meos_errno_reset()
 	_cret := C.temptype_basetype(C.MeosType(type_))
-	return MeosType(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return MeosType(_cret), nil
 }
 
 
 // SettypeBasetype wraps MEOS C function settype_basetype.
-func SettypeBasetype(type_ MeosType) MeosType {
+func SettypeBasetype(type_ MeosType) (_r0 MeosType, _err error) {
+	C.meos_errno_reset()
 	_cret := C.settype_basetype(C.MeosType(type_))
-	return MeosType(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return MeosType(_cret), nil
 }
 
 
 // SpantypeBasetype wraps MEOS C function spantype_basetype.
-func SpantypeBasetype(type_ MeosType) MeosType {
+func SpantypeBasetype(type_ MeosType) (_r0 MeosType, _err error) {
+	C.meos_errno_reset()
 	_cret := C.spantype_basetype(C.MeosType(type_))
-	return MeosType(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return MeosType(_cret), nil
 }
 
 
 // SpantypeSpansettype wraps MEOS C function spantype_spansettype.
-func SpantypeSpansettype(type_ MeosType) MeosType {
+func SpantypeSpansettype(type_ MeosType) (_r0 MeosType, _err error) {
+	C.meos_errno_reset()
 	_cret := C.spantype_spansettype(C.MeosType(type_))
-	return MeosType(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return MeosType(_cret), nil
 }
 
 
 // SpansettypeSpantype wraps MEOS C function spansettype_spantype.
-func SpansettypeSpantype(type_ MeosType) MeosType {
+func SpansettypeSpantype(type_ MeosType) (_r0 MeosType, _err error) {
+	C.meos_errno_reset()
 	_cret := C.spansettype_spantype(C.MeosType(type_))
-	return MeosType(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return MeosType(_cret), nil
 }
 
 
 // BasetypeSpantype wraps MEOS C function basetype_spantype.
-func BasetypeSpantype(type_ MeosType) MeosType {
+func BasetypeSpantype(type_ MeosType) (_r0 MeosType, _err error) {
+	C.meos_errno_reset()
 	_cret := C.basetype_spantype(C.MeosType(type_))
-	return MeosType(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return MeosType(_cret), nil
 }
 
 
 // BasetypeSettype wraps MEOS C function basetype_settype.
-func BasetypeSettype(type_ MeosType) MeosType {
+func BasetypeSettype(type_ MeosType) (_r0 MeosType, _err error) {
+	C.meos_errno_reset()
 	_cret := C.basetype_settype(C.MeosType(type_))
-	return MeosType(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return MeosType(_cret), nil
 }
 
 
 // TnumberBasetype wraps MEOS C function tnumber_basetype.
-func TnumberBasetype(type_ MeosType) bool {
+func TnumberBasetype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnumber_basetype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // GeoBasetype wraps MEOS C function geo_basetype.
-func GeoBasetype(type_ MeosType) bool {
+func GeoBasetype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.geo_basetype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // MeosBasetype wraps MEOS C function meos_basetype.
-func MeosBasetype(type_ MeosType) bool {
+func MeosBasetype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.meos_basetype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // AlphanumBasetype wraps MEOS C function alphanum_basetype.
-func AlphanumBasetype(type_ MeosType) bool {
+func AlphanumBasetype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.alphanum_basetype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // AlphanumTemptype wraps MEOS C function alphanum_temptype.
-func AlphanumTemptype(type_ MeosType) bool {
+func AlphanumTemptype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.alphanum_temptype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TimeType wraps MEOS C function time_type.
-func TimeType(type_ MeosType) bool {
+func TimeType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.time_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // SetBasetype wraps MEOS C function set_basetype.
-func SetBasetype(type_ MeosType) bool {
+func SetBasetype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.set_basetype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // SetType wraps MEOS C function set_type.
-func SetType(type_ MeosType) bool {
+func SetType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.set_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NumsetType wraps MEOS C function numset_type.
-func NumsetType(type_ MeosType) bool {
+func NumsetType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.numset_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureNumsetType wraps MEOS C function ensure_numset_type.
-func EnsureNumsetType(type_ MeosType) bool {
+func EnsureNumsetType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_numset_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TimesetType wraps MEOS C function timeset_type.
-func TimesetType(type_ MeosType) bool {
+func TimesetType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.timeset_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // SetSpantype wraps MEOS C function set_spantype.
-func SetSpantype(type_ MeosType) bool {
+func SetSpantype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.set_spantype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureSetSpantype wraps MEOS C function ensure_set_spantype.
-func EnsureSetSpantype(type_ MeosType) bool {
+func EnsureSetSpantype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_set_spantype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // AlphanumsetType wraps MEOS C function alphanumset_type.
-func AlphanumsetType(settype MeosType) bool {
+func AlphanumsetType(settype MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.alphanumset_type(C.MeosType(settype))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // GeosetType wraps MEOS C function geoset_type.
-func GeosetType(type_ MeosType) bool {
+func GeosetType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.geoset_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureGeosetType wraps MEOS C function ensure_geoset_type.
-func EnsureGeosetType(type_ MeosType) bool {
+func EnsureGeosetType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_geoset_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // SpatialsetType wraps MEOS C function spatialset_type.
-func SpatialsetType(type_ MeosType) bool {
+func SpatialsetType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.spatialset_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureSpatialsetType wraps MEOS C function ensure_spatialset_type.
-func EnsureSpatialsetType(type_ MeosType) bool {
+func EnsureSpatialsetType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_spatialset_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // PointcloudBasetype wraps MEOS C function pointcloud_basetype.
-func PointcloudBasetype(type_ MeosType) bool {
+func PointcloudBasetype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.pointcloud_basetype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // PointcloudsetType wraps MEOS C function pointcloudset_type.
-func PointcloudsetType(type_ MeosType) bool {
+func PointcloudsetType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.pointcloudset_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TpointcloudTemptype wraps MEOS C function tpointcloud_temptype.
-func TpointcloudTemptype(type_ MeosType) bool {
+func TpointcloudTemptype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpointcloud_temptype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureTpointcloudTemptype wraps MEOS C function ensure_tpointcloud_temptype.
-func EnsureTpointcloudTemptype(type_ MeosType) bool {
+func EnsureTpointcloudTemptype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_tpointcloud_temptype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // SpanBasetype wraps MEOS C function span_basetype.
-func SpanBasetype(type_ MeosType) bool {
+func SpanBasetype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.span_basetype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // SpanCanonBasetype wraps MEOS C function span_canon_basetype.
-func SpanCanonBasetype(type_ MeosType) bool {
+func SpanCanonBasetype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.span_canon_basetype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // SpanType wraps MEOS C function span_type.
-func SpanType(type_ MeosType) bool {
+func SpanType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.span_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TypeSpanBbox wraps MEOS C function type_span_bbox.
-func TypeSpanBbox(type_ MeosType) bool {
+func TypeSpanBbox(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.type_span_bbox(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // SpanTBOXType wraps MEOS C function span_tbox_type.
-func SpanTBOXType(type_ MeosType) bool {
+func SpanTBOXType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.span_tbox_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureSpanTBOXType wraps MEOS C function ensure_span_tbox_type.
-func EnsureSpanTBOXType(type_ MeosType) bool {
+func EnsureSpanTBOXType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_span_tbox_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NumspanBasetype wraps MEOS C function numspan_basetype.
-func NumspanBasetype(type_ MeosType) bool {
+func NumspanBasetype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.numspan_basetype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NumspanType wraps MEOS C function numspan_type.
-func NumspanType(type_ MeosType) bool {
+func NumspanType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.numspan_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureNumspanType wraps MEOS C function ensure_numspan_type.
-func EnsureNumspanType(type_ MeosType) bool {
+func EnsureNumspanType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_numspan_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TimespanBasetype wraps MEOS C function timespan_basetype.
-func TimespanBasetype(type_ MeosType) bool {
+func TimespanBasetype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.timespan_basetype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TimespanType wraps MEOS C function timespan_type.
-func TimespanType(type_ MeosType) bool {
+func TimespanType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.timespan_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // SpansetType wraps MEOS C function spanset_type.
-func SpansetType(type_ MeosType) bool {
+func SpansetType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.spanset_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TimespansetType wraps MEOS C function timespanset_type.
-func TimespansetType(type_ MeosType) bool {
+func TimespansetType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.timespanset_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureTimespansetType wraps MEOS C function ensure_timespanset_type.
-func EnsureTimespansetType(type_ MeosType) bool {
+func EnsureTimespansetType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_timespanset_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TemporalType wraps MEOS C function temporal_type.
-func TemporalType(type_ MeosType) bool {
+func TemporalType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.temporal_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TemporalBasetype wraps MEOS C function temporal_basetype.
-func TemporalBasetype(type_ MeosType) bool {
+func TemporalBasetype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.temporal_basetype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TemptypeSupportsLinear wraps MEOS C function temptype_supports_linear.
-func TemptypeSupportsLinear(type_ MeosType) bool {
+func TemptypeSupportsLinear(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.temptype_supports_linear(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // BasetypeByvalue wraps MEOS C function basetype_byvalue.
-func BasetypeByvalue(type_ MeosType) bool {
+func BasetypeByvalue(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.basetype_byvalue(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // BasetypeVarlength wraps MEOS C function basetype_varlength.
-func BasetypeVarlength(type_ MeosType) bool {
+func BasetypeVarlength(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.basetype_varlength(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // MeostypeLength wraps MEOS C function meostype_length.
-func MeostypeLength(type_ MeosType) int16 {
+func MeostypeLength(type_ MeosType) (_r0 int16, _err error) {
+	C.meos_errno_reset()
 	_cret := C.meostype_length(C.MeosType(type_))
-	return int16(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int16(_cret), nil
 }
 
 
 // TalphanumType wraps MEOS C function talphanum_type.
-func TalphanumType(type_ MeosType) bool {
+func TalphanumType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.talphanum_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TalphaType wraps MEOS C function talpha_type.
-func TalphaType(type_ MeosType) bool {
+func TalphaType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.talpha_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TnumberType wraps MEOS C function tnumber_type.
-func TnumberType(type_ MeosType) bool {
+func TnumberType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnumber_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureTnumberType wraps MEOS C function ensure_tnumber_type.
-func EnsureTnumberType(type_ MeosType) bool {
+func EnsureTnumberType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_tnumber_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureTnumberBasetype wraps MEOS C function ensure_tnumber_basetype.
-func EnsureTnumberBasetype(type_ MeosType) bool {
+func EnsureTnumberBasetype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_tnumber_basetype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TnumberSpantype wraps MEOS C function tnumber_spantype.
-func TnumberSpantype(type_ MeosType) bool {
+func TnumberSpantype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnumber_spantype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // SpatialBasetype wraps MEOS C function spatial_basetype.
-func SpatialBasetype(type_ MeosType) bool {
+func SpatialBasetype(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.spatial_basetype(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TspatialType wraps MEOS C function tspatial_type.
-func TspatialType(type_ MeosType) bool {
+func TspatialType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tspatial_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureTspatialType wraps MEOS C function ensure_tspatial_type.
-func EnsureTspatialType(type_ MeosType) bool {
+func EnsureTspatialType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_tspatial_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TpointType wraps MEOS C function tpoint_type.
-func TpointType(type_ MeosType) bool {
+func TpointType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tpoint_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureTpointType wraps MEOS C function ensure_tpoint_type.
-func EnsureTpointType(type_ MeosType) bool {
+func EnsureTpointType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_tpoint_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TgeoType wraps MEOS C function tgeo_type.
-func TgeoType(type_ MeosType) bool {
+func TgeoType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeo_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureTgeoType wraps MEOS C function ensure_tgeo_type.
-func EnsureTgeoType(type_ MeosType) bool {
+func EnsureTgeoType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_tgeo_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TgeoTypeAll wraps MEOS C function tgeo_type_all.
-func TgeoTypeAll(type_ MeosType) bool {
+func TgeoTypeAll(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeo_type_all(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureTgeoTypeAll wraps MEOS C function ensure_tgeo_type_all.
-func EnsureTgeoTypeAll(type_ MeosType) bool {
+func EnsureTgeoTypeAll(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_tgeo_type_all(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TgeometryType wraps MEOS C function tgeometry_type.
-func TgeometryType(type_ MeosType) bool {
+func TgeometryType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeometry_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureTgeometryType wraps MEOS C function ensure_tgeometry_type.
-func EnsureTgeometryType(type_ MeosType) bool {
+func EnsureTgeometryType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_tgeometry_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // TgeodeticType wraps MEOS C function tgeodetic_type.
-func TgeodeticType(type_ MeosType) bool {
+func TgeodeticType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeodetic_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureTgeodeticType wraps MEOS C function ensure_tgeodetic_type.
-func EnsureTgeodeticType(type_ MeosType) bool {
+func EnsureTgeodeticType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_tgeodetic_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // EnsureTnumberTpointType wraps MEOS C function ensure_tnumber_tpoint_type.
-func EnsureTnumberTpointType(type_ MeosType) bool {
+func EnsureTnumberTpointType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ensure_tnumber_tpoint_type(C.MeosType(type_))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 

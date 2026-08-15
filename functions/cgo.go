@@ -38,3 +38,36 @@ package functions
 #include "meos_pointcloud.h"
 */
 import "C"
+
+import "fmt"
+
+// MeosError reports that the MEOS call behind a wrapper failed, carrying the
+// error code MEOS recorded for it.
+type MeosError struct {
+	Code int
+}
+
+func (e *MeosError) Error() string {
+	return fmt.Sprintf("meos: error %d", e.Code)
+}
+
+// meosError reads the out-of-band state MEOS sets when a call fails, and
+// clears it so a stale code cannot condemn the next, innocent call.  It
+// returns nil when the call succeeded.
+//
+// The returned value can never answer this on its own: every MEOS sentinel is
+// a legitimate value of its own return type -- INT_MAX is a count, DBL_MAX is
+// a distance, and a bool has no spare value at all.  So no generated wrapper
+// compares against a sentinel; each consults this instead.
+//
+// Install meos_initialize_noexit_error_handler (wrapped as
+// MeosInitializeNoexitErrorHandler) once per process before calling anything
+// else, on every thread that calls MEOS: the default handler ends the
+// process, and meos_initialize resets the handler per thread.
+func meosError() error {
+	if code := int(C.meos_errno()); code != 0 {
+		C.meos_errno_reset()
+		return &MeosError{Code: code}
+	}
+	return nil
+}

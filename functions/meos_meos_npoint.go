@@ -86,912 +86,1424 @@ import (
 var _ = unsafe.Pointer(nil)
 
 // NpointAsEWKT wraps MEOS C function npoint_as_ewkt.
-func NpointAsEWKT(np *Npoint, maxdd int) string {
+func NpointAsEWKT(np *Npoint, maxdd int) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_as_ewkt(np._inner, C.int(maxdd))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // NpointAsHexwkb wraps MEOS C function npoint_as_hexwkb.
-func NpointAsHexwkb(np *Npoint, variant uint8, size_out unsafe.Pointer) string {
+func NpointAsHexwkb(np *Npoint, variant uint8, size_out unsafe.Pointer) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_as_hexwkb(np._inner, C.uint8_t(variant), (*C.size_t)(unsafe.Pointer(size_out)))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // NpointAsText wraps MEOS C function npoint_as_text.
-func NpointAsText(np *Npoint, maxdd int) string {
+func NpointAsText(np *Npoint, maxdd int) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_as_text(np._inner, C.int(maxdd))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // NpointAsWKB wraps MEOS C function npoint_as_wkb.
-func NpointAsWKB(np *Npoint, variant uint8, size_out unsafe.Pointer) unsafe.Pointer {
+func NpointAsWKB(np *Npoint, variant uint8, size_out unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_as_wkb(np._inner, C.uint8_t(variant), (*C.size_t)(unsafe.Pointer(size_out)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // NpointFromHexwkb wraps MEOS C function npoint_from_hexwkb.
-func NpointFromHexwkb(hexwkb string) *Npoint {
+func NpointFromHexwkb(hexwkb string) (_r0 *Npoint, _err error) {
 	_c_hexwkb := C.CString(hexwkb)
 	defer C.free(unsafe.Pointer(_c_hexwkb))
+	C.meos_errno_reset()
 	_cret := C.npoint_from_hexwkb(_c_hexwkb)
-	return &Npoint{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Npoint{_inner: _cret}, nil
 }
 
 
 // NpointFromWKB wraps MEOS C function npoint_from_wkb.
-func NpointFromWKB(wkb unsafe.Pointer, size uint) *Npoint {
+func NpointFromWKB(wkb unsafe.Pointer, size uint) (_r0 *Npoint, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_from_wkb((*C.uint8_t)(unsafe.Pointer(wkb)), C.size_t(size))
-	return &Npoint{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Npoint{_inner: _cret}, nil
 }
 
 
 // NpointIn wraps MEOS C function npoint_in.
-func NpointIn(str string) *Npoint {
+func NpointIn(str string) (_r0 *Npoint, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.npoint_in(_c_str)
-	return &Npoint{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Npoint{_inner: _cret}, nil
 }
 
 
 // NpointOut wraps MEOS C function npoint_out.
-func NpointOut(np *Npoint, maxdd int) string {
+func NpointOut(np *Npoint, maxdd int) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_out(np._inner, C.int(maxdd))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // NsegmentIn wraps MEOS C function nsegment_in.
-func NsegmentIn(str string) *Nsegment {
+func NsegmentIn(str string) (_r0 *Nsegment, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.nsegment_in(_c_str)
-	return &Nsegment{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Nsegment{_inner: _cret}, nil
 }
 
 
 // NsegmentOut wraps MEOS C function nsegment_out.
-func NsegmentOut(ns *Nsegment, maxdd int) string {
+func NsegmentOut(ns *Nsegment, maxdd int) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_out(ns._inner, C.int(maxdd))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // NpointMake wraps MEOS C function npoint_make.
-func NpointMake(rid int64, pos float64) *Npoint {
+func NpointMake(rid int64, pos float64) (_r0 *Npoint, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_make(C.int64_t(rid), C.double(pos))
-	return &Npoint{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Npoint{_inner: _cret}, nil
 }
 
 
 // NsegmentMake wraps MEOS C function nsegment_make.
-func NsegmentMake(rid int64, pos1 float64, pos2 float64) *Nsegment {
+func NsegmentMake(rid int64, pos1 float64, pos2 float64) (_r0 *Nsegment, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_make(C.int64_t(rid), C.double(pos1), C.double(pos2))
-	return &Nsegment{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Nsegment{_inner: _cret}, nil
 }
 
 
 // GeompointToNpoint wraps MEOS C function geompoint_to_npoint.
-func GeompointToNpoint(gs *Geom) *Npoint {
+func GeompointToNpoint(gs *Geom) (_r0 *Npoint, _err error) {
+	C.meos_errno_reset()
 	_cret := C.geompoint_to_npoint(gs._inner)
-	return &Npoint{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Npoint{_inner: _cret}, nil
 }
 
 
 // GeomToNsegment wraps MEOS C function geom_to_nsegment.
-func GeomToNsegment(gs *Geom) *Nsegment {
+func GeomToNsegment(gs *Geom) (_r0 *Nsegment, _err error) {
+	C.meos_errno_reset()
 	_cret := C.geom_to_nsegment(gs._inner)
-	return &Nsegment{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Nsegment{_inner: _cret}, nil
 }
 
 
 // NpointToGeompoint wraps MEOS C function npoint_to_geompoint.
-func NpointToGeompoint(np *Npoint) *Geom {
+func NpointToGeompoint(np *Npoint) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_to_geompoint(np._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // NpointToNsegment wraps MEOS C function npoint_to_nsegment.
-func NpointToNsegment(np *Npoint) *Nsegment {
+func NpointToNsegment(np *Npoint) (_r0 *Nsegment, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_to_nsegment(np._inner)
-	return &Nsegment{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Nsegment{_inner: _cret}, nil
 }
 
 
 // NpointToSTBOX wraps MEOS C function npoint_to_stbox.
-func NpointToSTBOX(np *Npoint) *STBox {
+func NpointToSTBOX(np *Npoint) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_to_stbox(np._inner)
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // NsegmentToGeom wraps MEOS C function nsegment_to_geom.
-func NsegmentToGeom(ns *Nsegment) *Geom {
+func NsegmentToGeom(ns *Nsegment) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_to_geom(ns._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // NsegmentToSTBOX wraps MEOS C function nsegment_to_stbox.
-func NsegmentToSTBOX(ns *Nsegment) *STBox {
+func NsegmentToSTBOX(ns *Nsegment) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_to_stbox(ns._inner)
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // NpointHash wraps MEOS C function npoint_hash.
-func NpointHash(np *Npoint) uint32 {
+func NpointHash(np *Npoint) (_r0 uint32, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_hash(np._inner)
-	return uint32(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint32(_cret), nil
 }
 
 
 // NpointHashExtended wraps MEOS C function npoint_hash_extended.
-func NpointHashExtended(np *Npoint, seed uint64) uint64 {
+func NpointHashExtended(np *Npoint, seed uint64) (_r0 uint64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_hash_extended(np._inner, C.uint64_t(seed))
-	return uint64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint64(_cret), nil
 }
 
 
 // NpointPosition wraps MEOS C function npoint_position.
-func NpointPosition(np *Npoint) float64 {
+func NpointPosition(np *Npoint) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_position(np._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // NpointRoute wraps MEOS C function npoint_route.
-func NpointRoute(np *Npoint) int64 {
+func NpointRoute(np *Npoint) (_r0 int64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_route(np._inner)
-	return int64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int64(_cret), nil
 }
 
 
 // NsegmentEndPosition wraps MEOS C function nsegment_end_position.
-func NsegmentEndPosition(ns *Nsegment) float64 {
+func NsegmentEndPosition(ns *Nsegment) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_end_position(ns._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // NsegmentRoute wraps MEOS C function nsegment_route.
-func NsegmentRoute(ns *Nsegment) int64 {
+func NsegmentRoute(ns *Nsegment) (_r0 int64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_route(ns._inner)
-	return int64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int64(_cret), nil
 }
 
 
 // NsegmentStartPosition wraps MEOS C function nsegment_start_position.
-func NsegmentStartPosition(ns *Nsegment) float64 {
+func NsegmentStartPosition(ns *Nsegment) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_start_position(ns._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // RouteExists wraps MEOS C function route_exists.
-func RouteExists(rid int64) bool {
+func RouteExists(rid int64) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.route_exists(C.int64_t(rid))
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // RouteGeom wraps MEOS C function route_geom.
-func RouteGeom(rid int64) *Geom {
+func RouteGeom(rid int64) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.route_geom(C.int64_t(rid))
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // RouteLength wraps MEOS C function route_length.
-func RouteLength(rid int64) float64 {
+func RouteLength(rid int64) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.route_length(C.int64_t(rid))
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // NpointRound wraps MEOS C function npoint_round.
-func NpointRound(np *Npoint, maxdd int) *Npoint {
+func NpointRound(np *Npoint, maxdd int) (_r0 *Npoint, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_round(np._inner, C.int(maxdd))
-	return &Npoint{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Npoint{_inner: _cret}, nil
 }
 
 
 // NsegmentRound wraps MEOS C function nsegment_round.
-func NsegmentRound(ns *Nsegment, maxdd int) *Nsegment {
+func NsegmentRound(ns *Nsegment, maxdd int) (_r0 *Nsegment, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_round(ns._inner, C.int(maxdd))
-	return &Nsegment{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Nsegment{_inner: _cret}, nil
 }
 
 
 // GetSRIDWays wraps MEOS C function get_srid_ways.
-func GetSRIDWays() int32 {
+func GetSRIDWays() (_r0 int32, _err error) {
+	C.meos_errno_reset()
 	_cret := C.get_srid_ways()
-	return int32(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int32(_cret), nil
 }
 
 
 // NpointSRID wraps MEOS C function npoint_srid.
-func NpointSRID(np *Npoint) int32 {
+func NpointSRID(np *Npoint) (_r0 int32, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_srid(np._inner)
-	return int32(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int32(_cret), nil
 }
 
 
 // NsegmentSRID wraps MEOS C function nsegment_srid.
-func NsegmentSRID(ns *Nsegment) int32 {
+func NsegmentSRID(ns *Nsegment) (_r0 int32, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_srid(ns._inner)
-	return int32(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int32(_cret), nil
 }
 
 
 // NpointTimestamptzToSTBOX wraps MEOS C function npoint_timestamptz_to_stbox.
-func NpointTimestamptzToSTBOX(np *Npoint, t int64) *STBox {
+func NpointTimestamptzToSTBOX(np *Npoint, t int64) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_timestamptz_to_stbox(np._inner, C.TimestampTz(t))
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // NpointTstzspanToSTBOX wraps MEOS C function npoint_tstzspan_to_stbox.
-func NpointTstzspanToSTBOX(np *Npoint, s *Span) *STBox {
+func NpointTstzspanToSTBOX(np *Npoint, s *Span) (_r0 *STBox, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_tstzspan_to_stbox(np._inner, s._inner)
-	return &STBox{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &STBox{_inner: _cret}, nil
 }
 
 
 // NpointCmp wraps MEOS C function npoint_cmp.
-func NpointCmp(np1 *Npoint, np2 *Npoint) int {
+func NpointCmp(np1 *Npoint, np2 *Npoint) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_cmp(np1._inner, np2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // NpointEq wraps MEOS C function npoint_eq.
-func NpointEq(np1 *Npoint, np2 *Npoint) bool {
+func NpointEq(np1 *Npoint, np2 *Npoint) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_eq(np1._inner, np2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NpointGe wraps MEOS C function npoint_ge.
-func NpointGe(np1 *Npoint, np2 *Npoint) bool {
+func NpointGe(np1 *Npoint, np2 *Npoint) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_ge(np1._inner, np2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NpointGt wraps MEOS C function npoint_gt.
-func NpointGt(np1 *Npoint, np2 *Npoint) bool {
+func NpointGt(np1 *Npoint, np2 *Npoint) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_gt(np1._inner, np2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NpointLe wraps MEOS C function npoint_le.
-func NpointLe(np1 *Npoint, np2 *Npoint) bool {
+func NpointLe(np1 *Npoint, np2 *Npoint) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_le(np1._inner, np2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NpointLt wraps MEOS C function npoint_lt.
-func NpointLt(np1 *Npoint, np2 *Npoint) bool {
+func NpointLt(np1 *Npoint, np2 *Npoint) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_lt(np1._inner, np2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NpointNe wraps MEOS C function npoint_ne.
-func NpointNe(np1 *Npoint, np2 *Npoint) bool {
+func NpointNe(np1 *Npoint, np2 *Npoint) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_ne(np1._inner, np2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NpointSame wraps MEOS C function npoint_same.
-func NpointSame(np1 *Npoint, np2 *Npoint) bool {
+func NpointSame(np1 *Npoint, np2 *Npoint) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_same(np1._inner, np2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NsegmentCmp wraps MEOS C function nsegment_cmp.
-func NsegmentCmp(ns1 *Nsegment, ns2 *Nsegment) int {
+func NsegmentCmp(ns1 *Nsegment, ns2 *Nsegment) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_cmp(ns1._inner, ns2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // NsegmentEq wraps MEOS C function nsegment_eq.
-func NsegmentEq(ns1 *Nsegment, ns2 *Nsegment) bool {
+func NsegmentEq(ns1 *Nsegment, ns2 *Nsegment) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_eq(ns1._inner, ns2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NsegmentGe wraps MEOS C function nsegment_ge.
-func NsegmentGe(ns1 *Nsegment, ns2 *Nsegment) bool {
+func NsegmentGe(ns1 *Nsegment, ns2 *Nsegment) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_ge(ns1._inner, ns2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NsegmentGt wraps MEOS C function nsegment_gt.
-func NsegmentGt(ns1 *Nsegment, ns2 *Nsegment) bool {
+func NsegmentGt(ns1 *Nsegment, ns2 *Nsegment) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_gt(ns1._inner, ns2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NsegmentLe wraps MEOS C function nsegment_le.
-func NsegmentLe(ns1 *Nsegment, ns2 *Nsegment) bool {
+func NsegmentLe(ns1 *Nsegment, ns2 *Nsegment) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_le(ns1._inner, ns2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NsegmentLt wraps MEOS C function nsegment_lt.
-func NsegmentLt(ns1 *Nsegment, ns2 *Nsegment) bool {
+func NsegmentLt(ns1 *Nsegment, ns2 *Nsegment) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_lt(ns1._inner, ns2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NsegmentNe wraps MEOS C function nsegment_ne.
-func NsegmentNe(ns1 *Nsegment, ns2 *Nsegment) bool {
+func NsegmentNe(ns1 *Nsegment, ns2 *Nsegment) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nsegment_ne(ns1._inner, ns2._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // NpointsetIn wraps MEOS C function npointset_in.
-func NpointsetIn(str string) *Set {
+func NpointsetIn(str string) (_r0 *Set, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.npointset_in(_c_str)
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // NpointsetOut wraps MEOS C function npointset_out.
-func NpointsetOut(s *Set, maxdd int) string {
+func NpointsetOut(s *Set, maxdd int) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npointset_out(s._inner, C.int(maxdd))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // NpointsetMake wraps MEOS C function npointset_make.
-func NpointsetMake(values unsafe.Pointer, count int) *Set {
+func NpointsetMake(values unsafe.Pointer, count int) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npointset_make((**C.Npoint)(unsafe.Pointer(values)), C.int(count))
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // NpointToSet wraps MEOS C function npoint_to_set.
-func NpointToSet(np *Npoint) *Set {
+func NpointToSet(np *Npoint) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_to_set(np._inner)
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // NpointsetEndValue wraps MEOS C function npointset_end_value.
-func NpointsetEndValue(s *Set) *Npoint {
+func NpointsetEndValue(s *Set) (_r0 *Npoint, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npointset_end_value(s._inner)
-	return &Npoint{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Npoint{_inner: _cret}, nil
 }
 
 
 // NpointsetRoutes wraps MEOS C function npointset_routes.
-func NpointsetRoutes(s *Set) *Set {
+func NpointsetRoutes(s *Set) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npointset_routes(s._inner)
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // NpointsetStartValue wraps MEOS C function npointset_start_value.
-func NpointsetStartValue(s *Set) *Npoint {
+func NpointsetStartValue(s *Set) (_r0 *Npoint, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npointset_start_value(s._inner)
-	return &Npoint{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Npoint{_inner: _cret}, nil
 }
 
 
 // NpointsetValueN wraps MEOS C function npointset_value_n.
-func NpointsetValueN(s *Set, n int) (bool, *Npoint) {
+func NpointsetValueN(s *Set, n int) (_r0 bool, _r1 *Npoint, _err error) {
 	var _out_result *C.Npoint
+	C.meos_errno_reset()
 	_cret := C.npointset_value_n(s._inner, C.int(n), &_out_result)
-	return bool(_cret), &Npoint{_inner: _out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), &Npoint{_inner: _out_result}, nil
 }
 
 
 // NpointsetValues wraps MEOS C function npointset_values.
-func NpointsetValues(s *Set, count unsafe.Pointer) unsafe.Pointer {
+func NpointsetValues(s *Set, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npointset_values(s._inner, (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // ContainedNpointSet wraps MEOS C function contained_npoint_set.
-func ContainedNpointSet(np *Npoint, s *Set) bool {
+func ContainedNpointSet(np *Npoint, s *Set) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.contained_npoint_set(np._inner, s._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // ContainsSetNpoint wraps MEOS C function contains_set_npoint.
-func ContainsSetNpoint(s *Set, np *Npoint) bool {
+func ContainsSetNpoint(s *Set, np *Npoint) (_r0 bool, _err error) {
+	C.meos_errno_reset()
 	_cret := C.contains_set_npoint(s._inner, np._inner)
-	return bool(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // IntersectionNpointSet wraps MEOS C function intersection_npoint_set.
-func IntersectionNpointSet(np *Npoint, s *Set) *Set {
+func IntersectionNpointSet(np *Npoint, s *Set) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.intersection_npoint_set(np._inner, s._inner)
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // IntersectionSetNpoint wraps MEOS C function intersection_set_npoint.
-func IntersectionSetNpoint(s *Set, np *Npoint) *Set {
+func IntersectionSetNpoint(s *Set, np *Npoint) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.intersection_set_npoint(s._inner, np._inner)
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // MinusNpointSet wraps MEOS C function minus_npoint_set.
-func MinusNpointSet(np *Npoint, s *Set) *Set {
+func MinusNpointSet(np *Npoint, s *Set) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.minus_npoint_set(np._inner, s._inner)
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // MinusSetNpoint wraps MEOS C function minus_set_npoint.
-func MinusSetNpoint(s *Set, np *Npoint) *Set {
+func MinusSetNpoint(s *Set, np *Npoint) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.minus_set_npoint(s._inner, np._inner)
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // NpointUnionTransfn wraps MEOS C function npoint_union_transfn.
-func NpointUnionTransfn(state *Set, np *Npoint) *Set {
+func NpointUnionTransfn(state *Set, np *Npoint) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.npoint_union_transfn(state._inner, np._inner)
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // UnionNpointSet wraps MEOS C function union_npoint_set.
-func UnionNpointSet(np *Npoint, s *Set) *Set {
+func UnionNpointSet(np *Npoint, s *Set) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.gunion_npoint_set(np._inner, s._inner)
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // UnionSetNpoint wraps MEOS C function union_set_npoint.
-func UnionSetNpoint(s *Set, np *Npoint) *Set {
+func UnionSetNpoint(s *Set, np *Npoint) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.gunion_set_npoint(s._inner, np._inner)
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // TnpointIn wraps MEOS C function tnpoint_in.
-func TnpointIn(str string) *Temporal {
+func TnpointIn(str string) (_r0 *Temporal, _err error) {
 	_c_str := C.CString(str)
 	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
 	_cret := C.tnpoint_in(_c_str)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointFromMFJSON wraps MEOS C function tnpoint_from_mfjson.
-func TnpointFromMFJSON(mfjson string) *Temporal {
+func TnpointFromMFJSON(mfjson string) (_r0 *Temporal, _err error) {
 	_c_mfjson := C.CString(mfjson)
 	defer C.free(unsafe.Pointer(_c_mfjson))
+	C.meos_errno_reset()
 	_cret := C.tnpoint_from_mfjson(_c_mfjson)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointOut wraps MEOS C function tnpoint_out.
-func TnpointOut(temp *Temporal, maxdd int) string {
+func TnpointOut(temp *Temporal, maxdd int) (_r0 string, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_out(temp._inner, C.int(maxdd))
-	return C.GoString(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
 }
 
 
 // TnpointinstMake wraps MEOS C function tnpointinst_make.
-func TnpointinstMake(np *Npoint, t int64) *TInstant {
+func TnpointinstMake(np *Npoint, t int64) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpointinst_make(np._inner, C.TimestampTz(t))
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // TnpointFromBaseTemp wraps MEOS C function tnpoint_from_base_temp.
-func TnpointFromBaseTemp(np *Npoint, temp *Temporal) *Temporal {
+func TnpointFromBaseTemp(np *Npoint, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_from_base_temp(np._inner, temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointseqFromBaseTstzset wraps MEOS C function tnpointseq_from_base_tstzset.
-func TnpointseqFromBaseTstzset(np *Npoint, s *Set) *TSequence {
+func TnpointseqFromBaseTstzset(np *Npoint, s *Set) (_r0 *TSequence, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpointseq_from_base_tstzset(np._inner, s._inner)
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TnpointseqFromBaseTstzspan wraps MEOS C function tnpointseq_from_base_tstzspan.
-func TnpointseqFromBaseTstzspan(np *Npoint, s *Span, interp Interpolation) *TSequence {
+func TnpointseqFromBaseTstzspan(np *Npoint, s *Span, interp Interpolation) (_r0 *TSequence, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpointseq_from_base_tstzspan(np._inner, s._inner, C.interpType(interp))
-	return &TSequence{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequence{_inner: _cret}, nil
 }
 
 
 // TnpointseqsetFromBaseTstzspanset wraps MEOS C function tnpointseqset_from_base_tstzspanset.
-func TnpointseqsetFromBaseTstzspanset(np *Npoint, ss *SpanSet, interp Interpolation) *TSequenceSet {
+func TnpointseqsetFromBaseTstzspanset(np *Npoint, ss *SpanSet, interp Interpolation) (_r0 *TSequenceSet, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpointseqset_from_base_tstzspanset(np._inner, ss._inner, C.interpType(interp))
-	return &TSequenceSet{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TSequenceSet{_inner: _cret}, nil
 }
 
 
 // TgeompointToTnpoint wraps MEOS C function tgeompoint_to_tnpoint.
-func TgeompointToTnpoint(temp *Temporal) *Temporal {
+func TgeompointToTnpoint(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tgeompoint_to_tnpoint(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointToTgeompoint wraps MEOS C function tnpoint_to_tgeompoint.
-func TnpointToTgeompoint(temp *Temporal) *Temporal {
+func TnpointToTgeompoint(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_to_tgeompoint(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointCumulativeLength wraps MEOS C function tnpoint_cumulative_length.
-func TnpointCumulativeLength(temp *Temporal) *Temporal {
+func TnpointCumulativeLength(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_cumulative_length(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointEndValue wraps MEOS C function tnpoint_end_value.
-func TnpointEndValue(temp *Temporal) *Npoint {
+func TnpointEndValue(temp *Temporal) (_r0 *Npoint, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_end_value(temp._inner)
-	return &Npoint{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Npoint{_inner: _cret}, nil
 }
 
 
 // TnpointLength wraps MEOS C function tnpoint_length.
-func TnpointLength(temp *Temporal) float64 {
+func TnpointLength(temp *Temporal) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_length(temp._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // TnpointPositions wraps MEOS C function tnpoint_positions.
-func TnpointPositions(temp *Temporal, count unsafe.Pointer) unsafe.Pointer {
+func TnpointPositions(temp *Temporal, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_positions(temp._inner, (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // TnpointRoute wraps MEOS C function tnpoint_route.
-func TnpointRoute(temp *Temporal) int64 {
+func TnpointRoute(temp *Temporal) (_r0 int64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_route(temp._inner)
-	return int64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int64(_cret), nil
 }
 
 
 // TnpointRoutes wraps MEOS C function tnpoint_routes.
-func TnpointRoutes(temp *Temporal) *Set {
+func TnpointRoutes(temp *Temporal) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_routes(temp._inner)
-	return &Set{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 
 // TnpointSpeed wraps MEOS C function tnpoint_speed.
-func TnpointSpeed(temp *Temporal) *Temporal {
+func TnpointSpeed(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_speed(temp._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointStartValue wraps MEOS C function tnpoint_start_value.
-func TnpointStartValue(temp *Temporal) *Npoint {
+func TnpointStartValue(temp *Temporal) (_r0 *Npoint, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_start_value(temp._inner)
-	return &Npoint{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Npoint{_inner: _cret}, nil
 }
 
 
 // TnpointTrajectory wraps MEOS C function tnpoint_trajectory.
-func TnpointTrajectory(temp *Temporal) *Geom {
+func TnpointTrajectory(temp *Temporal) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_trajectory(temp._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // TnpointValueAtTimestamptz wraps MEOS C function tnpoint_value_at_timestamptz.
-func TnpointValueAtTimestamptz(temp *Temporal, t int64, strict bool) (bool, *Npoint) {
+func TnpointValueAtTimestamptz(temp *Temporal, t int64, strict bool) (_r0 bool, _r1 *Npoint, _err error) {
 	var _out_value *C.Npoint
+	C.meos_errno_reset()
 	_cret := C.tnpoint_value_at_timestamptz(temp._inner, C.TimestampTz(t), C.bool(strict), &_out_value)
-	return bool(_cret), &Npoint{_inner: _out_value}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), &Npoint{_inner: _out_value}, nil
 }
 
 
 // TnpointValueN wraps MEOS C function tnpoint_value_n.
-func TnpointValueN(temp *Temporal, n int) (bool, *Npoint) {
+func TnpointValueN(temp *Temporal, n int) (_r0 bool, _r1 *Npoint, _err error) {
 	var _out_result *C.Npoint
+	C.meos_errno_reset()
 	_cret := C.tnpoint_value_n(temp._inner, C.int(n), &_out_result)
-	return bool(_cret), &Npoint{_inner: _out_result}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), &Npoint{_inner: _out_result}, nil
 }
 
 
 // TnpointValues wraps MEOS C function tnpoint_values.
-func TnpointValues(temp *Temporal, count unsafe.Pointer) unsafe.Pointer {
+func TnpointValues(temp *Temporal, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_values(temp._inner, (*C.int)(unsafe.Pointer(count)))
-	return unsafe.Pointer(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
 }
 
 
 // TnpointTwcentroid wraps MEOS C function tnpoint_twcentroid.
-func TnpointTwcentroid(temp *Temporal) *Geom {
+func TnpointTwcentroid(temp *Temporal) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_twcentroid(temp._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // TnpointAtGeom wraps MEOS C function tnpoint_at_geom.
-func TnpointAtGeom(temp *Temporal, gs *Geom) *Temporal {
+func TnpointAtGeom(temp *Temporal, gs *Geom) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_at_geom(temp._inner, gs._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointAtNpoint wraps MEOS C function tnpoint_at_npoint.
-func TnpointAtNpoint(temp *Temporal, np *Npoint) *Temporal {
+func TnpointAtNpoint(temp *Temporal, np *Npoint) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_at_npoint(temp._inner, np._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointAtNpointset wraps MEOS C function tnpoint_at_npointset.
-func TnpointAtNpointset(temp *Temporal, s *Set) *Temporal {
+func TnpointAtNpointset(temp *Temporal, s *Set) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_at_npointset(temp._inner, s._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointAtSTBOX wraps MEOS C function tnpoint_at_stbox.
-func TnpointAtSTBOX(temp *Temporal, box *STBox, border_inc bool) *Temporal {
+func TnpointAtSTBOX(temp *Temporal, box *STBox, border_inc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_at_stbox(temp._inner, box._inner, C.bool(border_inc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointMinusGeom wraps MEOS C function tnpoint_minus_geom.
-func TnpointMinusGeom(temp *Temporal, gs *Geom) *Temporal {
+func TnpointMinusGeom(temp *Temporal, gs *Geom) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_minus_geom(temp._inner, gs._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointMinusNpoint wraps MEOS C function tnpoint_minus_npoint.
-func TnpointMinusNpoint(temp *Temporal, np *Npoint) *Temporal {
+func TnpointMinusNpoint(temp *Temporal, np *Npoint) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_minus_npoint(temp._inner, np._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointMinusNpointset wraps MEOS C function tnpoint_minus_npointset.
-func TnpointMinusNpointset(temp *Temporal, s *Set) *Temporal {
+func TnpointMinusNpointset(temp *Temporal, s *Set) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_minus_npointset(temp._inner, s._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TnpointMinusSTBOX wraps MEOS C function tnpoint_minus_stbox.
-func TnpointMinusSTBOX(temp *Temporal, box *STBox, border_inc bool) *Temporal {
+func TnpointMinusSTBOX(temp *Temporal, box *STBox, border_inc bool) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_minus_stbox(temp._inner, box._inner, C.bool(border_inc))
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TdistanceTnpointNpoint wraps MEOS C function tdistance_tnpoint_npoint.
-func TdistanceTnpointNpoint(temp *Temporal, np *Npoint) *Temporal {
+func TdistanceTnpointNpoint(temp *Temporal, np *Npoint) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tdistance_tnpoint_npoint(temp._inner, np._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TdistanceTnpointGeo wraps MEOS C function tdistance_tnpoint_geo.
-func TdistanceTnpointGeo(temp *Temporal, gs *Geom) *Temporal {
+func TdistanceTnpointGeo(temp *Temporal, gs *Geom) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tdistance_tnpoint_geo(temp._inner, gs._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TdistanceTnpointTnpoint wraps MEOS C function tdistance_tnpoint_tnpoint.
-func TdistanceTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) *Temporal {
+func TdistanceTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tdistance_tnpoint_tnpoint(temp1._inner, temp2._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // NadTnpointGeo wraps MEOS C function nad_tnpoint_geo.
-func NadTnpointGeo(temp *Temporal, gs *Geom) float64 {
+func NadTnpointGeo(temp *Temporal, gs *Geom) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nad_tnpoint_geo(temp._inner, gs._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // NadTnpointNpoint wraps MEOS C function nad_tnpoint_npoint.
-func NadTnpointNpoint(temp *Temporal, np *Npoint) float64 {
+func NadTnpointNpoint(temp *Temporal, np *Npoint) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nad_tnpoint_npoint(temp._inner, np._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // NadTnpointSTBOX wraps MEOS C function nad_tnpoint_stbox.
-func NadTnpointSTBOX(temp *Temporal, box *STBox) float64 {
+func NadTnpointSTBOX(temp *Temporal, box *STBox) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nad_tnpoint_stbox(temp._inner, box._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // NadTnpointTnpoint wraps MEOS C function nad_tnpoint_tnpoint.
-func NadTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) float64 {
+func NadTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) (_r0 float64, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nad_tnpoint_tnpoint(temp1._inner, temp2._inner)
-	return float64(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
 }
 
 
 // NaiTnpointGeo wraps MEOS C function nai_tnpoint_geo.
-func NaiTnpointGeo(temp *Temporal, gs *Geom) *TInstant {
+func NaiTnpointGeo(temp *Temporal, gs *Geom) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nai_tnpoint_geo(temp._inner, gs._inner)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // NaiTnpointNpoint wraps MEOS C function nai_tnpoint_npoint.
-func NaiTnpointNpoint(temp *Temporal, np *Npoint) *TInstant {
+func NaiTnpointNpoint(temp *Temporal, np *Npoint) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nai_tnpoint_npoint(temp._inner, np._inner)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // NaiTnpointTnpoint wraps MEOS C function nai_tnpoint_tnpoint.
-func NaiTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) *TInstant {
+func NaiTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) (_r0 *TInstant, _err error) {
+	C.meos_errno_reset()
 	_cret := C.nai_tnpoint_tnpoint(temp1._inner, temp2._inner)
-	return &TInstant{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &TInstant{_inner: _cret}, nil
 }
 
 
 // ShortestlineTnpointGeo wraps MEOS C function shortestline_tnpoint_geo.
-func ShortestlineTnpointGeo(temp *Temporal, gs *Geom) *Geom {
+func ShortestlineTnpointGeo(temp *Temporal, gs *Geom) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.shortestline_tnpoint_geo(temp._inner, gs._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // ShortestlineTnpointNpoint wraps MEOS C function shortestline_tnpoint_npoint.
-func ShortestlineTnpointNpoint(temp *Temporal, np *Npoint) *Geom {
+func ShortestlineTnpointNpoint(temp *Temporal, np *Npoint) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.shortestline_tnpoint_npoint(temp._inner, np._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // ShortestlineTnpointTnpoint wraps MEOS C function shortestline_tnpoint_tnpoint.
-func ShortestlineTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) *Geom {
+func ShortestlineTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
 	_cret := C.shortestline_tnpoint_tnpoint(temp1._inner, temp2._inner)
-	return &Geom{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
 // TnpointTcentroidTransfn wraps MEOS C function tnpoint_tcentroid_transfn.
-func TnpointTcentroidTransfn(state *SkipList, temp *Temporal) *SkipList {
+func TnpointTcentroidTransfn(state *SkipList, temp *Temporal) (_r0 *SkipList, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tnpoint_tcentroid_transfn(state._inner, temp._inner)
-	return &SkipList{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &SkipList{_inner: _cret}, nil
 }
 
 
 // AlwaysEqNpointTnpoint wraps MEOS C function always_eq_npoint_tnpoint.
-func AlwaysEqNpointTnpoint(np *Npoint, temp *Temporal) int {
+func AlwaysEqNpointTnpoint(np *Npoint, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_eq_npoint_tnpoint(np._inner, temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysEqTnpointNpoint wraps MEOS C function always_eq_tnpoint_npoint.
-func AlwaysEqTnpointNpoint(temp *Temporal, np *Npoint) int {
+func AlwaysEqTnpointNpoint(temp *Temporal, np *Npoint) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_eq_tnpoint_npoint(temp._inner, np._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysEqTnpointTnpoint wraps MEOS C function always_eq_tnpoint_tnpoint.
-func AlwaysEqTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) int {
+func AlwaysEqTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_eq_tnpoint_tnpoint(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysNeNpointTnpoint wraps MEOS C function always_ne_npoint_tnpoint.
-func AlwaysNeNpointTnpoint(np *Npoint, temp *Temporal) int {
+func AlwaysNeNpointTnpoint(np *Npoint, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_ne_npoint_tnpoint(np._inner, temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysNeTnpointNpoint wraps MEOS C function always_ne_tnpoint_npoint.
-func AlwaysNeTnpointNpoint(temp *Temporal, np *Npoint) int {
+func AlwaysNeTnpointNpoint(temp *Temporal, np *Npoint) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_ne_tnpoint_npoint(temp._inner, np._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // AlwaysNeTnpointTnpoint wraps MEOS C function always_ne_tnpoint_tnpoint.
-func AlwaysNeTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) int {
+func AlwaysNeTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.always_ne_tnpoint_tnpoint(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverEqNpointTnpoint wraps MEOS C function ever_eq_npoint_tnpoint.
-func EverEqNpointTnpoint(np *Npoint, temp *Temporal) int {
+func EverEqNpointTnpoint(np *Npoint, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_eq_npoint_tnpoint(np._inner, temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverEqTnpointNpoint wraps MEOS C function ever_eq_tnpoint_npoint.
-func EverEqTnpointNpoint(temp *Temporal, np *Npoint) int {
+func EverEqTnpointNpoint(temp *Temporal, np *Npoint) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_eq_tnpoint_npoint(temp._inner, np._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverEqTnpointTnpoint wraps MEOS C function ever_eq_tnpoint_tnpoint.
-func EverEqTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) int {
+func EverEqTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_eq_tnpoint_tnpoint(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverNeNpointTnpoint wraps MEOS C function ever_ne_npoint_tnpoint.
-func EverNeNpointTnpoint(np *Npoint, temp *Temporal) int {
+func EverNeNpointTnpoint(np *Npoint, temp *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_ne_npoint_tnpoint(np._inner, temp._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverNeTnpointNpoint wraps MEOS C function ever_ne_tnpoint_npoint.
-func EverNeTnpointNpoint(temp *Temporal, np *Npoint) int {
+func EverNeTnpointNpoint(temp *Temporal, np *Npoint) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_ne_tnpoint_npoint(temp._inner, np._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // EverNeTnpointTnpoint wraps MEOS C function ever_ne_tnpoint_tnpoint.
-func EverNeTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) int {
+func EverNeTnpointTnpoint(temp1 *Temporal, temp2 *Temporal) (_r0 int, _err error) {
+	C.meos_errno_reset()
 	_cret := C.ever_ne_tnpoint_tnpoint(temp1._inner, temp2._inner)
-	return int(_cret)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
 }
 
 
 // TeqTnpointNpoint wraps MEOS C function teq_tnpoint_npoint.
-func TeqTnpointNpoint(temp *Temporal, np *Npoint) *Temporal {
+func TeqTnpointNpoint(temp *Temporal, np *Npoint) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.teq_tnpoint_npoint(temp._inner, np._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 
 // TneTnpointNpoint wraps MEOS C function tne_tnpoint_npoint.
-func TneTnpointNpoint(temp *Temporal, np *Npoint) *Temporal {
+func TneTnpointNpoint(temp *Temporal, np *Npoint) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
 	_cret := C.tne_tnpoint_npoint(temp._inner, np._inner)
-	return &Temporal{_inner: _cret}
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 

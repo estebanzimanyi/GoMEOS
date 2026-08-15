@@ -56,7 +56,45 @@ SKIPPED_FUNCTIONS = {
     "py_error_handler",
     "meos_initialize_error_handler",
     "meos_error",
+    # The errno accessors are the plumbing this generator's own error
+    # projection is built on: every emitted wrapper clears the errno before
+    # its call and reads it after.  Wrapping them as ordinary functions would
+    # both expose that plumbing as public API and be self-defeating -- a
+    # generated MeosErrno() would reset the errno immediately before reading
+    # it, and so always report success.  Callers get errors as Go errors.
+    "meos_errno",
+    "meos_errno_set",
+    "meos_errno_restore",
+    "meos_errno_reset",
 }
+
+# The error projection ------------------------------------------------------
+#
+# MEOS reports a failure out of band: the failing call sets a thread-local
+# errno and returns a sentinel that is the maximum of its own return type.
+# That sentinel can never answer the question by itself -- INT_MAX is a
+# legitimate count, DBL_MAX a legitimate distance, and a bool has no spare
+# value at all, so its failure is indistinguishable from a definite false.
+# The out-of-band state is the only discriminator.
+#
+# Go's idiom for that channel is the trailing error result, so every emitted
+# wrapper returns one.  This is applied to 100% of the emitted surface with no
+# per-function exception: a rule that held for only some functions would need
+# a hand-maintained list, and the property would stop being checkable.
+_ERRNO_RESET = "\tC.meos_errno_reset()"
+_ERRNO_GUARD = "\tif _err = meosError(); _err != nil {\n\t\treturn\n\t}"
+
+
+def _result_signature(all_returns: list[str]) -> str:
+    """Render the Go result list, with the projected error appended.
+
+    The results are named so the error guard can return the zero value of
+    every result with a bare ``return``, which keeps the emitted guard one
+    shape for every function rather than a per-type zero-value expression.
+    """
+    named = [f"_r{i} {go_type}" for i, go_type in enumerate(all_returns)]
+    named.append("_err error")
+    return f" ({', '.join(named)})"
 
 
 # Type mapping ----------------------------------------------------------
@@ -516,11 +554,12 @@ def _emit_array_input_group(entry: dict, group: dict) -> EmittedFunc:
     sig_args = ", ".join(go_args)
     call = f"C.{_c_callee(c_name)}({', '.join(inner_args)})"
     body = "\n".join("\t" + d for d in deferred)
-    ret_sig = "" if return_c == "void" else f" {ret_go}"
+    ret_sig = _result_signature([] if return_c == "void" else [ret_go])
     if return_c == "void":
-        tail = f"\t{call}"
+        tail = f"{_ERRNO_RESET}\n\t{call}\n{_ERRNO_GUARD}\n\treturn"
     else:
-        tail = f"\t_cret := {call}\n\treturn {ret_from_c.replace('$x', '_cret')}"
+        tail = (f"{_ERRNO_RESET}\n\t_cret := {call}\n{_ERRNO_GUARD}\n"
+                f"\treturn {ret_from_c.replace('$x', '_cret')}, nil")
     code = (
         f"// {go_name} wraps MEOS C function {c_name}.\n"
         f"func {go_name}({sig_args}){ret_sig} {{\n"
@@ -818,16 +857,12 @@ def emit_function(entry: dict) -> EmittedFunc:
     for go_type, _, _ in extra_returns:
         all_returns.append(go_type)
 
-    if len(all_returns) == 0:
-        ret_sig = ""
-    elif len(all_returns) == 1:
-        ret_sig = f" {all_returns[0]}"
-    else:
-        ret_sig = f" ({', '.join(all_returns)})"
+    ret_sig = _result_signature(all_returns)
 
     # Assemble Go body ----------------------------------------------------
     body_lines = []
     body_lines.extend("\t" + d for d in deferred)
+    body_lines.append(_ERRNO_RESET)
     call = f"C.{_c_callee(c_name)}({', '.join(inner_args)})"
 
     if is_array_return:
@@ -840,13 +875,14 @@ def emit_function(entry: dict) -> EmittedFunc:
         else:
             count_expr = array_length_source
         body_lines.append(f"\tres := {call}")
+        body_lines.append(_ERRNO_GUARD)
         body_lines.append(f"\t_n := {count_expr}")
         if array_elem_go == "byte":
             # WKB byte buffer; cast (*C.uint8_t -> []byte via unsafe.Slice).
             body_lines.append("\t_slice := unsafe.Slice((*byte)(unsafe.Pointer(res)), _n)")
             body_lines.append("\t_out := make([]byte, _n)")
             body_lines.append("\tcopy(_out, _slice)")
-            body_lines.append("\treturn _out")
+            body_lines.append("\treturn _out, nil")
         else:
             base, stars = _array_return_info(return_c)
             elem_c = f"*C.{base}" if stars == 2 else f"C.{base}"
@@ -855,26 +891,30 @@ def emit_function(entry: dict) -> EmittedFunc:
             body_lines.append("\tfor _i, _e := range _slice {")
             body_lines.append(f"\t\t_out[_i] = {array_elem_ctor.replace('$x', '_e')}")
             body_lines.append("\t}")
-            body_lines.append("\treturn _out")
+            body_lines.append("\treturn _out, nil")
     elif return_c == "void":
         if extra_returns:
             body_lines.append(f"\t{call}")
+            body_lines.append(_ERRNO_GUARD)
             tail = ", ".join(c2g for _, _, c2g in extra_returns)
             tail = _expand_slice_markers(tail, body_lines, array_count_local, array_length_source)
-            body_lines.append(f"\treturn {tail}")
+            body_lines.append(f"\treturn {tail}, nil")
         else:
             body_lines.append(f"\t{call}")
+            body_lines.append(_ERRNO_GUARD)
+            body_lines.append("\treturn nil")
     else:
         # ``_cret`` (not ``res``) so the result local never collides with a C
         # parameter named ``res`` (e.g. h3_uncompact_cells' resolution arg).
         body_lines.append(f"\t_cret := {call}")
+        body_lines.append(_ERRNO_GUARD)
         return_expr = ret_from_c.replace("$x", "_cret")
         if extra_returns:
             tail = ", ".join(c2g for _, _, c2g in extra_returns)
             tail = _expand_slice_markers(tail, body_lines, array_count_local, array_length_source)
-            body_lines.append(f"\treturn {return_expr}, {tail}")
+            body_lines.append(f"\treturn {return_expr}, {tail}, nil")
         else:
-            body_lines.append(f"\treturn {return_expr}")
+            body_lines.append(f"\treturn {return_expr}, nil")
 
     code = (
         f"// {go_name} wraps MEOS C function {c_name}.\n"
@@ -990,6 +1030,39 @@ _CGO_FILE = """package functions
 #include "meos_pointcloud.h"
 */
 import "C"
+
+import "fmt"
+
+// MeosError reports that the MEOS call behind a wrapper failed, carrying the
+// error code MEOS recorded for it.
+type MeosError struct {
+	Code int
+}
+
+func (e *MeosError) Error() string {
+	return fmt.Sprintf("meos: error %d", e.Code)
+}
+
+// meosError reads the out-of-band state MEOS sets when a call fails, and
+// clears it so a stale code cannot condemn the next, innocent call.  It
+// returns nil when the call succeeded.
+//
+// The returned value can never answer this on its own: every MEOS sentinel is
+// a legitimate value of its own return type -- INT_MAX is a count, DBL_MAX is
+// a distance, and a bool has no spare value at all.  So no generated wrapper
+// compares against a sentinel; each consults this instead.
+//
+// Install meos_initialize_noexit_error_handler (wrapped as
+// MeosInitializeNoexitErrorHandler) once per process before calling anything
+// else, on every thread that calls MEOS: the default handler ends the
+// process, and meos_initialize resets the handler per thread.
+func meosError() error {
+	if code := int(C.meos_errno()); code != 0 {
+		C.meos_errno_reset()
+		return &MeosError{Code: code}
+	}
+	return nil
+}
 """
 
 _PER_HEADER_PREAMBLE = """package functions
