@@ -36,6 +36,7 @@ package functions
 #define gunion_pcpatch_set union_pcpatch_set
 #define gunion_pcpoint_set union_pcpoint_set
 #define gunion_pose_set union_pose_set
+#define gunion_posechain_set union_posechain_set
 #define gunion_set_bigint union_set_bigint
 #define gunion_set_cbuffer union_set_cbuffer
 #define gunion_set_date union_set_date
@@ -47,6 +48,7 @@ package functions
 #define gunion_set_pcpatch union_set_pcpatch
 #define gunion_set_pcpoint union_set_pcpoint
 #define gunion_set_pose union_set_pose
+#define gunion_set_posechain union_set_posechain
 #define gunion_set_set union_set_set
 #define gunion_set_text union_set_text
 #define gunion_set_timestamptz union_set_timestamptz
@@ -85,25 +87,58 @@ import (
 
 var _ = unsafe.Pointer(nil)
 
-// GslGetGenerationRng wraps MEOS C function gsl_get_generation_rng.
-func GslGetGenerationRng() (_r0 *GslRng, _err error) {
+// PrngGetGenerationRng wraps MEOS C function prng_get_generation_rng.
+func PrngGetGenerationRng() (_r0 unsafe.Pointer, _err error) {
 	C.meos_errno_reset()
-	_cret := C.gsl_get_generation_rng()
+	_cret := C.prng_get_generation_rng()
 	if _err = meosError(); _err != nil {
 		return
 	}
-	return &GslRng{_inner: _cret}, nil
+	return unsafe.Pointer(_cret), nil
 }
 
 
-// GslGetAggregationRng wraps MEOS C function gsl_get_aggregation_rng.
-func GslGetAggregationRng() (_r0 *GslRng, _err error) {
+// PrngGetAggregationRng wraps MEOS C function prng_get_aggregation_rng.
+func PrngGetAggregationRng() (_r0 unsafe.Pointer, _err error) {
 	C.meos_errno_reset()
-	_cret := C.gsl_get_aggregation_rng()
+	_cret := C.prng_get_aggregation_rng()
 	if _err = meosError(); _err != nil {
 		return
 	}
-	return &GslRng{_inner: _cret}, nil
+	return unsafe.Pointer(_cret), nil
+}
+
+
+// MeosRandomDouble wraps MEOS C function meos_random_double.
+func MeosRandomDouble(rng unsafe.Pointer) (_r0 float64, _err error) {
+	C.meos_errno_reset()
+	_cret := C.meos_random_double((*C.pg_prng_state)(unsafe.Pointer(rng)))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
+}
+
+
+// MeosRandomExponential wraps MEOS C function meos_random_exponential.
+func MeosRandomExponential(rng unsafe.Pointer, mean float64) (_r0 float64, _err error) {
+	C.meos_errno_reset()
+	_cret := C.meos_random_exponential((*C.pg_prng_state)(unsafe.Pointer(rng)), C.double(mean))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
+}
+
+
+// MeosRandomBinomial20Half wraps MEOS C function meos_random_binomial20_half.
+func MeosRandomBinomial20Half(rng unsafe.Pointer) (_r0 uint32, _err error) {
+	C.meos_errno_reset()
+	_cret := C.meos_random_binomial20_half((*C.pg_prng_state)(unsafe.Pointer(rng)))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return uint32(_cret), nil
 }
 
 
@@ -525,6 +560,21 @@ func EnsureBboxTemporalCompatible(bboxtype MeosType, temp *Temporal) (_r0 bool, 
 }
 
 
+// EnsureSameIndexBboxtype wraps MEOS C function ensure_same_index_bboxtype.
+func EnsureSameIndexBboxtype(bboxtype1 MeosType, bboxtype2 MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.ensure_same_index_bboxtype(C.MeosType(bboxtype1), C.MeosType(bboxtype2))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TODO ensure_index_join_op: unsupported param IndexSearchOp
+// func EnsureIndexJoinOp(...) { /* not yet handled by codegen */ }
+
+
 // BboxTemporalSplitBoxes wraps MEOS C function bbox_temporal_split_boxes.
 func BboxTemporalSplitBoxes(bboxtype MeosType, boxsize uint, temp *Temporal, maxboxes int, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
 	C.meos_errno_reset()
@@ -533,6 +583,105 @@ func BboxTemporalSplitBoxes(bboxtype MeosType, boxsize uint, temp *Temporal, max
 		return
 	}
 	return unsafe.Pointer(_cret), nil
+}
+
+
+// SpanContains wraps MEOS C function span_contains.
+func SpanContains(s1 *Span, s2 *Span) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.span_contains(s1._inner, s2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// SpanContained wraps MEOS C function span_contained.
+func SpanContained(s1 *Span, s2 *Span) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.span_contained(s1._inner, s2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// SpanOverlaps wraps MEOS C function span_overlaps.
+func SpanOverlaps(s1 *Span, s2 *Span) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.span_overlaps(s1._inner, s2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// SpanSame wraps MEOS C function span_same.
+func SpanSame(s1 *Span, s2 *Span) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.span_same(s1._inner, s2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// SpanAdjacent wraps MEOS C function span_adjacent.
+func SpanAdjacent(s1 *Span, s2 *Span) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.span_adjacent(s1._inner, s2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// SpanLeft wraps MEOS C function span_left.
+func SpanLeft(s1 *Span, s2 *Span) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.span_left(s1._inner, s2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// SpanRight wraps MEOS C function span_right.
+func SpanRight(s1 *Span, s2 *Span) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.span_right(s1._inner, s2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// SpanOverleft wraps MEOS C function span_overleft.
+func SpanOverleft(s1 *Span, s2 *Span) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.span_overleft(s1._inner, s2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// SpanOverright wraps MEOS C function span_overright.
+func SpanOverright(s1 *Span, s2 *Span) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.span_overright(s1._inner, s2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
@@ -668,6 +817,149 @@ func TBOXExpand(box1 *TBox, box2 *TBox) (_err error) {
 		return
 	}
 	return nil
+}
+
+
+// TBOXContains wraps MEOS C function tbox_contains.
+func TBOXContains(box1 *TBox, box2 *TBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tbox_contains(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TBOXContained wraps MEOS C function tbox_contained.
+func TBOXContained(box1 *TBox, box2 *TBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tbox_contained(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TBOXOverlaps wraps MEOS C function tbox_overlaps.
+func TBOXOverlaps(box1 *TBox, box2 *TBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tbox_overlaps(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TBOXSame wraps MEOS C function tbox_same.
+func TBOXSame(box1 *TBox, box2 *TBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tbox_same(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TBOXAdjacent wraps MEOS C function tbox_adjacent.
+func TBOXAdjacent(box1 *TBox, box2 *TBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tbox_adjacent(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TBOXLeft wraps MEOS C function tbox_left.
+func TBOXLeft(box1 *TBox, box2 *TBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tbox_left(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TBOXRight wraps MEOS C function tbox_right.
+func TBOXRight(box1 *TBox, box2 *TBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tbox_right(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TBOXOverleft wraps MEOS C function tbox_overleft.
+func TBOXOverleft(box1 *TBox, box2 *TBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tbox_overleft(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TBOXOverright wraps MEOS C function tbox_overright.
+func TBOXOverright(box1 *TBox, box2 *TBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tbox_overright(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TBOXBefore wraps MEOS C function tbox_before.
+func TBOXBefore(box1 *TBox, box2 *TBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tbox_before(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TBOXAfter wraps MEOS C function tbox_after.
+func TBOXAfter(box1 *TBox, box2 *TBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tbox_after(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TBOXOverbefore wraps MEOS C function tbox_overbefore.
+func TBOXOverbefore(box1 *TBox, box2 *TBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tbox_overbefore(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TBOXOverafter wraps MEOS C function tbox_overafter.
+func TBOXOverafter(box1 *TBox, box2 *TBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tbox_overafter(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 

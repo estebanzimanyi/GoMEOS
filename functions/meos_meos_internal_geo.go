@@ -36,6 +36,7 @@ package functions
 #define gunion_pcpatch_set union_pcpatch_set
 #define gunion_pcpoint_set union_pcpoint_set
 #define gunion_pose_set union_pose_set
+#define gunion_posechain_set union_posechain_set
 #define gunion_set_bigint union_set_bigint
 #define gunion_set_cbuffer union_set_cbuffer
 #define gunion_set_date union_set_date
@@ -47,6 +48,7 @@ package functions
 #define gunion_set_pcpatch union_set_pcpatch
 #define gunion_set_pcpoint union_set_pcpoint
 #define gunion_set_pose union_set_pose
+#define gunion_set_posechain union_set_posechain
 #define gunion_set_set union_set_set
 #define gunion_set_text union_set_text
 #define gunion_set_timestamptz union_set_timestamptz
@@ -85,10 +87,10 @@ import (
 
 var _ = unsafe.Pointer(nil)
 
-// ProjGetContext wraps MEOS C function proj_get_context.
-func ProjGetContext() (_r0 *PJContext, _err error) {
+// MeosProjGetContext wraps MEOS C function meos_proj_get_context.
+func MeosProjGetContext() (_r0 *PJContext, _err error) {
 	C.meos_errno_reset()
-	_cret := C.proj_get_context()
+	_cret := C.meos_proj_get_context()
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -261,6 +263,237 @@ func STBOXExpandSpaceSet(box *STBox, d float64) (_r0 bool, _r1 *STBox, _err erro
 }
 
 
+// STBOXContains wraps MEOS C function stbox_contains.
+func STBOXContains(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_contains(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXContained wraps MEOS C function stbox_contained.
+func STBOXContained(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_contained(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXOverlaps wraps MEOS C function stbox_overlaps.
+func STBOXOverlaps(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_overlaps(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXSame wraps MEOS C function stbox_same.
+func STBOXSame(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_same(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXAdjacent wraps MEOS C function stbox_adjacent.
+func STBOXAdjacent(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_adjacent(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXLeft wraps MEOS C function stbox_left.
+func STBOXLeft(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_left(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXRight wraps MEOS C function stbox_right.
+func STBOXRight(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_right(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXOverleft wraps MEOS C function stbox_overleft.
+func STBOXOverleft(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_overleft(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXOverright wraps MEOS C function stbox_overright.
+func STBOXOverright(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_overright(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXBelow wraps MEOS C function stbox_below.
+func STBOXBelow(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_below(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXAbove wraps MEOS C function stbox_above.
+func STBOXAbove(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_above(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXOverbelow wraps MEOS C function stbox_overbelow.
+func STBOXOverbelow(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_overbelow(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXOverabove wraps MEOS C function stbox_overabove.
+func STBOXOverabove(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_overabove(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXFront wraps MEOS C function stbox_front.
+func STBOXFront(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_front(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXBack wraps MEOS C function stbox_back.
+func STBOXBack(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_back(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXOverfront wraps MEOS C function stbox_overfront.
+func STBOXOverfront(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_overfront(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXOverback wraps MEOS C function stbox_overback.
+func STBOXOverback(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_overback(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXBefore wraps MEOS C function stbox_before.
+func STBOXBefore(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_before(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXAfter wraps MEOS C function stbox_after.
+func STBOXAfter(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_after(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXOverbefore wraps MEOS C function stbox_overbefore.
+func STBOXOverbefore(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_overbefore(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// STBOXOverafter wraps MEOS C function stbox_overafter.
+func STBOXOverafter(box1 *STBox, box2 *STBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_overafter(box1._inner, box2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
 // InterSTBOXSTBOX wraps MEOS C function inter_stbox_stbox.
 func InterSTBOXSTBOX(box1 *STBox, box2 *STBox) (_r0 bool, _r1 *STBox, _err error) {
 	var _out_result C.STBox
@@ -270,6 +503,17 @@ func InterSTBOXSTBOX(box1 *STBox, box2 *STBox) (_r0 bool, _r1 *STBox, _err error
 		return
 	}
 	return bool(_cret), &STBox{_inner: &_out_result}, nil
+}
+
+
+// STBOXGeo wraps MEOS C function stbox_geo.
+func STBOXGeo(box *STBox) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
+	_cret := C.stbox_geo(box._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
@@ -441,6 +685,17 @@ func TspatialSetSTBOX(temp *Temporal) (_r0 *STBox, _err error) {
 }
 
 
+// TgeoinstSetSTBOX wraps MEOS C function tgeoinst_set_stbox.
+func TgeoinstSetSTBOX(inst *TInstant, box *STBox) (_err error) {
+	C.meos_errno_reset()
+	C.tgeoinst_set_stbox(inst._inner, box._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return nil
+}
+
+
 // TspatialseqSetSTBOX wraps MEOS C function tspatialseq_set_stbox.
 func TspatialseqSetSTBOX(seq *TSequence, box *STBox) (_err error) {
 	C.meos_errno_reset()
@@ -562,10 +817,10 @@ func TgeoseqsetRestrictSTBOX(ss *TSequenceSet, box *STBox, border_inc bool, atfu
 }
 
 
-// GeoClipCtxMake wraps MEOS C function geo_clip_ctx_make.
-func GeoClipCtxMake(gs *Geom) (_r0 unsafe.Pointer, _err error) {
+// GeoEdgeCtxMake wraps MEOS C function geo_edge_ctx_make.
+func GeoEdgeCtxMake(gs *Geom) (_r0 unsafe.Pointer, _err error) {
 	C.meos_errno_reset()
-	_cret := C.geo_clip_ctx_make(gs._inner)
+	_cret := C.geo_edge_ctx_make(gs._inner)
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -573,10 +828,10 @@ func GeoClipCtxMake(gs *Geom) (_r0 unsafe.Pointer, _err error) {
 }
 
 
-// GeoClipCtxFree wraps MEOS C function geo_clip_ctx_free.
-func GeoClipCtxFree(ctx unsafe.Pointer) (_err error) {
+// GeoEdgeCtxFree wraps MEOS C function geo_edge_ctx_free.
+func GeoEdgeCtxFree(ctx unsafe.Pointer) (_err error) {
 	C.meos_errno_reset()
-	C.geo_clip_ctx_free(unsafe.Pointer(ctx))
+	C.geo_edge_ctx_free(unsafe.Pointer(ctx))
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -683,10 +938,10 @@ func TpointLinearRestrictGeom(temp *Temporal, gs *Geom, atfunc bool) (_r0 *Tempo
 }
 
 
-// GeomClipSupported wraps MEOS C function geom_clip_supported.
-func GeomClipSupported(geom unsafe.Pointer) (_r0 bool, _err error) {
+// GeomMeosSupported wraps MEOS C function geom_meos_supported.
+func GeomMeosSupported(geom unsafe.Pointer) (_r0 bool, _err error) {
 	C.meos_errno_reset()
-	_cret := C.geom_clip_supported((*C.LWGEOM)(unsafe.Pointer(geom)))
+	_cret := C.geom_meos_supported((*C.LWGEOM)(unsafe.Pointer(geom)))
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -845,6 +1100,17 @@ func TgeoseqsetSplitNStboxes(ss *TSequenceSet, max_count int, count unsafe.Point
 		return
 	}
 	return &STBox{_inner: _cret}, nil
+}
+
+
+// TpointGetCoord wraps MEOS C function tpoint_get_coord.
+func TpointGetCoord(temp *Temporal, coord int) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tpoint_get_coord(temp._inner, C.int(coord))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
 }
 
 

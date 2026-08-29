@@ -36,6 +36,7 @@ package functions
 #define gunion_pcpatch_set union_pcpatch_set
 #define gunion_pcpoint_set union_pcpoint_set
 #define gunion_pose_set union_pose_set
+#define gunion_posechain_set union_posechain_set
 #define gunion_set_bigint union_set_bigint
 #define gunion_set_cbuffer union_set_cbuffer
 #define gunion_set_date union_set_date
@@ -47,6 +48,7 @@ package functions
 #define gunion_set_pcpatch union_set_pcpatch
 #define gunion_set_pcpoint union_set_pcpoint
 #define gunion_set_pose union_set_pose
+#define gunion_set_posechain union_set_posechain
 #define gunion_set_set union_set_set
 #define gunion_set_text union_set_text
 #define gunion_set_timestamptz union_set_timestamptz
@@ -682,6 +684,17 @@ func GeomArrayUnion(gsarr unsafe.Pointer, count int) (_r0 *Geom, _err error) {
 }
 
 
+// GeogArrayUnion wraps MEOS C function geog_array_union.
+func GeogArrayUnion(gsarr unsafe.Pointer, count int) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geog_array_union((**C.GSERIALIZED)(unsafe.Pointer(gsarr)), C.int(count))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
+}
+
+
 // GeomBoundary wraps MEOS C function geom_boundary.
 func GeomBoundary(gs *Geom) (_r0 *Geom, _err error) {
 	C.meos_errno_reset()
@@ -739,6 +752,17 @@ func GeomDifference2d(gs1 *Geom, gs2 *Geom) (_r0 *Geom, _err error) {
 }
 
 
+// GeomIsSimple wraps MEOS C function geom_is_simple.
+func GeomIsSimple(gs *Geom) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geom_is_simple(gs._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
 // GeomIntersection2d wraps MEOS C function geom_intersection2d.
 func GeomIntersection2d(gs1 *Geom, gs2 *Geom) (_r0 *Geom, _err error) {
 	C.meos_errno_reset()
@@ -765,6 +789,17 @@ func GeomIntersection2dColl(gs1 *Geom, gs2 *Geom) (_r0 *Geom, _err error) {
 func GeomMinBoundingRadius(geom *Geom, radius unsafe.Pointer) (_r0 *Geom, _err error) {
 	C.meos_errno_reset()
 	_cret := C.geom_min_bounding_radius(geom._inner, (*C.double)(unsafe.Pointer(radius)))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
+}
+
+
+// GeomOrientedEnvelope wraps MEOS C function geom_oriented_envelope.
+func GeomOrientedEnvelope(gs *Geom) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geom_oriented_envelope(gs._inner)
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -959,6 +994,17 @@ func GeomIntersects3d(gs1 *Geom, gs2 *Geom) (_r0 bool, _err error) {
 }
 
 
+// GeomRelate wraps MEOS C function geom_relate.
+func GeomRelate(gs1 *Geom, gs2 *Geom) (_r0 string, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geom_relate(gs1._inner, gs2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
+}
+
+
 // GeomRelatePattern wraps MEOS C function geom_relate_pattern.
 func GeomRelatePattern(gs1 *Geom, gs2 *Geom, patt string) (_r0 bool, _err error) {
 	_c_patt := C.CString(patt)
@@ -1031,6 +1077,17 @@ func GeogDistance(g1 *Geom, g2 *Geom) (_r0 float64, _err error) {
 func GeomDistance2d(gs1 *Geom, gs2 *Geom) (_r0 float64, _err error) {
 	C.meos_errno_reset()
 	_cret := C.geom_distance2d(gs1._inner, gs2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
+}
+
+
+// GeomMaxDistance2d wraps MEOS C function geom_max_distance2d.
+func GeomMaxDistance2d(gs1 *Geom, gs2 *Geom) (_r0 float64, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geom_max_distance2d(gs1._inner, gs2._inner)
 	if _err = meosError(); _err != nil {
 		return
 	}
