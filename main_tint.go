@@ -423,13 +423,13 @@ func SubIntTInt[TI TInt](value int, ti TI) Temporal {
 
 // MultTIntInt returns the temporal multiplication of a temporal integer and a constant integer.
 func MultTIntInt[TI TInt](ti TI, value int) Temporal {
-	c_temp := C.mult_tint_int(ti.Inner(), C.int(value))
+	c_temp := C.mul_tint_int(ti.Inner(), C.int(value))
 	return CreateTemporal(c_temp)
 }
 
 // MultIntTInt returns the temporal multiplication of a constant integer and a temporal integer.
 func MultIntTInt[TI TInt](value int, ti TI) Temporal {
-	c_temp := C.mult_int_tint(C.int(value), ti.Inner())
+	c_temp := C.mul_int_tint(C.int(value), ti.Inner())
 	return CreateTemporal(c_temp)
 }
 

@@ -2,6 +2,14 @@ package gomeos
 
 /*
 #include "meos.h"
+// The date and timestamp entry points this file calls are declared by the
+// installed pg_date.h and pg_timestamp.h, which meos.h does not pull in. The
+// retired vendored copy carried them inline under pg_-prefixed spellings, so
+// nothing named either the headers or the canonical names: the public surface
+// exports date_in/date_out (pg_date.h:61,65) and timestamptz_in/timestamptz_out
+// (pg_timestamp.h:114,118), with the same arity.
+#include <pg_date.h>
+#include <pg_timestamp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "cast.h"
@@ -17,12 +25,12 @@ import (
 func DateToDateADT(t time.Time) C.DateADT {
 	c_date_in := C.CString(t.Format("2006-01-02"))
 	defer C.free(unsafe.Pointer(c_date_in))
-	c_date := C.pg_date_in(c_date_in)
+	c_date := C.date_in(c_date_in)
 	return c_date
 }
 
 func DateADTToDate(d C.DateADT) time.Time {
-	dateStr := C.GoString(C.pg_date_out(d))
+	dateStr := C.GoString(C.date_out(d))
 	layout := "2006-01-02"
 	parsedDate, _ := time.Parse(layout, dateStr)
 	return parsedDate
@@ -50,12 +58,12 @@ func TimeDeltaToInterval(td timeutil.Timedelta) C.Interval {
 func TimestamptzIn(timeStr string) C.TimestampTz {
 	CtimeStr := C.CString(timeStr)
 	defer C.free(unsafe.Pointer(CtimeStr))
-	tstz := C.pg_timestamptz_in(CtimeStr, C.int(-1))
+	tstz := C.timestamptz_in(CtimeStr, C.int(-1))
 	return tstz
 }
 
 func TimestamptzOut(ts C.TimestampTz) string {
-	timeStr := C.GoString(C.pg_timestamptz_out(ts))
+	timeStr := C.GoString(C.timestamptz_out(ts))
 	return timeStr
 }
 

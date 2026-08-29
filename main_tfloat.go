@@ -441,13 +441,13 @@ func SubFloatTFloat[TF TFloat](value float64, tf TF) Temporal {
 
 // MultTFloatFloat returns the temporal multiplication of a temporal float and a constant float.
 func MultTFloatFloat[TF TFloat](tf TF, value float64) Temporal {
-	c_temp := C.mult_tfloat_float(tf.Inner(), C.double(value))
+	c_temp := C.mul_tfloat_float(tf.Inner(), C.double(value))
 	return CreateTemporal(c_temp)
 }
 
 // MultFloatTFloat returns the temporal multiplication of a constant float and a temporal float.
 func MultFloatTFloat[TF TFloat](value float64, tf TF) Temporal {
-	c_temp := C.mult_float_tfloat(C.double(value), tf.Inner())
+	c_temp := C.mul_float_tfloat(C.double(value), tf.Inner())
 	return CreateTemporal(c_temp)
 }
 
