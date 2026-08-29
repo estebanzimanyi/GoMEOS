@@ -134,7 +134,7 @@ func SubTNumberTNumber[TN1 TNumber, TN2 TNumber](tn1 TN1, tn2 TN2) Temporal {
 
 // MultTNumberTNumber returns the temporal multiplication of two temporal numbers.
 func MultTNumberTNumber[TN1 TNumber, TN2 TNumber](tn1 TN1, tn2 TN2) Temporal {
-	c_temp := C.mult_tnumber_tnumber(tn1.Inner(), tn2.Inner())
+	c_temp := C.mul_tnumber_tnumber(tn1.Inner(), tn2.Inner())
 	return CreateTemporal(c_temp)
 }
 

@@ -2,6 +2,9 @@ package gomeos
 
 /*
 #include "meos.h"
+// timestamptz_out is declared by the installed pg_timestamp.h; the retired
+// vendored header carried it inline under a pg_-prefixed spelling.
+#include <pg_timestamp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "cast.h"
@@ -66,7 +69,7 @@ func (tgmpi *TGeomPointInst) Timestamptz() time.Time {
 
 func (tgmpi *TGeomPointInst) TimestampOut() string {
 	c_inst := C.cast_temporal_to_tinstant(tgmpi._inner)
-	return C.GoString(C.pg_timestamptz_out(c_inst.t))
+	return C.GoString(C.timestamptz_out(c_inst.t))
 }
 
 type TGeogPointSeq struct {
