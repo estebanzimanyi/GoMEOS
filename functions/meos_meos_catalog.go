@@ -36,6 +36,7 @@ package functions
 #define gunion_pcpatch_set union_pcpatch_set
 #define gunion_pcpoint_set union_pcpoint_set
 #define gunion_pose_set union_pose_set
+#define gunion_posechain_set union_posechain_set
 #define gunion_set_bigint union_set_bigint
 #define gunion_set_cbuffer union_set_cbuffer
 #define gunion_set_date union_set_date
@@ -47,6 +48,7 @@ package functions
 #define gunion_set_pcpatch union_set_pcpatch
 #define gunion_set_pcpoint union_set_pcpoint
 #define gunion_set_pose union_set_pose
+#define gunion_set_posechain union_set_posechain
 #define gunion_set_set union_set_set
 #define gunion_set_text union_set_text
 #define gunion_set_timestamptz union_set_timestamptz
@@ -566,6 +568,17 @@ func TypeSpanBbox(type_ MeosType) (_r0 bool, _err error) {
 }
 
 
+// TypeBboxtype wraps MEOS C function type_bboxtype.
+func TypeBboxtype(type_ MeosType) (_r0 MeosType, _err error) {
+	C.meos_errno_reset()
+	_cret := C.type_bboxtype(C.MeosType(type_))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return MeosType(_cret), nil
+}
+
+
 // SpanTBOXType wraps MEOS C function span_tbox_type.
 func SpanTBOXType(type_ MeosType) (_r0 bool, _err error) {
 	C.meos_errno_reset()
@@ -786,6 +799,28 @@ func EnsureTnumberType(type_ MeosType) (_r0 bool, _err error) {
 }
 
 
+// TorderType wraps MEOS C function torder_type.
+func TorderType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.torder_type(C.MeosType(type_))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// EnsureTorderType wraps MEOS C function ensure_torder_type.
+func EnsureTorderType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.ensure_torder_type(C.MeosType(type_))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
 // EnsureTnumberBasetype wraps MEOS C function ensure_tnumber_basetype.
 func EnsureTnumberBasetype(type_ MeosType) (_r0 bool, _err error) {
 	C.meos_errno_reset()
@@ -878,6 +913,17 @@ func TgeoType(type_ MeosType) (_r0 bool, _err error) {
 func EnsureTgeoType(type_ MeosType) (_r0 bool, _err error) {
 	C.meos_errno_reset()
 	_cret := C.ensure_tgeo_type(C.MeosType(type_))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// TspatialBodyType wraps MEOS C function tspatial_body_type.
+func TspatialBodyType(type_ MeosType) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tspatial_body_type(C.MeosType(type_))
 	if _err = meosError(); _err != nil {
 		return
 	}

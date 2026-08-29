@@ -82,8 +82,6 @@ type AFFINE struct { _inner *C.AFFINE }
 func (x *AFFINE) Inner() *C.AFFINE { if x == nil { return nil }; return x._inner }
 type PJContext struct { _inner *C.PJ_CONTEXT }
 func (x *PJContext) Inner() *C.PJ_CONTEXT { if x == nil { return nil }; return x._inner }
-type GslRng struct { _inner *C.gsl_rng }
-func (x *GslRng) Inner() *C.gsl_rng { if x == nil { return nil }; return x._inner }
 
 // -------------------- enums --------------------
 type TempSubtype C.tempSubtype
@@ -100,11 +98,29 @@ const (
 	Interpolation_STEP Interpolation = 2
 	Interpolation_LINEAR Interpolation = 3
 )
-type RTreeSearchOp C.RTreeSearchOp
+type IndexSearchOp C.IndexSearchOp
 const (
-	RTreeSearchOp_RTREE_OVERLAPS RTreeSearchOp = 0
-	RTreeSearchOp_RTREE_CONTAINS RTreeSearchOp = 1
-	RTreeSearchOp_RTREE_CONTAINED_BY RTreeSearchOp = 2
+	IndexSearchOp_INDEX_OVERLAPS IndexSearchOp = 0
+	IndexSearchOp_INDEX_CONTAINS IndexSearchOp = 1
+	IndexSearchOp_INDEX_CONTAINED_BY IndexSearchOp = 2
+	IndexSearchOp_INDEX_LEFT IndexSearchOp = 3
+	IndexSearchOp_INDEX_OVERLEFT IndexSearchOp = 4
+	IndexSearchOp_INDEX_RIGHT IndexSearchOp = 5
+	IndexSearchOp_INDEX_OVERRIGHT IndexSearchOp = 6
+	IndexSearchOp_INDEX_BELOW IndexSearchOp = 7
+	IndexSearchOp_INDEX_OVERBELOW IndexSearchOp = 8
+	IndexSearchOp_INDEX_ABOVE IndexSearchOp = 9
+	IndexSearchOp_INDEX_OVERABOVE IndexSearchOp = 10
+	IndexSearchOp_INDEX_FRONT IndexSearchOp = 11
+	IndexSearchOp_INDEX_OVERFRONT IndexSearchOp = 12
+	IndexSearchOp_INDEX_BACK IndexSearchOp = 13
+	IndexSearchOp_INDEX_OVERBACK IndexSearchOp = 14
+	IndexSearchOp_INDEX_BEFORE IndexSearchOp = 15
+	IndexSearchOp_INDEX_OVERBEFORE IndexSearchOp = 16
+	IndexSearchOp_INDEX_AFTER IndexSearchOp = 17
+	IndexSearchOp_INDEX_OVERAFTER IndexSearchOp = 18
+	IndexSearchOp_INDEX_SAME IndexSearchOp = 19
+	IndexSearchOp_INDEX_ADJACENT IndexSearchOp = 20
 )
 type SPTreeKind C.SPTreeKind
 const (
@@ -195,7 +211,13 @@ const (
 	MeosType_T_TPCPATCH MeosType = 79
 	MeosType_T_TPCBOX MeosType = 80
 	MeosType_T_RAQUET MeosType = 81
-	MeosType_NUM_MEOS_TYPES MeosType = 82
+	MeosType_T_POSECHAIN MeosType = 82
+	MeosType_T_POSECHAINSET MeosType = 83
+	MeosType_T_TPOSECHAIN MeosType = 84
+	MeosType_T_S2CELL MeosType = 85
+	MeosType_T_S2CELLSET MeosType = 86
+	MeosType_T_TS2CELL MeosType = 87
+	MeosType_NUM_MEOS_TYPES MeosType = 88
 )
 type MeosOper C.MeosOper
 const (

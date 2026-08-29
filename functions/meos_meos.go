@@ -36,6 +36,7 @@ package functions
 #define gunion_pcpatch_set union_pcpatch_set
 #define gunion_pcpoint_set union_pcpoint_set
 #define gunion_pose_set union_pose_set
+#define gunion_posechain_set union_posechain_set
 #define gunion_set_bigint union_set_bigint
 #define gunion_set_cbuffer union_set_cbuffer
 #define gunion_set_date union_set_date
@@ -47,6 +48,7 @@ package functions
 #define gunion_set_pcpatch union_set_pcpatch
 #define gunion_set_pcpoint union_set_pcpoint
 #define gunion_set_pose union_set_pose
+#define gunion_set_posechain union_set_posechain
 #define gunion_set_set union_set_set
 #define gunion_set_text union_set_text
 #define gunion_set_timestamptz union_set_timestamptz
@@ -84,6 +86,295 @@ import (
 )
 
 var _ = unsafe.Pointer(nil)
+
+// BoolIn wraps MEOS C function bool_in.
+func BoolIn(str string) (_r0 bool, _err error) {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
+	_cret := C.bool_in(_c_str)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// BoolOut wraps MEOS C function bool_out.
+func BoolOut(b bool) (_r0 string, _err error) {
+	C.meos_errno_reset()
+	_cret := C.bool_out(C.bool(b))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
+}
+
+
+// Float8Out wraps MEOS C function float8_out.
+func Float8Out(num float64, maxdd int) (_r0 string, _err error) {
+	C.meos_errno_reset()
+	_cret := C.float8_out(C.double(num), C.int(maxdd))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
+}
+
+
+// DateIn wraps MEOS C function date_in.
+func DateIn(str string) (_r0 int32, _err error) {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
+	_cret := C.date_in(_c_str)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int32(_cret), nil
+}
+
+
+// DateOut wraps MEOS C function date_out.
+func DateOut(date int32) (_r0 string, _err error) {
+	C.meos_errno_reset()
+	_cret := C.date_out(C.DateADT(date))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
+}
+
+
+// IntervalCmp wraps MEOS C function interval_cmp.
+func IntervalCmp(interv1 *Interval, interv2 *Interval) (_r0 int, _err error) {
+	C.meos_errno_reset()
+	_cret := C.interval_cmp(interv1._inner, interv2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
+}
+
+
+// IntervalIn wraps MEOS C function interval_in.
+func IntervalIn(str string, typmod int32) (_r0 *Interval, _err error) {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
+	_cret := C.interval_in(_c_str, C.int32(typmod))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Interval{_inner: _cret}, nil
+}
+
+
+// IntervalOut wraps MEOS C function interval_out.
+func IntervalOut(interv *Interval) (_r0 string, _err error) {
+	C.meos_errno_reset()
+	_cret := C.interval_out(interv._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
+}
+
+
+// TimeIn wraps MEOS C function time_in.
+func TimeIn(str string, typmod int32) (_r0 int64, _err error) {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
+	_cret := C.time_in(_c_str, C.int32(typmod))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int64(_cret), nil
+}
+
+
+// TimeOut wraps MEOS C function time_out.
+func TimeOut(time int64) (_r0 string, _err error) {
+	C.meos_errno_reset()
+	_cret := C.time_out(C.TimeADT(time))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
+}
+
+
+// TimestampIn wraps MEOS C function timestamp_in.
+func TimestampIn(str string, typmod int32) (_r0 int64, _err error) {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
+	_cret := C.timestamp_in(_c_str, C.int32(typmod))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int64(_cret), nil
+}
+
+
+// TimestampOut wraps MEOS C function timestamp_out.
+func TimestampOut(ts int64) (_r0 string, _err error) {
+	C.meos_errno_reset()
+	_cret := C.timestamp_out(C.Timestamp(ts))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
+}
+
+
+// TimestamptzIn wraps MEOS C function timestamptz_in.
+func TimestamptzIn(str string, typmod int32) (_r0 int64, _err error) {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
+	_cret := C.timestamptz_in(_c_str, C.int32(typmod))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int64(_cret), nil
+}
+
+
+// TimestamptzOut wraps MEOS C function timestamptz_out.
+func TimestamptzOut(tstz int64) (_r0 string, _err error) {
+	C.meos_errno_reset()
+	_cret := C.timestamptz_out(C.TimestampTz(tstz))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
+}
+
+
+// CstringToText wraps MEOS C function cstring_to_text.
+func CstringToText(str string) (_r0 string, _err error) {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
+	_cret := C.cstring_to_text(_c_str)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(C.text_to_cstring(_cret)), nil
+}
+
+
+// TextToCstring wraps MEOS C function text_to_cstring.
+func TextToCstring(txt string) (_r0 string, _err error) {
+	_c_txt := C.cstring_to_text(C.CString(txt))
+	defer C.free(unsafe.Pointer(_c_txt))
+	C.meos_errno_reset()
+	_cret := C.text_to_cstring(_c_txt)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
+}
+
+
+// TextIn wraps MEOS C function text_in.
+func TextIn(str string) (_r0 string, _err error) {
+	_c_str := C.CString(str)
+	defer C.free(unsafe.Pointer(_c_str))
+	C.meos_errno_reset()
+	_cret := C.text_in(_c_str)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(C.text_to_cstring(_cret)), nil
+}
+
+
+// TextOut wraps MEOS C function text_out.
+func TextOut(txt string) (_r0 string, _err error) {
+	_c_txt := C.cstring_to_text(C.CString(txt))
+	defer C.free(unsafe.Pointer(_c_txt))
+	C.meos_errno_reset()
+	_cret := C.text_out(_c_txt)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
+}
+
+
+// TODO text_cmp: unsupported param Oid
+// func TextCmp(...) { /* not yet handled by codegen */ }
+
+
+// TextCopy wraps MEOS C function text_copy.
+func TextCopy(txt string) (_r0 string, _err error) {
+	_c_txt := C.cstring_to_text(C.CString(txt))
+	defer C.free(unsafe.Pointer(_c_txt))
+	C.meos_errno_reset()
+	_cret := C.text_copy(_c_txt)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(C.text_to_cstring(_cret)), nil
+}
+
+
+// TextInitcap wraps MEOS C function text_initcap.
+func TextInitcap(txt string) (_r0 string, _err error) {
+	_c_txt := C.cstring_to_text(C.CString(txt))
+	defer C.free(unsafe.Pointer(_c_txt))
+	C.meos_errno_reset()
+	_cret := C.text_initcap(_c_txt)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(C.text_to_cstring(_cret)), nil
+}
+
+
+// TextLower wraps MEOS C function text_lower.
+func TextLower(txt string) (_r0 string, _err error) {
+	_c_txt := C.cstring_to_text(C.CString(txt))
+	defer C.free(unsafe.Pointer(_c_txt))
+	C.meos_errno_reset()
+	_cret := C.text_lower(_c_txt)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(C.text_to_cstring(_cret)), nil
+}
+
+
+// TextUpper wraps MEOS C function text_upper.
+func TextUpper(txt string) (_r0 string, _err error) {
+	_c_txt := C.cstring_to_text(C.CString(txt))
+	defer C.free(unsafe.Pointer(_c_txt))
+	C.meos_errno_reset()
+	_cret := C.text_upper(_c_txt)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(C.text_to_cstring(_cret)), nil
+}
+
+
+// TextcatTextText wraps MEOS C function textcat_text_text.
+func TextcatTextText(txt1 string, txt2 string) (_r0 string, _err error) {
+	_c_txt1 := C.cstring_to_text(C.CString(txt1))
+	defer C.free(unsafe.Pointer(_c_txt1))
+	_c_txt2 := C.cstring_to_text(C.CString(txt2))
+	defer C.free(unsafe.Pointer(_c_txt2))
+	C.meos_errno_reset()
+	_cret := C.textcat_text_text(_c_txt1, _c_txt2)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(C.text_to_cstring(_cret)), nil
+}
+
 
 // MeosArrayCreate wraps MEOS C function meos_array_create.
 func MeosArrayCreate(elem_size int) (_r0 *MeosArray, _err error) {
@@ -272,85 +563,97 @@ func RtreeFree(rtree *RTree) (_err error) {
 }
 
 
-// RtreeInsert wraps MEOS C function rtree_insert.
-func RtreeInsert(rtree *RTree, box unsafe.Pointer, id int) (_err error) {
+// RtreeNumEntries wraps MEOS C function rtree_num_entries.
+func RtreeNumEntries(rtree *RTree) (_r0 int, _err error) {
 	C.meos_errno_reset()
-	C.rtree_insert(rtree._inner, unsafe.Pointer(box), C.int(id))
+	_cret := C.rtree_num_entries(rtree._inner)
 	if _err = meosError(); _err != nil {
 		return
 	}
-	return nil
+	return int(_cret), nil
+}
+
+
+// RtreeMemSize wraps MEOS C function rtree_mem_size.
+func RtreeMemSize(rtree *RTree) (_r0 int64, _err error) {
+	C.meos_errno_reset()
+	_cret := C.rtree_mem_size(rtree._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int64(_cret), nil
+}
+
+
+// RtreeHeight wraps MEOS C function rtree_height.
+func RtreeHeight(rtree *RTree) (_r0 int, _err error) {
+	C.meos_errno_reset()
+	_cret := C.rtree_height(rtree._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
+}
+
+
+// RtreeInsert wraps MEOS C function rtree_insert.
+func RtreeInsert(rtree *RTree, box unsafe.Pointer, id int64) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.rtree_insert(rtree._inner, unsafe.Pointer(box), C.int64_t(id))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// RtreeLoad wraps MEOS C function rtree_load.
+func RtreeLoad(rtree *RTree, boxes unsafe.Pointer, ids unsafe.Pointer, count int) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.rtree_load(rtree._inner, unsafe.Pointer(boxes), (*C.int64_t)(unsafe.Pointer(ids)), C.int(count))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // RtreeInsertTemporal wraps MEOS C function rtree_insert_temporal.
-func RtreeInsertTemporal(rtree *RTree, temp *Temporal, id int) (_err error) {
+func RtreeInsertTemporal(rtree *RTree, temp *Temporal, id int64) (_r0 bool, _err error) {
 	C.meos_errno_reset()
-	C.rtree_insert_temporal(rtree._inner, temp._inner, C.int(id))
+	_cret := C.rtree_insert_temporal(rtree._inner, temp._inner, C.int64_t(id))
 	if _err = meosError(); _err != nil {
 		return
 	}
-	return nil
+	return bool(_cret), nil
 }
 
 
 // RtreeInsertTemporalSplit wraps MEOS C function rtree_insert_temporal_split.
-func RtreeInsertTemporalSplit(rtree *RTree, temp *Temporal, id int, maxboxes int) (_err error) {
+func RtreeInsertTemporalSplit(rtree *RTree, temp *Temporal, id int64, maxboxes int) (_r0 bool, _err error) {
 	C.meos_errno_reset()
-	C.rtree_insert_temporal_split(rtree._inner, temp._inner, C.int(id), C.int(maxboxes))
+	_cret := C.rtree_insert_temporal_split(rtree._inner, temp._inner, C.int64_t(id), C.int(maxboxes))
 	if _err = meosError(); _err != nil {
 		return
 	}
-	return nil
+	return bool(_cret), nil
 }
 
 
-// RtreeSearch wraps MEOS C function rtree_search.
-func RtreeSearch(rtree *RTree, op RTreeSearchOp, query unsafe.Pointer) (_r0 int, _r1 *MeosArray, _err error) {
-	var _out_result C.MeosArray
-	C.meos_errno_reset()
-	_cret := C.rtree_search(rtree._inner, C.RTreeSearchOp(op), unsafe.Pointer(query), &_out_result)
-	if _err = meosError(); _err != nil {
-		return
-	}
-	return int(_cret), &MeosArray{_inner: &_out_result}, nil
-}
+// TODO rtree_search: unsupported param IndexSearchOp
+// func RtreeSearch(...) { /* not yet handled by codegen */ }
 
 
-// RtreeJoin wraps MEOS C function rtree_join.
-func RtreeJoin(rtree1 *RTree, rtree2 *RTree, op RTreeSearchOp) (_r0 int, _r1 *MeosArray, _err error) {
-	var _out_result C.MeosArray
-	C.meos_errno_reset()
-	_cret := C.rtree_join(rtree1._inner, rtree2._inner, C.RTreeSearchOp(op), &_out_result)
-	if _err = meosError(); _err != nil {
-		return
-	}
-	return int(_cret), &MeosArray{_inner: &_out_result}, nil
-}
+// TODO rtree_join: unsupported param IndexSearchOp
+// func RtreeJoin(...) { /* not yet handled by codegen */ }
 
 
-// RtreeSearchTemporal wraps MEOS C function rtree_search_temporal.
-func RtreeSearchTemporal(rtree *RTree, op RTreeSearchOp, temp *Temporal) (_r0 int, _r1 *MeosArray, _err error) {
-	var _out_result C.MeosArray
-	C.meos_errno_reset()
-	_cret := C.rtree_search_temporal(rtree._inner, C.RTreeSearchOp(op), temp._inner, &_out_result)
-	if _err = meosError(); _err != nil {
-		return
-	}
-	return int(_cret), &MeosArray{_inner: &_out_result}, nil
-}
+// TODO rtree_search_temporal: unsupported param IndexSearchOp
+// func RtreeSearchTemporal(...) { /* not yet handled by codegen */ }
 
 
-// RtreeSearchTemporalDedup wraps MEOS C function rtree_search_temporal_dedup.
-func RtreeSearchTemporalDedup(rtree *RTree, op RTreeSearchOp, temp *Temporal, maxboxes int) (_r0 int, _r1 *MeosArray, _err error) {
-	var _out_result C.MeosArray
-	C.meos_errno_reset()
-	_cret := C.rtree_search_temporal_dedup(rtree._inner, C.RTreeSearchOp(op), temp._inner, C.int(maxboxes), &_out_result)
-	if _err = meosError(); _err != nil {
-		return
-	}
-	return int(_cret), &MeosArray{_inner: &_out_result}, nil
-}
+// TODO rtree_search_temporal_dedup: unsupported param IndexSearchOp
+// func RtreeSearchTemporalDedup(...) { /* not yet handled by codegen */ }
 
 
 // RtreeNnCursorOpen wraps MEOS C function rtree_nn_cursor_open.
@@ -367,7 +670,7 @@ func RtreeNnCursorOpen(rtree *RTree, query unsafe.Pointer) (_r0 unsafe.Pointer, 
 // RtreeNnCursorNext wraps MEOS C function rtree_nn_cursor_next.
 func RtreeNnCursorNext(cursor unsafe.Pointer, id_out unsafe.Pointer, dist_out unsafe.Pointer) (_r0 bool, _err error) {
 	C.meos_errno_reset()
-	_cret := C.rtree_nn_cursor_next((*C.RTreeNNCursor)(unsafe.Pointer(cursor)), (*C.int)(unsafe.Pointer(id_out)), (*C.double)(unsafe.Pointer(dist_out)))
+	_cret := C.rtree_nn_cursor_next((*C.RTreeNNCursor)(unsafe.Pointer(cursor)), (*C.int64_t)(unsafe.Pointer(id_out)), (*C.double)(unsafe.Pointer(dist_out)))
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -429,73 +732,97 @@ func SptreeFree(sptree unsafe.Pointer) (_err error) {
 }
 
 
-// SptreeInsert wraps MEOS C function sptree_insert.
-func SptreeInsert(sptree unsafe.Pointer, box unsafe.Pointer, id int) (_err error) {
+// SptreeNumEntries wraps MEOS C function sptree_num_entries.
+func SptreeNumEntries(sptree unsafe.Pointer) (_r0 int, _err error) {
 	C.meos_errno_reset()
-	C.sptree_insert((*C.SPTree)(unsafe.Pointer(sptree)), unsafe.Pointer(box), C.int(id))
+	_cret := C.sptree_num_entries((*C.SPTree)(unsafe.Pointer(sptree)))
 	if _err = meosError(); _err != nil {
 		return
 	}
-	return nil
+	return int(_cret), nil
+}
+
+
+// SptreeMemSize wraps MEOS C function sptree_mem_size.
+func SptreeMemSize(sptree unsafe.Pointer) (_r0 int64, _err error) {
+	C.meos_errno_reset()
+	_cret := C.sptree_mem_size((*C.SPTree)(unsafe.Pointer(sptree)))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int64(_cret), nil
+}
+
+
+// SptreeHeight wraps MEOS C function sptree_height.
+func SptreeHeight(sptree unsafe.Pointer) (_r0 int, _err error) {
+	C.meos_errno_reset()
+	_cret := C.sptree_height((*C.SPTree)(unsafe.Pointer(sptree)))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int(_cret), nil
+}
+
+
+// SptreeInsert wraps MEOS C function sptree_insert.
+func SptreeInsert(sptree unsafe.Pointer, box unsafe.Pointer, id int64) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.sptree_insert((*C.SPTree)(unsafe.Pointer(sptree)), unsafe.Pointer(box), C.int64_t(id))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// SptreeLoad wraps MEOS C function sptree_load.
+func SptreeLoad(sptree unsafe.Pointer, boxes unsafe.Pointer, ids unsafe.Pointer, count int) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.sptree_load((*C.SPTree)(unsafe.Pointer(sptree)), unsafe.Pointer(boxes), (*C.int64_t)(unsafe.Pointer(ids)), C.int(count))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 
 // SptreeInsertTemporal wraps MEOS C function sptree_insert_temporal.
-func SptreeInsertTemporal(sptree unsafe.Pointer, temp *Temporal, id int) (_err error) {
+func SptreeInsertTemporal(sptree unsafe.Pointer, temp *Temporal, id int64) (_r0 bool, _err error) {
 	C.meos_errno_reset()
-	C.sptree_insert_temporal((*C.SPTree)(unsafe.Pointer(sptree)), temp._inner, C.int(id))
+	_cret := C.sptree_insert_temporal((*C.SPTree)(unsafe.Pointer(sptree)), temp._inner, C.int64_t(id))
 	if _err = meosError(); _err != nil {
 		return
 	}
-	return nil
+	return bool(_cret), nil
 }
 
 
 // SptreeInsertTemporalSplit wraps MEOS C function sptree_insert_temporal_split.
-func SptreeInsertTemporalSplit(sptree unsafe.Pointer, temp *Temporal, id int, maxboxes int) (_err error) {
+func SptreeInsertTemporalSplit(sptree unsafe.Pointer, temp *Temporal, id int64, maxboxes int) (_r0 bool, _err error) {
 	C.meos_errno_reset()
-	C.sptree_insert_temporal_split((*C.SPTree)(unsafe.Pointer(sptree)), temp._inner, C.int(id), C.int(maxboxes))
+	_cret := C.sptree_insert_temporal_split((*C.SPTree)(unsafe.Pointer(sptree)), temp._inner, C.int64_t(id), C.int(maxboxes))
 	if _err = meosError(); _err != nil {
 		return
 	}
-	return nil
+	return bool(_cret), nil
 }
 
 
-// SptreeSearch wraps MEOS C function sptree_search.
-func SptreeSearch(sptree unsafe.Pointer, op RTreeSearchOp, query unsafe.Pointer) (_r0 int, _r1 *MeosArray, _err error) {
-	var _out_result C.MeosArray
-	C.meos_errno_reset()
-	_cret := C.sptree_search((*C.SPTree)(unsafe.Pointer(sptree)), C.RTreeSearchOp(op), unsafe.Pointer(query), &_out_result)
-	if _err = meosError(); _err != nil {
-		return
-	}
-	return int(_cret), &MeosArray{_inner: &_out_result}, nil
-}
+// TODO sptree_search: unsupported param IndexSearchOp
+// func SptreeSearch(...) { /* not yet handled by codegen */ }
 
 
-// SptreeSearchTemporal wraps MEOS C function sptree_search_temporal.
-func SptreeSearchTemporal(sptree unsafe.Pointer, op RTreeSearchOp, temp *Temporal) (_r0 int, _r1 *MeosArray, _err error) {
-	var _out_result C.MeosArray
-	C.meos_errno_reset()
-	_cret := C.sptree_search_temporal((*C.SPTree)(unsafe.Pointer(sptree)), C.RTreeSearchOp(op), temp._inner, &_out_result)
-	if _err = meosError(); _err != nil {
-		return
-	}
-	return int(_cret), &MeosArray{_inner: &_out_result}, nil
-}
+// TODO sptree_join: unsupported param IndexSearchOp
+// func SptreeJoin(...) { /* not yet handled by codegen */ }
 
 
-// SptreeSearchTemporalDedup wraps MEOS C function sptree_search_temporal_dedup.
-func SptreeSearchTemporalDedup(sptree unsafe.Pointer, op RTreeSearchOp, temp *Temporal, maxboxes int) (_r0 int, _r1 *MeosArray, _err error) {
-	var _out_result C.MeosArray
-	C.meos_errno_reset()
-	_cret := C.sptree_search_temporal_dedup((*C.SPTree)(unsafe.Pointer(sptree)), C.RTreeSearchOp(op), temp._inner, C.int(maxboxes), &_out_result)
-	if _err = meosError(); _err != nil {
-		return
-	}
-	return int(_cret), &MeosArray{_inner: &_out_result}, nil
-}
+// TODO sptree_search_temporal: unsupported param IndexSearchOp
+// func SptreeSearchTemporal(...) { /* not yet handled by codegen */ }
+
+
+// TODO sptree_search_temporal_dedup: unsupported param IndexSearchOp
+// func SptreeSearchTemporalDedup(...) { /* not yet handled by codegen */ }
 
 
 // SptreeNnCursorOpen wraps MEOS C function sptree_nn_cursor_open.
@@ -512,7 +839,7 @@ func SptreeNnCursorOpen(sptree unsafe.Pointer, query unsafe.Pointer) (_r0 unsafe
 // SptreeNnCursorNext wraps MEOS C function sptree_nn_cursor_next.
 func SptreeNnCursorNext(cursor unsafe.Pointer, id_out unsafe.Pointer, dist_out unsafe.Pointer) (_r0 bool, _err error) {
 	C.meos_errno_reset()
-	_cret := C.sptree_nn_cursor_next((*C.SPNNCursor)(unsafe.Pointer(cursor)), (*C.int)(unsafe.Pointer(id_out)), (*C.double)(unsafe.Pointer(dist_out)))
+	_cret := C.sptree_nn_cursor_next((*C.SPNNCursor)(unsafe.Pointer(cursor)), (*C.int64_t)(unsafe.Pointer(id_out)), (*C.double)(unsafe.Pointer(dist_out)))
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -12166,6 +12493,17 @@ func EverNeTtextText(temp *Temporal, txt string) (_r0 int, _err error) {
 }
 
 
+// TeqBigintTbigint wraps MEOS C function teq_bigint_tbigint.
+func TeqBigintTbigint(i int64, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.teq_bigint_tbigint(C.int64_t(i), temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
 // TeqBoolTbool wraps MEOS C function teq_bool_tbool.
 func TeqBoolTbool(b bool, temp *Temporal) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
@@ -12192,6 +12530,17 @@ func TeqFloatTfloat(d float64, temp *Temporal) (_r0 *Temporal, _err error) {
 func TeqIntTint(i int, temp *Temporal) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
 	_cret := C.teq_int_tint(C.int(i), temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TeqTbigintBigint wraps MEOS C function teq_tbigint_bigint.
+func TeqTbigintBigint(temp *Temporal, i int64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.teq_tbigint_bigint(temp._inner, C.int64_t(i))
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -12269,6 +12618,17 @@ func TeqTtextText(temp *Temporal, txt string) (_r0 *Temporal, _err error) {
 }
 
 
+// TgeBigintTbigint wraps MEOS C function tge_bigint_tbigint.
+func TgeBigintTbigint(i int64, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tge_bigint_tbigint(C.int64_t(i), temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
 // TgeFloatTfloat wraps MEOS C function tge_float_tfloat.
 func TgeFloatTfloat(d float64, temp *Temporal) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
@@ -12315,6 +12675,17 @@ func TgeTextTtext(txt string, temp *Temporal) (_r0 *Temporal, _err error) {
 }
 
 
+// TgeTbigintBigint wraps MEOS C function tge_tbigint_bigint.
+func TgeTbigintBigint(temp *Temporal, i int64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tge_tbigint_bigint(temp._inner, C.int64_t(i))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
 // TgeTfloatFloat wraps MEOS C function tge_tfloat_float.
 func TgeTfloatFloat(temp *Temporal, d float64) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
@@ -12343,6 +12714,17 @@ func TgeTtextText(temp *Temporal, txt string) (_r0 *Temporal, _err error) {
 	defer C.free(unsafe.Pointer(_c_txt))
 	C.meos_errno_reset()
 	_cret := C.tge_ttext_text(temp._inner, _c_txt)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TgtBigintTbigint wraps MEOS C function tgt_bigint_tbigint.
+func TgtBigintTbigint(i int64, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tgt_bigint_tbigint(C.int64_t(i), temp._inner)
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -12396,6 +12778,17 @@ func TgtTextTtext(txt string, temp *Temporal) (_r0 *Temporal, _err error) {
 }
 
 
+// TgtTbigintBigint wraps MEOS C function tgt_tbigint_bigint.
+func TgtTbigintBigint(temp *Temporal, i int64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tgt_tbigint_bigint(temp._inner, C.int64_t(i))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
 // TgtTfloatFloat wraps MEOS C function tgt_tfloat_float.
 func TgtTfloatFloat(temp *Temporal, d float64) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
@@ -12424,6 +12817,17 @@ func TgtTtextText(temp *Temporal, txt string) (_r0 *Temporal, _err error) {
 	defer C.free(unsafe.Pointer(_c_txt))
 	C.meos_errno_reset()
 	_cret := C.tgt_ttext_text(temp._inner, _c_txt)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TleBigintTbigint wraps MEOS C function tle_bigint_tbigint.
+func TleBigintTbigint(i int64, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tle_bigint_tbigint(C.int64_t(i), temp._inner)
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -12477,6 +12881,17 @@ func TleTextTtext(txt string, temp *Temporal) (_r0 *Temporal, _err error) {
 }
 
 
+// TleTbigintBigint wraps MEOS C function tle_tbigint_bigint.
+func TleTbigintBigint(temp *Temporal, i int64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tle_tbigint_bigint(temp._inner, C.int64_t(i))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
 // TleTfloatFloat wraps MEOS C function tle_tfloat_float.
 func TleTfloatFloat(temp *Temporal, d float64) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
@@ -12505,6 +12920,17 @@ func TleTtextText(temp *Temporal, txt string) (_r0 *Temporal, _err error) {
 	defer C.free(unsafe.Pointer(_c_txt))
 	C.meos_errno_reset()
 	_cret := C.tle_ttext_text(temp._inner, _c_txt)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TltBigintTbigint wraps MEOS C function tlt_bigint_tbigint.
+func TltBigintTbigint(i int64, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tlt_bigint_tbigint(C.int64_t(i), temp._inner)
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -12558,6 +12984,17 @@ func TltTextTtext(txt string, temp *Temporal) (_r0 *Temporal, _err error) {
 }
 
 
+// TltTbigintBigint wraps MEOS C function tlt_tbigint_bigint.
+func TltTbigintBigint(temp *Temporal, i int64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tlt_tbigint_bigint(temp._inner, C.int64_t(i))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
 // TltTfloatFloat wraps MEOS C function tlt_tfloat_float.
 func TltTfloatFloat(temp *Temporal, d float64) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
@@ -12593,6 +13030,17 @@ func TltTtextText(temp *Temporal, txt string) (_r0 *Temporal, _err error) {
 }
 
 
+// TneBigintTbigint wraps MEOS C function tne_bigint_tbigint.
+func TneBigintTbigint(i int64, temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tne_bigint_tbigint(C.int64_t(i), temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
 // TneBoolTbool wraps MEOS C function tne_bool_tbool.
 func TneBoolTbool(b bool, temp *Temporal) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
@@ -12619,6 +13067,17 @@ func TneFloatTfloat(d float64, temp *Temporal) (_r0 *Temporal, _err error) {
 func TneIntTint(i int, temp *Temporal) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
 	_cret := C.tne_int_tint(C.int(i), temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TneTbigintBigint wraps MEOS C function tne_tbigint_bigint.
+func TneTbigintBigint(temp *Temporal, i int64) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tne_tbigint_bigint(temp._inner, C.int64_t(i))
 	if _err = meosError(); _err != nil {
 		return
 	}

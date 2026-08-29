@@ -36,6 +36,7 @@ package functions
 #define gunion_pcpatch_set union_pcpatch_set
 #define gunion_pcpoint_set union_pcpoint_set
 #define gunion_pose_set union_pose_set
+#define gunion_posechain_set union_posechain_set
 #define gunion_set_bigint union_set_bigint
 #define gunion_set_cbuffer union_set_cbuffer
 #define gunion_set_date union_set_date
@@ -47,6 +48,7 @@ package functions
 #define gunion_set_pcpatch union_set_pcpatch
 #define gunion_set_pcpoint union_set_pcpoint
 #define gunion_set_pose union_set_pose
+#define gunion_set_posechain union_set_posechain
 #define gunion_set_set union_set_set
 #define gunion_set_text union_set_text
 #define gunion_set_timestamptz union_set_timestamptz
@@ -593,6 +595,17 @@ func TquadbinValueAtTimestamptz(temp *Temporal, t int64, strict bool) (_r0 bool,
 		return
 	}
 	return bool(_cret), uint64(_out_result), nil
+}
+
+
+// QuadbinToSet wraps MEOS C function quadbin_to_set.
+func QuadbinToSet(cell uint64) (_r0 *Set, _err error) {
+	C.meos_errno_reset()
+	_cret := C.quadbin_to_set(C.uint64_t(cell))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Set{_inner: _cret}, nil
 }
 
 

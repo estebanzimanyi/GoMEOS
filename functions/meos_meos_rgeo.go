@@ -36,6 +36,7 @@ package functions
 #define gunion_pcpatch_set union_pcpatch_set
 #define gunion_pcpoint_set union_pcpoint_set
 #define gunion_pose_set union_pose_set
+#define gunion_posechain_set union_posechain_set
 #define gunion_set_bigint union_set_bigint
 #define gunion_set_cbuffer union_set_cbuffer
 #define gunion_set_date union_set_date
@@ -47,6 +48,7 @@ package functions
 #define gunion_set_pcpatch union_set_pcpatch
 #define gunion_set_pcpoint union_set_pcpoint
 #define gunion_set_pose union_set_pose
+#define gunion_set_posechain union_set_posechain
 #define gunion_set_set union_set_set
 #define gunion_set_text union_set_text
 #define gunion_set_timestamptz union_set_timestamptz
@@ -309,10 +311,32 @@ func TrgeometryPoints(temp *Temporal) (_r0 *Set, _err error) {
 }
 
 
-// TrgeometryRotation wraps MEOS C function trgeometry_rotation.
-func TrgeometryRotation(temp *Temporal) (_r0 *Temporal, _err error) {
+// TrgeometryYaw wraps MEOS C function trgeometry_yaw.
+func TrgeometryYaw(temp *Temporal) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
-	_cret := C.trgeometry_rotation(temp._inner)
+	_cret := C.trgeometry_yaw(temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TrgeometryPitch wraps MEOS C function trgeometry_pitch.
+func TrgeometryPitch(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.trgeometry_pitch(temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TrgeometryRoll wraps MEOS C function trgeometry_roll.
+func TrgeometryRoll(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.trgeometry_roll(temp._inner)
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -574,6 +598,17 @@ func TrgeometryCumulativeLength(temp *Temporal) (_r0 *Temporal, _err error) {
 }
 
 
+// TrgeometryAngularSpeed wraps MEOS C function trgeometry_angular_speed.
+func TrgeometryAngularSpeed(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.trgeometry_angular_speed(temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
 // TrgeometrySpeed wraps MEOS C function trgeometry_speed.
 func TrgeometrySpeed(temp *Temporal) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
@@ -655,6 +690,28 @@ func TrgeometryDeleteTstzspan(temp *Temporal, s *Span, connect bool) (_r0 *Tempo
 func TrgeometryDeleteTstzspanset(temp *Temporal, ss *SpanSet, connect bool) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
 	_cret := C.trgeometry_delete_tstzspanset(temp._inner, ss._inner, C.bool(connect))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TrgeometryMerge wraps MEOS C function trgeometry_merge.
+func TrgeometryMerge(temp1 *Temporal, temp2 *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.trgeometry_merge(temp1._inner, temp2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TrgeometryMergeArray wraps MEOS C function trgeometry_merge_array.
+func TrgeometryMergeArray(temparr unsafe.Pointer, count int) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.trgeometry_merge_array((**C.Temporal)(unsafe.Pointer(temparr)), C.int(count))
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -967,6 +1024,28 @@ func TrgeometryAtTstzspanset(temp *Temporal, ss *SpanSet) (_r0 *Temporal, _err e
 func TrgeometryMinusTstzspanset(temp *Temporal, ss *SpanSet) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
 	_cret := C.trgeometry_minus_tstzspanset(temp._inner, ss._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TrgeometryAtElevation wraps MEOS C function trgeometry_at_elevation.
+func TrgeometryAtElevation(temp *Temporal, s *Span) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.trgeometry_at_elevation(temp._inner, s._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TrgeometryMinusElevation wraps MEOS C function trgeometry_minus_elevation.
+func TrgeometryMinusElevation(temp *Temporal, s *Span) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.trgeometry_minus_elevation(temp._inner, s._inner)
 	if _err = meosError(); _err != nil {
 		return
 	}

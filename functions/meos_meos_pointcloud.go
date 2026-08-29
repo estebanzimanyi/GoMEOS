@@ -36,6 +36,7 @@ package functions
 #define gunion_pcpatch_set union_pcpatch_set
 #define gunion_pcpoint_set union_pcpoint_set
 #define gunion_pose_set union_pose_set
+#define gunion_posechain_set union_posechain_set
 #define gunion_set_bigint union_set_bigint
 #define gunion_set_cbuffer union_set_cbuffer
 #define gunion_set_date union_set_date
@@ -47,6 +48,7 @@ package functions
 #define gunion_set_pcpatch union_set_pcpatch
 #define gunion_set_pcpoint union_set_pcpoint
 #define gunion_set_pose union_set_pose
+#define gunion_set_posechain union_set_posechain
 #define gunion_set_set union_set_set
 #define gunion_set_text union_set_text
 #define gunion_set_timestamptz union_set_timestamptz
@@ -130,6 +132,17 @@ func PcpointAsHexwkb(pt *Pcpoint) (_r0 string, _err error) {
 		return
 	}
 	return C.GoString(_cret), nil
+}
+
+
+// PcpointMake wraps MEOS C function pcpoint_make.
+func PcpointMake(pcid uint32, values unsafe.Pointer, count int) (_r0 *Pcpoint, _err error) {
+	C.meos_errno_reset()
+	_cret := C.pcpoint_make(C.uint32_t(pcid), (*C.double)(unsafe.Pointer(values)), C.int(count))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Pcpoint{_inner: _cret}, nil
 }
 
 
@@ -256,6 +269,32 @@ func MeosPcSchemaRegister(pcid uint32, schema *PCSchema) (_err error) {
 }
 
 
+// MeosPcSchemaFromDims wraps MEOS C function meos_pc_schema_from_dims.
+func MeosPcSchemaFromDims(pcid uint32, srid int32, compression string, dims unsafe.Pointer, ndims int) (_r0 *PCSchema, _err error) {
+	_c_compression := C.CString(compression)
+	defer C.free(unsafe.Pointer(_c_compression))
+	C.meos_errno_reset()
+	_cret := C.meos_pc_schema_from_dims(C.uint32_t(pcid), C.int32_t(srid), _c_compression, (*C.PCDimensionSpec)(unsafe.Pointer(dims)), C.int(ndims))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &PCSchema{_inner: _cret}, nil
+}
+
+
+// MeosPcSchemaRegisterDims wraps MEOS C function meos_pc_schema_register_dims.
+func MeosPcSchemaRegisterDims(pcid uint32, srid int32, compression string, dims unsafe.Pointer, ndims int) (_r0 bool, _err error) {
+	_c_compression := C.CString(compression)
+	defer C.free(unsafe.Pointer(_c_compression))
+	C.meos_errno_reset()
+	_cret := C.meos_pc_schema_register_dims(C.uint32_t(pcid), C.int32_t(srid), _c_compression, (*C.PCDimensionSpec)(unsafe.Pointer(dims)), C.int(ndims))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
 // MeosPcSchemaRegisterXml wraps MEOS C function meos_pc_schema_register_xml.
 func MeosPcSchemaRegisterXml(pcid uint32, schema *PCSchema, xml_text string) (_err error) {
 	_c_xml_text := C.CString(xml_text)
@@ -284,6 +323,52 @@ func MeosPcSchemaXml(pcid uint32) (_r0 string, _err error) {
 func MeosPcSchemaClear() (_err error) {
 	C.meos_errno_reset()
 	C.meos_pc_schema_clear()
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return nil
+}
+
+
+// MeosPcSchemaSRID wraps MEOS C function meos_pc_schema_srid.
+func MeosPcSchemaSRID(pcid uint32) (_r0 int32, _err error) {
+	C.meos_errno_reset()
+	_cret := C.meos_pc_schema_srid(C.uint32_t(pcid))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int32(_cret), nil
+}
+
+
+// MeosPcSchemaCompression wraps MEOS C function meos_pc_schema_compression.
+func MeosPcSchemaCompression(pcid uint32) (_r0 string, _err error) {
+	C.meos_errno_reset()
+	_cret := C.meos_pc_schema_compression(C.uint32_t(pcid))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
+}
+
+
+// MeosPcSchemaNdims wraps MEOS C function meos_pc_schema_ndims.
+func MeosPcSchemaNdims(pcid uint32) (_r0 int32, _err error) {
+	C.meos_errno_reset()
+	_cret := C.meos_pc_schema_ndims(C.uint32_t(pcid))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return int32(_cret), nil
+}
+
+
+// MeosSetPointcloudSchemasXml wraps MEOS C function meos_set_pointcloud_schemas_xml.
+func MeosSetPointcloudSchemasXml(path string) (_err error) {
+	_c_path := C.CString(path)
+	defer C.free(unsafe.Pointer(_c_path))
+	C.meos_errno_reset()
+	C.meos_set_pointcloud_schemas_xml(_c_path)
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -416,6 +501,28 @@ func PcpatchAsHexwkb(pa *Pcpatch) (_r0 string, _err error) {
 }
 
 
+// PcpatchMake wraps MEOS C function pcpatch_make.
+func PcpatchMake(points unsafe.Pointer, count int) (_r0 *Pcpatch, _err error) {
+	C.meos_errno_reset()
+	_cret := C.pcpatch_make((**C.Pcpoint)(unsafe.Pointer(points)), C.int(count))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Pcpatch{_inner: _cret}, nil
+}
+
+
+// PcpatchMakeCoords wraps MEOS C function pcpatch_make_coords.
+func PcpatchMakeCoords(pcid uint32, values unsafe.Pointer, count int) (_r0 *Pcpatch, _err error) {
+	C.meos_errno_reset()
+	_cret := C.pcpatch_make_coords(C.uint32_t(pcid), (*C.double)(unsafe.Pointer(values)), C.int(count))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Pcpatch{_inner: _cret}, nil
+}
+
+
 // PcpatchCopy wraps MEOS C function pcpatch_copy.
 func PcpatchCopy(pa *Pcpatch) (_r0 *Pcpatch, _err error) {
 	C.meos_errno_reset()
@@ -468,6 +575,17 @@ func PcpatchHashExtended(pa *Pcpatch, seed uint64) (_r0 uint64, _err error) {
 		return
 	}
 	return uint64(_cret), nil
+}
+
+
+// PcpatchToGeom wraps MEOS C function pcpatch_to_geom.
+func PcpatchToGeom(pa *Pcpatch) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
+	_cret := C.pcpatch_to_geom(pa._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
 }
 
 
@@ -1568,6 +1686,17 @@ func TpointcloudToTgeompoint(temp *Temporal) (_r0 *Temporal, _err error) {
 }
 
 
+// TpcpatchToTgeometry wraps MEOS C function tpcpatch_to_tgeometry.
+func TpcpatchToTgeometry(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tpcpatch_to_tgeometry(temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
 // TpcpointinstMake wraps MEOS C function tpcpointinst_make.
 func TpcpointinstMake(pt *Pcpoint, t int64) (_r0 *TInstant, _err error) {
 	C.meos_errno_reset()
@@ -2185,6 +2314,171 @@ func TneTpcpatchPcpatch(temp *Temporal, pa *Pcpatch) (_r0 *Temporal, _err error)
 		return
 	}
 	return &Temporal{_inner: _cret}, nil
+}
+
+
+// AdjacentTpcboxTpointcloud wraps MEOS C function adjacent_tpcbox_tpointcloud.
+func AdjacentTpcboxTpointcloud(box *TPCBox, temp *Temporal) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.adjacent_tpcbox_tpointcloud(box._inner, temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// AdjacentTpointcloudTpcbox wraps MEOS C function adjacent_tpointcloud_tpcbox.
+func AdjacentTpointcloudTpcbox(temp *Temporal, box *TPCBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.adjacent_tpointcloud_tpcbox(temp._inner, box._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// AdjacentTpointcloudTpointcloud wraps MEOS C function adjacent_tpointcloud_tpointcloud.
+func AdjacentTpointcloudTpointcloud(temp1 *Temporal, temp2 *Temporal) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.adjacent_tpointcloud_tpointcloud(temp1._inner, temp2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// ContainedTpcboxTpointcloud wraps MEOS C function contained_tpcbox_tpointcloud.
+func ContainedTpcboxTpointcloud(box *TPCBox, temp *Temporal) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.contained_tpcbox_tpointcloud(box._inner, temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// ContainedTpointcloudTpcbox wraps MEOS C function contained_tpointcloud_tpcbox.
+func ContainedTpointcloudTpcbox(temp *Temporal, box *TPCBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.contained_tpointcloud_tpcbox(temp._inner, box._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// ContainedTpointcloudTpointcloud wraps MEOS C function contained_tpointcloud_tpointcloud.
+func ContainedTpointcloudTpointcloud(temp1 *Temporal, temp2 *Temporal) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.contained_tpointcloud_tpointcloud(temp1._inner, temp2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// ContainsTpcboxTpointcloud wraps MEOS C function contains_tpcbox_tpointcloud.
+func ContainsTpcboxTpointcloud(box *TPCBox, temp *Temporal) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.contains_tpcbox_tpointcloud(box._inner, temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// ContainsTpointcloudTpcbox wraps MEOS C function contains_tpointcloud_tpcbox.
+func ContainsTpointcloudTpcbox(temp *Temporal, box *TPCBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.contains_tpointcloud_tpcbox(temp._inner, box._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// ContainsTpointcloudTpointcloud wraps MEOS C function contains_tpointcloud_tpointcloud.
+func ContainsTpointcloudTpointcloud(temp1 *Temporal, temp2 *Temporal) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.contains_tpointcloud_tpointcloud(temp1._inner, temp2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// OverlapsTpcboxTpointcloud wraps MEOS C function overlaps_tpcbox_tpointcloud.
+func OverlapsTpcboxTpointcloud(box *TPCBox, temp *Temporal) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.overlaps_tpcbox_tpointcloud(box._inner, temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// OverlapsTpointcloudTpcbox wraps MEOS C function overlaps_tpointcloud_tpcbox.
+func OverlapsTpointcloudTpcbox(temp *Temporal, box *TPCBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.overlaps_tpointcloud_tpcbox(temp._inner, box._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// OverlapsTpointcloudTpointcloud wraps MEOS C function overlaps_tpointcloud_tpointcloud.
+func OverlapsTpointcloudTpointcloud(temp1 *Temporal, temp2 *Temporal) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.overlaps_tpointcloud_tpointcloud(temp1._inner, temp2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// SameTpcboxTpointcloud wraps MEOS C function same_tpcbox_tpointcloud.
+func SameTpcboxTpointcloud(box *TPCBox, temp *Temporal) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.same_tpcbox_tpointcloud(box._inner, temp._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// SameTpointcloudTpcbox wraps MEOS C function same_tpointcloud_tpcbox.
+func SameTpointcloudTpcbox(temp *Temporal, box *TPCBox) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.same_tpointcloud_tpcbox(temp._inner, box._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// SameTpointcloudTpointcloud wraps MEOS C function same_tpointcloud_tpointcloud.
+func SameTpointcloudTpointcloud(temp1 *Temporal, temp2 *Temporal) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.same_tpointcloud_tpointcloud(temp1._inner, temp2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
 }
 
 

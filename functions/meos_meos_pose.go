@@ -36,6 +36,7 @@ package functions
 #define gunion_pcpatch_set union_pcpatch_set
 #define gunion_pcpoint_set union_pcpoint_set
 #define gunion_pose_set union_pose_set
+#define gunion_posechain_set union_posechain_set
 #define gunion_set_bigint union_set_bigint
 #define gunion_set_cbuffer union_set_cbuffer
 #define gunion_set_date union_set_date
@@ -47,6 +48,7 @@ package functions
 #define gunion_set_pcpatch union_set_pcpatch
 #define gunion_set_pcpoint union_set_pcpoint
 #define gunion_set_pose union_set_pose
+#define gunion_set_posechain union_set_posechain
 #define gunion_set_set union_set_set
 #define gunion_set_text union_set_text
 #define gunion_set_timestamptz union_set_timestamptz
@@ -247,6 +249,39 @@ func TposeAsGeoposeStreamElement(temp *Temporal, inst *TInstant, precision int) 
 }
 
 
+// TposeAsGeoposeStream wraps MEOS C function tpose_as_geopose_stream.
+func TposeAsGeoposeStream(temp *Temporal, precision int) (_r0 string, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tpose_as_geopose_stream(temp._inner, C.int(precision))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return C.GoString(_cret), nil
+}
+
+
+// GeoposeFrames wraps MEOS C function geopose_frames.
+func GeoposeFrames(count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geopose_frames((*C.int)(unsafe.Pointer(count)))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
+}
+
+
+// GeoposeFrame wraps MEOS C function geopose_frame.
+func GeoposeFrame(frame_id int32) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geopose_frame(C.int32_t(frame_id))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
+}
+
+
 // PoseApplyGeo wraps MEOS C function pose_apply_geo.
 func PoseApplyGeo(pose *Pose, body *Geom) (_r0 *Geom, _err error) {
 	C.meos_errno_reset()
@@ -262,6 +297,50 @@ func PoseApplyGeo(pose *Pose, body *Geom) (_r0 *Geom, _err error) {
 func TposeApplyGeo(temp *Temporal, body *Geom) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
 	_cret := C.tpose_apply_geo(temp._inner, body._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TposeComposePose wraps MEOS C function tpose_compose_pose.
+func TposeComposePose(body *Temporal, frame *Pose) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tpose_compose_pose(body._inner, frame._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// PoseComposeTpose wraps MEOS C function pose_compose_tpose.
+func PoseComposeTpose(body *Pose, frame *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.pose_compose_tpose(body._inner, frame._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TposeComposeTpose wraps MEOS C function tpose_compose_tpose.
+func TposeComposeTpose(body *Temporal, frame *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tpose_compose_tpose(body._inner, frame._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TposeInverse wraps MEOS C function tpose_inverse.
+func TposeInverse(temp *Temporal) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tpose_inverse(temp._inner)
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -324,6 +403,17 @@ func PoseMakePoint3d(gs *Geom, W float64, X float64, Y float64, Z float64) (_r0 
 }
 
 
+// PoseMakePoint3dYpr wraps MEOS C function pose_make_point3d_ypr.
+func PoseMakePoint3dYpr(gs *Geom, yaw float64, pitch float64, roll float64) (_r0 *Pose, _err error) {
+	C.meos_errno_reset()
+	_cret := C.pose_make_point3d_ypr(gs._inner, C.double(yaw), C.double(pitch), C.double(roll))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Pose{_inner: _cret}, nil
+}
+
+
 // PoseToPoint wraps MEOS C function pose_to_point.
 func PoseToPoint(pose *Pose) (_r0 *Geom, _err error) {
 	C.meos_errno_reset()
@@ -368,10 +458,10 @@ func PoseHashExtended(pose *Pose, seed uint64) (_r0 uint64, _err error) {
 }
 
 
-// PoseOrientation wraps MEOS C function pose_orientation.
-func PoseOrientation(pose *Pose, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+// PoseQuaternion wraps MEOS C function pose_quaternion.
+func PoseQuaternion(pose *Pose, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
 	C.meos_errno_reset()
-	_cret := C.pose_orientation(pose._inner, (*C.int)(unsafe.Pointer(count)))
+	_cret := C.pose_quaternion(pose._inner, (*C.int)(unsafe.Pointer(count)))
 	if _err = meosError(); _err != nil {
 		return
 	}
@@ -379,14 +469,14 @@ func PoseOrientation(pose *Pose, count unsafe.Pointer) (_r0 unsafe.Pointer, _err
 }
 
 
-// PoseRotation wraps MEOS C function pose_rotation.
-func PoseRotation(pose *Pose) (_r0 float64, _err error) {
+// PoseYpr wraps MEOS C function pose_ypr.
+func PoseYpr(pose *Pose, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
 	C.meos_errno_reset()
-	_cret := C.pose_rotation(pose._inner)
+	_cret := C.pose_ypr(pose._inner, (*C.int)(unsafe.Pointer(count)))
 	if _err = meosError(); _err != nil {
 		return
 	}
-	return float64(_cret), nil
+	return unsafe.Pointer(_cret), nil
 }
 
 
@@ -431,6 +521,28 @@ func PoseAngularDistance(pose1 *Pose, pose2 *Pose) (_r0 float64, _err error) {
 		return
 	}
 	return float64(_cret), nil
+}
+
+
+// PoseCompose wraps MEOS C function pose_compose.
+func PoseCompose(body *Pose, frame *Pose) (_r0 *Pose, _err error) {
+	C.meos_errno_reset()
+	_cret := C.pose_compose(body._inner, frame._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Pose{_inner: _cret}, nil
+}
+
+
+// PoseInverse wraps MEOS C function pose_inverse.
+func PoseInverse(pose *Pose) (_r0 *Pose, _err error) {
+	C.meos_errno_reset()
+	_cret := C.pose_inverse(pose._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Pose{_inner: _cret}, nil
 }
 
 
@@ -982,17 +1094,6 @@ func TposePoints(temp *Temporal) (_r0 *Set, _err error) {
 }
 
 
-// TposeRotation wraps MEOS C function tpose_rotation.
-func TposeRotation(temp *Temporal) (_r0 *Temporal, _err error) {
-	C.meos_errno_reset()
-	_cret := C.tpose_rotation(temp._inner)
-	if _err = meosError(); _err != nil {
-		return
-	}
-	return &Temporal{_inner: _cret}, nil
-}
-
-
 // TposeYaw wraps MEOS C function tpose_yaw.
 func TposeYaw(temp *Temporal) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
@@ -1105,6 +1206,17 @@ func TposeValues(temp *Temporal, count unsafe.Pointer) (_r0 unsafe.Pointer, _err
 }
 
 
+// TposeAtElevation wraps MEOS C function tpose_at_elevation.
+func TposeAtElevation(temp *Temporal, s *Span) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tpose_at_elevation(temp._inner, s._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
 // TposeAtGeom wraps MEOS C function tpose_at_geom.
 func TposeAtGeom(temp *Temporal, gs *Geom) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
@@ -1131,6 +1243,17 @@ func TposeAtSTBOX(temp *Temporal, box *STBox, border_inc bool) (_r0 *Temporal, _
 func TposeAtPose(temp *Temporal, pose *Pose) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()
 	_cret := C.tpose_at_pose(temp._inner, pose._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Temporal{_inner: _cret}, nil
+}
+
+
+// TposeMinusElevation wraps MEOS C function tpose_minus_elevation.
+func TposeMinusElevation(temp *Temporal, s *Span) (_r0 *Temporal, _err error) {
+	C.meos_errno_reset()
+	_cret := C.tpose_minus_elevation(temp._inner, s._inner)
 	if _err = meosError(); _err != nil {
 		return
 	}
