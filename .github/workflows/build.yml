@@ -46,6 +46,25 @@ jobs:
         with:
           go-version: "1.23"
 
+      # The committed functions package is what a `go get` consumer compiles, and
+      # every step below overwrites it, so its own compilability is decided HERE
+      # or nowhere. Drift against the freshly derived catalog is expected and
+      # constant, because MobilityDB master moves independently of this repo --
+      # but a snapshot that no longer BUILDS is a consumer breakage, and it is
+      # invisible to a job that regenerates first. A retired spelling (mult_*,
+      # RTreeSearchOp) reaches consumers exactly this way.
+      - name: Build the COMMITTED functions package (what a `go get` consumer compiles)
+        env:
+          CGO_CFLAGS: -I/usr/local/include -I/usr/include/h3
+          CGO_LDFLAGS: -L/usr/local/lib -lmeos
+          LD_LIBRARY_PATH: /usr/local/lib
+        run: |
+          if ! go build ./functions; then
+            echo "::error::the committed functions/ snapshot does not build against this libmeos."
+            echo "Refresh it: python3 tools/codegen.py against a freshly derived meos-idl.json, then commit functions/."
+            exit 1
+          fi
+
       - name: Stage the derived catalog for the generator
         run: cp "${{ steps.provision.outputs.catalog-path }}" tools/meos-idl.json
 
@@ -54,9 +73,10 @@ jobs:
 
       - name: Report drift between the committed and freshly derived functions package
         run: |
-          # Informational only: CI builds and tests the FRESHLY regenerated
-          # functions/ above, so a drift against the committed snapshot never
-          # fails the build (MobilityDB master moves independently of this repo).
+          # Informational only, and deliberately so: MobilityDB master moves
+          # independently of this repo, so a difference here is ordinary and a
+          # contributor cannot act on it. What a stale snapshot COSTS is caught
+          # by the committed-snapshot build above, which fails.
           # The committed functions/ is a convenience snapshot for `go get`
           # consumers; refresh it by running 'python3 tools/codegen.py' against a
           # freshly derived meos-idl.json and committing the result.
