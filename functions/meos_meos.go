@@ -13518,6 +13518,17 @@ func OverlapsTemporalTemporal(temp1 *Temporal, temp2 *Temporal) (_r0 bool, _err 
 }
 
 
+// TemporalTimeOverlaps wraps MEOS C function temporal_time_overlaps.
+func TemporalTimeOverlaps(temp1 *Temporal, temp2 *Temporal) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.temporal_time_overlaps(temp1._inner, temp2._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
 // OverlapsTemporalTstzspan wraps MEOS C function overlaps_temporal_tstzspan.
 func OverlapsTemporalTstzspan(temp *Temporal, s *Span) (_r0 bool, _err error) {
 	C.meos_errno_reset()

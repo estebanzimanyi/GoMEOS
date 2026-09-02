@@ -109,17 +109,6 @@ func PointRound(gs *Geom, maxdd int) (_r0 *Geom, _err error) {
 }
 
 
-// GeoSetSRIDInt wraps MEOS C function geo_set_srid_int.
-func GeoSetSRIDInt(gs *Geom, srid int32) (_err error) {
-	C.meos_errno_reset()
-	C.geo_set_srid_int(gs._inner, C.int32_t(srid))
-	if _err = meosError(); _err != nil {
-		return
-	}
-	return nil
-}
-
-
 // STBOXSet wraps MEOS C function stbox_set.
 func STBOXSet(hasx bool, hasz bool, geodetic bool, srid int32, xmin float64, xmax float64, ymin float64, ymax float64, zmin float64, zmax float64, s *Span) (_r0 *STBox, _err error) {
 	var _out_result C.STBox
