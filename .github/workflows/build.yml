@@ -98,3 +98,24 @@ jobs:
         env:
           CGO_ENABLED: "0"
         run: go test ./tools/parity/
+
+      # The root gomeos package carries the binding's only behavioural tests:
+      # Example functions whose `// Output:` block is the assertion. They need
+      # libmeos, which this job already installs, and until now no job collected
+      # them -- so their expectations were never compared against MEOS at all.
+      # TZ is stated rather than inherited: the expectations print timestamptz
+      # values, so the zone is an input to the assertion.
+      - name: Run the gomeos package tests against the all-families libmeos
+        env:
+          PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+          LD_LIBRARY_PATH: /usr/local/lib
+          TZ: UTC
+        run: go test -v . 2>&1 | tee test.log
+
+      # Refuse the two ways this suite could stop covering the binding while the
+      # job still reports success: a test that skips, and a suite that shrank.
+      - name: Refuse a skipped test, and hold the test count
+        uses: MobilityDB/MEOS-API/.github/actions/check-test-outcome@master
+        with:
+          log: test.log
+          min-tests: "115"

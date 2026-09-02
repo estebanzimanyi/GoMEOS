@@ -265,7 +265,7 @@ func ExampleFloatSpan_Distance() {
 	fmt.Println(distance, err)
 	// Output:
 	//0 <nil>
-	//4.625393849793197e+18 <nil>
+	//16.7 <nil>
 }
 func ExampleFloatSpan_Intersection() {
 	g_fs := NewFloatSpan("[1.1, 3.3]")
