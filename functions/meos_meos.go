@@ -10307,7 +10307,7 @@ func TintValues(temp *Temporal, count unsafe.Pointer) (_r0 unsafe.Pointer, _err 
 // TbigintValues wraps MEOS C function tbigint_values.
 func TbigintValues(temp *Temporal, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
 	C.meos_errno_reset()
-	_cret := C.tbigint_values(temp._inner, (*C.int32)(unsafe.Pointer(count)))
+	_cret := C.tbigint_values(temp._inner, (*C.int)(unsafe.Pointer(count)))
 	if _err = meosError(); _err != nil {
 		return
 	}
