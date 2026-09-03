@@ -276,6 +276,22 @@ def emit_types(idl: dict, corpus: str) -> str:
             f"func (x *{go_name}) Inner() *C.{c_name} {{ "
             f"if x == nil {{ return nil }}; return x._inner }}"
         )
+        # A cgo type belongs to the package that declares it, so this package's
+        # `*C.{c_name}` and a caller's own `*C.{c_name}` are DIFFERENT Go types
+        # and Inner() cannot cross a package boundary. The handle is an opaque
+        # MEOS pointer either way, so the pointer itself is the boundary -- the
+        # same contract MEOS.NET's generated handles carry as IntPtr. A nil
+        # handle yields a nil pointer and a nil pointer yields a nil handle, so
+        # a MEOS entry answering NULL cannot become a dereference here.
+        out.append(
+            f"func (x *{go_name}) Pointer() unsafe.Pointer {{ "
+            f"if x == nil {{ return nil }}; return unsafe.Pointer(x._inner) }}"
+        )
+        out.append(
+            f"func {go_name}FromPointer(p unsafe.Pointer) *{go_name} {{ "
+            f"if p == nil {{ return nil }}; "
+            f"return &{go_name}{{_inner: (*C.{c_name})(p)}} }}"
+        )
 
     # -- enums: Go type aliased to the C enum + a numeric const block --------
     out.append("\n// -------------------- enums --------------------")

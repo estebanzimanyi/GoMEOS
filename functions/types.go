@@ -26,62 +26,120 @@ var _ = unsafe.Pointer(nil)
 // -------------------- opaque handle types --------------------
 type Temporal struct { _inner *C.Temporal }
 func (x *Temporal) Inner() *C.Temporal { if x == nil { return nil }; return x._inner }
+func (x *Temporal) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func TemporalFromPointer(p unsafe.Pointer) *Temporal { if p == nil { return nil }; return &Temporal{_inner: (*C.Temporal)(p)} }
 type TInstant struct { _inner *C.TInstant }
 func (x *TInstant) Inner() *C.TInstant { if x == nil { return nil }; return x._inner }
+func (x *TInstant) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func TInstantFromPointer(p unsafe.Pointer) *TInstant { if p == nil { return nil }; return &TInstant{_inner: (*C.TInstant)(p)} }
 type TSequence struct { _inner *C.TSequence }
 func (x *TSequence) Inner() *C.TSequence { if x == nil { return nil }; return x._inner }
+func (x *TSequence) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func TSequenceFromPointer(p unsafe.Pointer) *TSequence { if p == nil { return nil }; return &TSequence{_inner: (*C.TSequence)(p)} }
 type TSequenceSet struct { _inner *C.TSequenceSet }
 func (x *TSequenceSet) Inner() *C.TSequenceSet { if x == nil { return nil }; return x._inner }
+func (x *TSequenceSet) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func TSequenceSetFromPointer(p unsafe.Pointer) *TSequenceSet { if p == nil { return nil }; return &TSequenceSet{_inner: (*C.TSequenceSet)(p)} }
 type STBox struct { _inner *C.STBox }
 func (x *STBox) Inner() *C.STBox { if x == nil { return nil }; return x._inner }
+func (x *STBox) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func STBoxFromPointer(p unsafe.Pointer) *STBox { if p == nil { return nil }; return &STBox{_inner: (*C.STBox)(p)} }
 type TBox struct { _inner *C.TBox }
 func (x *TBox) Inner() *C.TBox { if x == nil { return nil }; return x._inner }
+func (x *TBox) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func TBoxFromPointer(p unsafe.Pointer) *TBox { if p == nil { return nil }; return &TBox{_inner: (*C.TBox)(p)} }
 type Span struct { _inner *C.Span }
 func (x *Span) Inner() *C.Span { if x == nil { return nil }; return x._inner }
+func (x *Span) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func SpanFromPointer(p unsafe.Pointer) *Span { if p == nil { return nil }; return &Span{_inner: (*C.Span)(p)} }
 type SpanSet struct { _inner *C.SpanSet }
 func (x *SpanSet) Inner() *C.SpanSet { if x == nil { return nil }; return x._inner }
+func (x *SpanSet) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func SpanSetFromPointer(p unsafe.Pointer) *SpanSet { if p == nil { return nil }; return &SpanSet{_inner: (*C.SpanSet)(p)} }
 type Set struct { _inner *C.Set }
 func (x *Set) Inner() *C.Set { if x == nil { return nil }; return x._inner }
+func (x *Set) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func SetFromPointer(p unsafe.Pointer) *Set { if p == nil { return nil }; return &Set{_inner: (*C.Set)(p)} }
 type Geom struct { _inner *C.GSERIALIZED }
 func (x *Geom) Inner() *C.GSERIALIZED { if x == nil { return nil }; return x._inner }
+func (x *Geom) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func GeomFromPointer(p unsafe.Pointer) *Geom { if p == nil { return nil }; return &Geom{_inner: (*C.GSERIALIZED)(p)} }
 type Interval struct { _inner *C.Interval }
 func (x *Interval) Inner() *C.Interval { if x == nil { return nil }; return x._inner }
+func (x *Interval) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func IntervalFromPointer(p unsafe.Pointer) *Interval { if p == nil { return nil }; return &Interval{_inner: (*C.Interval)(p)} }
 type Npoint struct { _inner *C.Npoint }
 func (x *Npoint) Inner() *C.Npoint { if x == nil { return nil }; return x._inner }
+func (x *Npoint) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func NpointFromPointer(p unsafe.Pointer) *Npoint { if p == nil { return nil }; return &Npoint{_inner: (*C.Npoint)(p)} }
 type Nsegment struct { _inner *C.Nsegment }
 func (x *Nsegment) Inner() *C.Nsegment { if x == nil { return nil }; return x._inner }
+func (x *Nsegment) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func NsegmentFromPointer(p unsafe.Pointer) *Nsegment { if p == nil { return nil }; return &Nsegment{_inner: (*C.Nsegment)(p)} }
 type Cbuffer struct { _inner *C.Cbuffer }
 func (x *Cbuffer) Inner() *C.Cbuffer { if x == nil { return nil }; return x._inner }
+func (x *Cbuffer) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func CbufferFromPointer(p unsafe.Pointer) *Cbuffer { if p == nil { return nil }; return &Cbuffer{_inner: (*C.Cbuffer)(p)} }
 type Pose struct { _inner *C.Pose }
 func (x *Pose) Inner() *C.Pose { if x == nil { return nil }; return x._inner }
+func (x *Pose) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func PoseFromPointer(p unsafe.Pointer) *Pose { if p == nil { return nil }; return &Pose{_inner: (*C.Pose)(p)} }
 type Jsonb struct { _inner *C.Jsonb }
 func (x *Jsonb) Inner() *C.Jsonb { if x == nil { return nil }; return x._inner }
+func (x *Jsonb) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func JsonbFromPointer(p unsafe.Pointer) *Jsonb { if p == nil { return nil }; return &Jsonb{_inner: (*C.Jsonb)(p)} }
 type JsonPath struct { _inner *C.JsonPath }
 func (x *JsonPath) Inner() *C.JsonPath { if x == nil { return nil }; return x._inner }
+func (x *JsonPath) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func JsonPathFromPointer(p unsafe.Pointer) *JsonPath { if p == nil { return nil }; return &JsonPath{_inner: (*C.JsonPath)(p)} }
 type Pcpoint struct { _inner *C.Pcpoint }
 func (x *Pcpoint) Inner() *C.Pcpoint { if x == nil { return nil }; return x._inner }
+func (x *Pcpoint) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func PcpointFromPointer(p unsafe.Pointer) *Pcpoint { if p == nil { return nil }; return &Pcpoint{_inner: (*C.Pcpoint)(p)} }
 type Pcpatch struct { _inner *C.Pcpatch }
 func (x *Pcpatch) Inner() *C.Pcpatch { if x == nil { return nil }; return x._inner }
+func (x *Pcpatch) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func PcpatchFromPointer(p unsafe.Pointer) *Pcpatch { if p == nil { return nil }; return &Pcpatch{_inner: (*C.Pcpatch)(p)} }
 type TPCBox struct { _inner *C.TPCBox }
 func (x *TPCBox) Inner() *C.TPCBox { if x == nil { return nil }; return x._inner }
+func (x *TPCBox) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func TPCBoxFromPointer(p unsafe.Pointer) *TPCBox { if p == nil { return nil }; return &TPCBox{_inner: (*C.TPCBox)(p)} }
 type MeosArray struct { _inner *C.MeosArray }
 func (x *MeosArray) Inner() *C.MeosArray { if x == nil { return nil }; return x._inner }
+func (x *MeosArray) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func MeosArrayFromPointer(p unsafe.Pointer) *MeosArray { if p == nil { return nil }; return &MeosArray{_inner: (*C.MeosArray)(p)} }
 type PCSchema struct { _inner *C.PCSCHEMA }
 func (x *PCSchema) Inner() *C.PCSCHEMA { if x == nil { return nil }; return x._inner }
+func (x *PCSchema) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func PCSchemaFromPointer(p unsafe.Pointer) *PCSchema { if p == nil { return nil }; return &PCSchema{_inner: (*C.PCSCHEMA)(p)} }
 type SkipList struct { _inner *C.SkipList }
 func (x *SkipList) Inner() *C.SkipList { if x == nil { return nil }; return x._inner }
+func (x *SkipList) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func SkipListFromPointer(p unsafe.Pointer) *SkipList { if p == nil { return nil }; return &SkipList{_inner: (*C.SkipList)(p)} }
 type RTree struct { _inner *C.RTree }
 func (x *RTree) Inner() *C.RTree { if x == nil { return nil }; return x._inner }
+func (x *RTree) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func RTreeFromPointer(p unsafe.Pointer) *RTree { if p == nil { return nil }; return &RTree{_inner: (*C.RTree)(p)} }
 type Match struct { _inner *C.Match }
 func (x *Match) Inner() *C.Match { if x == nil { return nil }; return x._inner }
+func (x *Match) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func MatchFromPointer(p unsafe.Pointer) *Match { if p == nil { return nil }; return &Match{_inner: (*C.Match)(p)} }
 type Box3D struct { _inner *C.BOX3D }
 func (x *Box3D) Inner() *C.BOX3D { if x == nil { return nil }; return x._inner }
+func (x *Box3D) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func Box3DFromPointer(p unsafe.Pointer) *Box3D { if p == nil { return nil }; return &Box3D{_inner: (*C.BOX3D)(p)} }
 type GBox struct { _inner *C.GBOX }
 func (x *GBox) Inner() *C.GBOX { if x == nil { return nil }; return x._inner }
+func (x *GBox) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func GBoxFromPointer(p unsafe.Pointer) *GBox { if p == nil { return nil }; return &GBox{_inner: (*C.GBOX)(p)} }
 type AFFINE struct { _inner *C.AFFINE }
 func (x *AFFINE) Inner() *C.AFFINE { if x == nil { return nil }; return x._inner }
+func (x *AFFINE) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func AFFINEFromPointer(p unsafe.Pointer) *AFFINE { if p == nil { return nil }; return &AFFINE{_inner: (*C.AFFINE)(p)} }
 type PJContext struct { _inner *C.PJ_CONTEXT }
 func (x *PJContext) Inner() *C.PJ_CONTEXT { if x == nil { return nil }; return x._inner }
+func (x *PJContext) Pointer() unsafe.Pointer { if x == nil { return nil }; return unsafe.Pointer(x._inner) }
+func PJContextFromPointer(p unsafe.Pointer) *PJContext { if p == nil { return nil }; return &PJContext{_inner: (*C.PJ_CONTEXT)(p)} }
 
 // -------------------- enums --------------------
 type TempSubtype C.tempSubtype
