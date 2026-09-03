@@ -817,6 +817,72 @@ func GeoEdgeCtxMake(gs *Geom) (_r0 unsafe.Pointer, _err error) {
 }
 
 
+// GeoIsPlanarLinear wraps MEOS C function geo_is_planar_linear.
+func GeoIsPlanarLinear(gs *Geom) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geo_is_planar_linear(gs._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// GeoClipSubject wraps MEOS C function geo_clip_subject.
+func GeoClipSubject(gs *Geom) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geo_clip_subject(gs._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// GeoIsPointSet wraps MEOS C function geo_is_point_set.
+func GeoIsPointSet(gs *Geom) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geo_is_point_set(gs._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// GeoMeosSupported wraps MEOS C function geo_meos_supported.
+func GeoMeosSupported(gs *Geom) (_r0 bool, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geo_meos_supported(gs._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return bool(_cret), nil
+}
+
+
+// GeoPointsCovered wraps MEOS C function geo_points_covered.
+func GeoPointsCovered(pts *Geom, gs *Geom, covered bool) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geo_points_covered(pts._inner, gs._inner, C.bool(covered))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
+}
+
+
+// GeoClipLinearGeom wraps MEOS C function geo_clip_linear_geom.
+func GeoClipLinearGeom(line *Geom, gs *Geom, inside bool) (_r0 *Geom, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geo_clip_linear_geom(line._inner, gs._inner, C.bool(inside))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Geom{_inner: _cret}, nil
+}
+
+
 // GeoEdgeCtxFree wraps MEOS C function geo_edge_ctx_free.
 func GeoEdgeCtxFree(ctx unsafe.Pointer) (_err error) {
 	C.meos_errno_reset()

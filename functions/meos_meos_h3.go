@@ -107,6 +107,7 @@ func H3indexOut(cell uint64) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -373,6 +374,7 @@ func H3indexAsHexwkb(cell uint64, variant uint8, size_out unsafe.Pointer) (_r0 s
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
