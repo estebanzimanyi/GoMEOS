@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"time"
 	"unsafe"
+
+	"github.com/MobilityDB/GoMEOS/functions"
 )
 
 type TIntInst struct {
@@ -252,10 +254,21 @@ func TIntMaxValue[TB TInt](tb TB) int {
 	return int(cValue)
 }
 
-// TIntValueAtTimestamp Return the value of a temporal int at a timestamptz
-func TIntValueAtTimestamp[TF TInt](tf TF, ts time.Time) int {
-	tintinst, _ := TemporalToTIntInst(TemporalAtTimestamptz(tf, ts))
-	return TIntStartValue(tintinst)
+// TIntValueAtTimestamp Return the value of a temporal int at a timestamptz.
+// The second result reports whether the value holds anything at that moment;
+// false leaves the first at its zero value. An error is reserved for a MEOS
+// failure, which is a different thing from absence.
+func TIntValueAtTimestamp[TF TInt](tf TF, ts time.Time) (int, bool, error) {
+	found, value, err := functions.TintValueAtTimestamptz(
+		functions.TemporalFromPointer(unsafe.Pointer(tf.Inner())),
+		int64(DatetimeToTimestamptz(ts)), true)
+	if err != nil {
+		return 0, false, err
+	}
+	if !found {
+		return 0, false, nil
+	}
+	return value, true, nil
 }
 
 // AlwaysLtTIntInt Return true if a temporal integer is always less than an integer

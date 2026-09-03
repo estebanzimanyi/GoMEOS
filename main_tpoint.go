@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"time"
 	"unsafe"
+
+	"github.com/MobilityDB/GoMEOS/functions"
 )
 
 // TPointOut Return a temporal geometry/geography point from its Well-Known Text (WKT) representation
@@ -66,10 +68,20 @@ func TPointEndValue[TP TPoint](tp TP) *Geom {
 	return &Geom{_inner: cValue}
 }
 
-// TPointValueAtTimestamp Return the value of a temporal point at a timestamptz
-func TPointValueAtTimestamp[TP TPoint](tp TP, ts time.Time) *Geom {
-	tpointinst, _ := TemporalToGeomPointInst(TemporalAtTimestamptz(tp, ts))
-	return TPointStartValue(tpointinst)
+// TPointValueAtTimestamp Return the value of a temporal point at a timestamptz.
+// A temporal value that holds nothing at that moment yields an error rather than
+// a value.
+func TPointValueAtTimestamp[TP TPoint](tp TP, ts time.Time) (*Geom, bool, error) {
+	found, value, err := functions.TgeoValueAtTimestamptz(
+		functions.TemporalFromPointer(unsafe.Pointer(tp.Inner())),
+		int64(DatetimeToTimestamptz(ts)), true)
+	if err != nil {
+		return nil, false, err
+	}
+	if !found {
+		return nil, false, nil
+	}
+	return &Geom{_inner: (*C.GSERIALIZED)(value.Pointer())}, true, nil
 }
 
 // TPointValueSet Return the array of base values of a temporal geometry point

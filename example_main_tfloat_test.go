@@ -32,8 +32,8 @@ func ExampleTFloatValues() {
 func ExampleTFloatValueAtTimestamp() {
 	tf_seq := TFloatIn("{1.2@2022-10-01, 2.3@2022-10-02,3.4@2022-10-03}", &TFloatSeq{})
 	ts, _ := time.Parse("2006-01-02", "2022-10-01")
-	res := TFloatValueAtTimestamp(tf_seq, ts)
-	fmt.Println(res)
+	res, ok, err := TFloatValueAtTimestamp(tf_seq, ts)
+	fmt.Println(res, ok, err)
 	// Output:
-	// 1.2
+	// 1.2 true <nil>
 }
