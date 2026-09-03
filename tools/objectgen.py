@@ -395,13 +395,16 @@ class Generator:
 
 
 def main() -> int:
+    repo = Path(__file__).resolve().parent.parent
+
     ap = argparse.ArgumentParser()
-    ap.add_argument("catalog", type=Path)
+    ap.add_argument("catalog", type=Path, nargs="?",
+                    default=repo / "tools" / "meos-idl.json",
+                    help="the catalog to project (default: tools/meos-idl.json, "
+                         "where the refresh stages it)")
     ap.add_argument("--report", action="store_true",
                     help="print what each class deferred and why")
     args = ap.parse_args()
-
-    repo = Path(__file__).resolve().parent.parent
 
     # Fill codegen.SIGNATURES by RUNNING the flat generator, so which functions have a
     # wrapper is decided in one place. Re-deriving that here would be a second copy of
