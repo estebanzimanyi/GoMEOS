@@ -491,6 +491,17 @@ func GeomAzimuth(gs1 *Geom, gs2 *Geom) (_r0 bool, _r1 float64, _err error) {
 }
 
 
+// GeomArea wraps MEOS C function geom_area.
+func GeomArea(gs *Geom) (_r0 float64, _err error) {
+	C.meos_errno_reset()
+	_cret := C.geom_area(gs._inner)
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return float64(_cret), nil
+}
+
+
 // GeomLength wraps MEOS C function geom_length.
 func GeomLength(gs *Geom) (_r0 float64, _err error) {
 	C.meos_errno_reset()
