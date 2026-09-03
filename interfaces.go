@@ -97,7 +97,14 @@ type NumSpan interface {
 	IsNumSpan() bool
 }
 
+// CreateTemporal wraps a MEOS temporal value in the Go type its temptype and
+// subtype name. A MEOS entry answers NULL for an empty result — a restriction
+// that selects nothing, for one — so a nil pointer is a value rather than a
+// fault, and it arrives back as a nil Temporal for the caller to test.
 func CreateTemporal(inner *C.Temporal) Temporal {
+	if inner == nil {
+		return nil
+	}
 	meosType := inner.temptype
 	subtype := inner.subtype
 	// meosType MeosType, subtype MeosTemporalSubtype

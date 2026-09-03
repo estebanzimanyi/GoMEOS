@@ -11,6 +11,8 @@ import "C"
 import (
 	"time"
 	"unsafe"
+
+	"github.com/MobilityDB/GoMEOS/functions"
 )
 
 type TTextInst struct {
@@ -191,10 +193,18 @@ func TTextMaxValue[TT TText](tt TT) string {
 	return C.GoString(C.text_out(cValue))
 }
 
-// TTextValueAtTimestamp Return the value of a temporal text at a timestamptz
-func TTextValueAtTimestamp[TT TText](tt TT, ts time.Time) string {
-	ttextinst, _ := TemporalToTTextInst(TemporalAtTimestamptz(tt, ts))
-	return TTextStartValue(ttextinst)
+// TTextValueAtTimestamp Return the value of a temporal text at a timestamptz.
+// The second result reports whether the value holds anything at that moment;
+// false leaves the first at its zero value. An error is reserved for a MEOS
+// failure, which is a different thing from absence.
+func TTextValueAtTimestamp[TT TText](tt TT, ts time.Time) (string, bool, error) {
+	found, value, err := functions.TtextValueAtTimestamptz(
+		functions.TemporalFromPointer(unsafe.Pointer(tt.Inner())),
+		int64(DatetimeToTimestamptz(ts)), true)
+	if err != nil {
+		return "", false, err
+	}
+	return value, found, nil
 }
 
 // TTextUpper Return a temporal text transformed to uppercase

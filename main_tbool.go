@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"time"
 	"unsafe"
+
+	"github.com/MobilityDB/GoMEOS/functions"
 )
 
 type TBoolInst struct {
@@ -198,10 +200,21 @@ func TBoolEndValue[TB TBool](tb TB) bool {
 	return bool(cValue)
 }
 
-// TBoolValueAtTimestamp Return the value of a temporal boolean at a timestamptz
-func TBoolValueAtTimestamp[TB TBool](tb TB, ts time.Time) bool {
-	tboolinst, _ := TemporalToTBoolInst(TemporalAtTimestamptz(tb, ts))
-	return TBoolStartValue(tboolinst)
+// TBoolValueAtTimestamp Return the value of a temporal boolean at a timestamptz.
+// The second result reports whether the value holds anything at that moment;
+// false leaves the first at its zero value. An error is reserved for a MEOS
+// failure, which is a different thing from absence.
+func TBoolValueAtTimestamp[TB TBool](tb TB, ts time.Time) (bool, bool, error) {
+	found, value, err := functions.TboolValueAtTimestamptz(
+		functions.TemporalFromPointer(unsafe.Pointer(tb.Inner())),
+		int64(DatetimeToTimestamptz(ts)), true)
+	if err != nil {
+		return false, false, err
+	}
+	if !found {
+		return false, false, nil
+	}
+	return value, true, nil
 }
 
 // AlwaysEqTBoolBool Return true if a temporal boolean is always equal to a boolean

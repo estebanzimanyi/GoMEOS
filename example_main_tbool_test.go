@@ -30,10 +30,10 @@ func ExampleTBoolOut() {
 func ExampleTBoolValueAtTimestamp() {
 	g_is := NewTBoolSeq("{FALSE@2022-10-01, FALSE@2022-10-02,TRUE@2022-10-03}")
 	ts, _ := time.Parse("2006-01-02", "2022-10-01")
-	res := TBoolValueAtTimestamp(g_is, ts)
-	fmt.Println(res)
+	res, ok, err := TBoolValueAtTimestamp(g_is, ts)
+	fmt.Println(res, ok, err)
 	// Output:
-	// false
+	// false true <nil>
 }
 
 func ExampleEverEqTBoolBool() {

@@ -118,4 +118,4 @@ jobs:
         uses: MobilityDB/MEOS-API/.github/actions/check-test-outcome@master
         with:
           log: test.log
-          min-tests: "118"
+          min-tests: "121"

@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"time"
 	"unsafe"
+
+	"github.com/MobilityDB/GoMEOS/functions"
 )
 
 type TFloatInst struct {
@@ -368,10 +370,21 @@ func TFloatMinusValue[TF TFloat](tf TF, value float64) Temporal {
 	return CreateTemporal(c_tbools)
 }
 
-// TFloatValueAtTimestamp Return the value of a temporal float at a timestamptz
-func TFloatValueAtTimestamp[TF TFloat](tf TF, ts time.Time) float64 {
-	tfloatinst, _ := TemporalToTFloatInst(TemporalAtTimestamptz(tf, ts))
-	return TFloatStartValue(tfloatinst)
+// TFloatValueAtTimestamp Return the value of a temporal float at a timestamptz.
+// The second result reports whether the value holds anything at that moment;
+// false leaves the first at its zero value. An error is reserved for a MEOS
+// failure, which is a different thing from absence.
+func TFloatValueAtTimestamp[TF TFloat](tf TF, ts time.Time) (float64, bool, error) {
+	found, value, err := functions.TfloatValueAtTimestamptz(
+		functions.TemporalFromPointer(unsafe.Pointer(tf.Inner())),
+		int64(DatetimeToTimestamptz(ts)), true)
+	if err != nil {
+		return 0, false, err
+	}
+	if !found {
+		return 0, false, nil
+	}
+	return value, true, nil
 }
 
 // TFloatDerivative Return the derivative of a temporal number
