@@ -59,17 +59,21 @@ jobs:
           CGO_LDFLAGS: -L/usr/local/lib -lmeos
           LD_LIBRARY_PATH: /usr/local/lib
         run: |
-          if ! go build ./functions; then
-            echo "::error::the committed functions/ snapshot does not build against this libmeos."
-            echo "Refresh it: python3 tools/codegen.py against a freshly derived meos-idl.json, then commit functions/."
+          if ! go build ./functions ./types; then
+            echo "::error::the committed functions/ or types/ snapshot does not build against this libmeos."
+            echo "Refresh them: python3 tools/objectgen.py against a freshly derived meos-idl.json, then commit both."
             exit 1
           fi
 
       - name: Stage the derived catalog for the generator
         run: cp "${{ steps.provision.outputs.catalog-path }}" tools/meos-idl.json
 
-      - name: Regenerate the functions package from the catalog
-        run: python3 tools/codegen.py
+      # objectgen RUNS codegen and then projects the object model, so one command
+      # regenerates both packages and neither can be refreshed without the other.
+      # types/ calls the wrappers codegen emits, so a functions/ refreshed alone
+      # leaves the object layer calling a surface that has moved.
+      - name: Regenerate the functions and types packages from the catalog
+        run: python3 tools/objectgen.py
 
       - name: Report drift between the committed and freshly derived functions package
         run: |
@@ -80,19 +84,19 @@ jobs:
           # The committed functions/ is a convenience snapshot for `go get`
           # consumers; refresh it by running 'python3 tools/codegen.py' against a
           # freshly derived meos-idl.json and committing the result.
-          if ! git diff --quiet -- functions/; then
-            echo "::notice::functions/ differs from the freshly derived catalog (snapshot lags MobilityDB master):"
-            git diff --stat -- functions/
+          if ! git diff --quiet -- functions/ types/; then
+            echo "::notice::the generated packages differ from the freshly derived catalog (snapshot lags MobilityDB master):"
+            git diff --stat -- functions/ types/
           else
-            echo "functions/ snapshot is in sync with the derived catalog."
+            echo "functions/ and types/ snapshots are in sync with the derived catalog."
           fi
 
-      - name: Build the generated functions package against the all-families libmeos
+      - name: Build the generated functions and types packages against the all-families libmeos
         env:
           CGO_CFLAGS: -I/usr/local/include -I/usr/include/h3
           CGO_LDFLAGS: -L/usr/local/lib -lmeos
           LD_LIBRARY_PATH: /usr/local/lib
-        run: go build ./functions
+        run: go build ./functions ./types
 
       - name: Run the portable-parity gate
         env:
