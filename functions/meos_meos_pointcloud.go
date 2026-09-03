@@ -556,6 +556,28 @@ func PcpatchNpoints(pa *Pcpatch) (_r0 uint32, _err error) {
 }
 
 
+// PcpatchPointN wraps MEOS C function pcpatch_point_n.
+func PcpatchPointN(pa *Pcpatch, n int) (_r0 *Pcpoint, _err error) {
+	C.meos_errno_reset()
+	_cret := C.pcpatch_point_n(pa._inner, C.int(n))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return &Pcpoint{_inner: _cret}, nil
+}
+
+
+// PcpatchPoints wraps MEOS C function pcpatch_points.
+func PcpatchPoints(pa *Pcpatch, count unsafe.Pointer) (_r0 unsafe.Pointer, _err error) {
+	C.meos_errno_reset()
+	_cret := C.pcpatch_points(pa._inner, (*C.int)(unsafe.Pointer(count)))
+	if _err = meosError(); _err != nil {
+		return
+	}
+	return unsafe.Pointer(_cret), nil
+}
+
+
 // PcpatchHash wraps MEOS C function pcpatch_hash.
 func PcpatchHash(pa *Pcpatch) (_r0 uint32, _err error) {
 	C.meos_errno_reset()
