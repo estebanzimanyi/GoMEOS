@@ -117,6 +117,40 @@ def _result_signature(all_returns: list[str]) -> str:
     return f" ({', '.join(named)})"
 
 
+@dataclass
+class Signature:
+    """The Go signature this generator emits for one MEOS function.
+
+    A caller of a generated wrapper needs the shape the generator CHOSE, which is not
+    the C parameter list: an out-parameter is folded into an extra result, an array and
+    its length collapse into one slice, and a ``char *`` becomes a ``string``.  Reading
+    the C signature instead reconstructs a shape the wrapper does not have.
+    """
+
+    c_name: str
+    go_name: str
+    params: list[tuple[str, str]]   # (Go parameter name, Go type), in order
+    returns: list[str]              # Go result types, WITHOUT the trailing error
+
+
+# Every wrapper this generator emits, by MEOS C name.  ``objectgen.py`` reads it so the
+# object layer and the flat layer cannot disagree about a folded out-parameter: the
+# object layer never parses a C parameter list, and a function absent from here has no
+# wrapper to call.  Filled as each function is emitted, so a caller that emits one
+# function gets that one entry and a full ``generate()`` run gets them all.
+SIGNATURES: dict[str, Signature] = {}
+
+
+def _record(c_name: str, go_name: str, go_args: list[str],
+            returns: list[str]) -> None:
+    """Record the signature just assembled, splitting each ``"name type"`` apart."""
+    params = []
+    for arg in go_args:
+        name, _, go_type = arg.partition(" ")
+        params.append((name, go_type))
+    SIGNATURES[c_name] = Signature(c_name, go_name, params, list(returns))
+
+
 # Type mapping ----------------------------------------------------------
 
 @dataclass
@@ -602,6 +636,7 @@ def _emit_array_input_group(entry: dict, group: dict) -> EmittedFunc:
         f"func {go_name}({sig_args}){ret_sig} {{\n"
         f"{body}\n{tail}\n}}\n"
     )
+    _record(c_name, go_name, go_args, [] if return_c == "void" else [ret_go])
     return EmittedFunc(go_name, code, False)
 
 
@@ -962,6 +997,7 @@ def emit_function(entry: dict) -> EmittedFunc:
         + "\n".join(body_lines)
         + "\n}\n"
     )
+    _record(c_name, go_name, go_args, all_returns)
     return EmittedFunc(go_name, code, False)
 
 
