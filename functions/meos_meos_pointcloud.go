@@ -1664,17 +1664,6 @@ func OverafterTpcboxTpcbox(box1 *TPCBox, box2 *TPCBox) (_r0 bool, _err error) {
 }
 
 
-// EnsureSamePcidTpcbox wraps MEOS C function ensure_same_pcid_tpcbox.
-func EnsureSamePcidTpcbox(box1 *TPCBox, box2 *TPCBox) (_r0 bool, _err error) {
-	C.meos_errno_reset()
-	_cret := C.ensure_same_pcid_tpcbox(box1._inner, box2._inner)
-	if _err = meosError(); _err != nil {
-		return
-	}
-	return bool(_cret), nil
-}
-
-
 // TpointcloudToTgeompoint wraps MEOS C function tpointcloud_to_tgeompoint.
 func TpointcloudToTgeompoint(temp *Temporal) (_r0 *Temporal, _err error) {
 	C.meos_errno_reset()

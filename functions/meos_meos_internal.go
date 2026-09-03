@@ -1376,17 +1376,6 @@ func TemporalSetTstzspan(temp *Temporal, s *Span) (_err error) {
 }
 
 
-// TemporalTimeOverlaps wraps MEOS C function temporal_time_overlaps.
-func TemporalTimeOverlaps(temp1 *Temporal, temp2 *Temporal) (_r0 bool, _err error) {
-	C.meos_errno_reset()
-	_cret := C.temporal_time_overlaps(temp1._inner, temp2._inner)
-	if _err = meosError(); _err != nil {
-		return
-	}
-	return bool(_cret), nil
-}
-
-
 // TinstantSetTstzspan wraps MEOS C function tinstant_set_tstzspan.
 func TinstantSetTstzspan(inst *TInstant, s *Span) (_err error) {
 	C.meos_errno_reset()
