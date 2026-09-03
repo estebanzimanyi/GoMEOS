@@ -395,6 +395,7 @@ func QuadbinIndexToString(index uint64) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -419,6 +420,7 @@ func QuadbinCellToQuadkey(cell uint64) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 

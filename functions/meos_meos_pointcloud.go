@@ -107,6 +107,7 @@ func PcpointHexOut(pt *Pcpoint, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -131,6 +132,7 @@ func PcpointAsHexwkb(pt *Pcpoint) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -473,6 +475,7 @@ func PcpatchHexOut(pa *Pcpatch, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -497,6 +500,7 @@ func PcpatchAsHexwkb(pa *Pcpatch) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -708,6 +712,7 @@ func PcpointsetOut(s *Set, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -898,6 +903,7 @@ func PcpatchsetOut(s *Set, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1088,6 +1094,7 @@ func TpcboxOut(box *TPCBox, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 

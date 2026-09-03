@@ -94,6 +94,7 @@ func CbufferAsEWKT(cb *Cbuffer, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -105,6 +106,7 @@ func CbufferAsHexwkb(cb *Cbuffer, variant uint8, size_out unsafe.Pointer) (_r0 s
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -116,6 +118,7 @@ func CbufferAsText(cb *Cbuffer, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -175,6 +178,7 @@ func CbufferOut(cb *Cbuffer, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -608,6 +612,7 @@ func CbuffersetOut(s *Set, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 

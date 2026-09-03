@@ -107,6 +107,7 @@ func BoolOut(b bool) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -118,6 +119,7 @@ func Float8Out(num float64, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -142,6 +144,7 @@ func DateOut(date int32) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -177,6 +180,7 @@ func IntervalOut(interv *Interval) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -201,6 +205,7 @@ func TimeOut(time int64) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -225,6 +230,7 @@ func TimestampOut(ts int64) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -249,6 +255,7 @@ func TimestamptzOut(tstz int64) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -275,6 +282,7 @@ func TextToCstring(txt string) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -301,6 +309,7 @@ func TextOut(txt string) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -985,6 +994,7 @@ func MeosGetDatestyle() (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -996,6 +1006,7 @@ func MeosGetIntervalstyle() (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1055,6 +1066,7 @@ func MeosVersion() (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1066,6 +1078,7 @@ func MeosFullVersion() (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1077,6 +1090,7 @@ func MobilitydbVersion() (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1088,6 +1102,7 @@ func MobilitydbFullVersion() (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1112,6 +1127,7 @@ func BigintsetOut(set *Set) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1147,6 +1163,7 @@ func BigintspanOut(s *Span) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1171,6 +1188,7 @@ func BigintspansetOut(ss *SpanSet) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1195,6 +1213,7 @@ func DatesetOut(s *Set) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1219,6 +1238,7 @@ func DatespanOut(s *Span) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1243,6 +1263,7 @@ func DatespansetOut(ss *SpanSet) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1267,6 +1288,7 @@ func FloatsetOut(set *Set, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1302,6 +1324,7 @@ func FloatspanOut(s *Span, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1326,6 +1349,7 @@ func FloatspansetOut(ss *SpanSet, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1350,6 +1374,7 @@ func IntsetOut(set *Set) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1385,6 +1410,7 @@ func IntspanOut(s *Span) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1409,6 +1435,7 @@ func IntspansetOut(ss *SpanSet) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1420,6 +1447,7 @@ func SetAsHexwkb(s *Set, variant uint8, size_out unsafe.Pointer) (_r0 string, _e
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1466,6 +1494,7 @@ func SpanAsHexwkb(s *Span, variant uint8, size_out unsafe.Pointer) (_r0 string, 
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1512,6 +1541,7 @@ func SpansetAsHexwkb(ss *SpanSet, variant uint8, size_out unsafe.Pointer) (_r0 s
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1571,6 +1601,7 @@ func TextsetOut(set *Set) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1595,6 +1626,7 @@ func TstzsetOut(set *Set) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1619,6 +1651,7 @@ func TstzspanOut(s *Span) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1643,6 +1676,7 @@ func TstzspansetOut(ss *SpanSet) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -8115,6 +8149,7 @@ func TBOXAsHexwkb(box *TBox, variant uint8, size_out unsafe.Pointer) (_r0 string
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -8174,6 +8209,7 @@ func TBOXOut(box *TBox, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -8995,6 +9031,7 @@ func TboolOut(temp *Temporal) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -9006,6 +9043,7 @@ func TemporalAsHexwkb(temp *Temporal, variant uint8, size_out unsafe.Pointer) (_
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -9019,6 +9057,7 @@ func TemporalAsMFJSON(temp *Temporal, with_bbox bool, flags int, precision int, 
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -9104,6 +9143,7 @@ func TfloatOut(temp *Temporal, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -9167,6 +9207,7 @@ func TintOut(temp *Temporal) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -9178,6 +9219,7 @@ func TbigintOut(temp *Temporal) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -9215,6 +9257,7 @@ func TtextOut(temp *Temporal) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 

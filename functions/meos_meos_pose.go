@@ -94,6 +94,7 @@ func PoseAsEWKT(pose *Pose, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -105,6 +106,7 @@ func PoseAsHexwkb(pose *Pose, variant uint8, size_out unsafe.Pointer) (_r0 strin
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -116,6 +118,7 @@ func PoseAsText(pose *Pose, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -175,6 +178,7 @@ func PoseOut(pose *Pose, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -199,6 +203,7 @@ func PoseAsGeopose(pose *Pose, conformance int, precision int) (_r0 string, _err
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -223,6 +228,7 @@ func TposeAsGeopose(temp *Temporal, conformance int, precision int) (_r0 string,
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -234,6 +240,7 @@ func TposeAsGeoposeStreamHeader(temp *Temporal, precision int) (_r0 string, _err
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -245,6 +252,7 @@ func TposeAsGeoposeStreamElement(temp *Temporal, inst *TInstant, precision int) 
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -256,6 +264,7 @@ func TposeAsGeoposeStream(temp *Temporal, precision int) (_r0 string, _err error
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -799,6 +808,7 @@ func PosesetOut(s *Set, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1633,6 +1643,7 @@ func PosechainOut(pc unsafe.Pointer, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1644,6 +1655,7 @@ func PosechainAsText(pc unsafe.Pointer, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1655,6 +1667,7 @@ func PosechainAsEWKT(pc unsafe.Pointer, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1677,6 +1690,7 @@ func PosechainAsHexwkb(pc unsafe.Pointer, variant uint8, size_out unsafe.Pointer
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1969,6 +1983,7 @@ func TposechainAsGeopose(temp *Temporal, precision int) (_r0 string, _err error)
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -1980,6 +1995,7 @@ func TposechainarrAsGeopose(temparr unsafe.Pointer, count int, precision int) (_
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 
@@ -2103,6 +2119,7 @@ func PosechainsetOut(s *Set, maxdd int) (_r0 string, _err error) {
 	if _err = meosError(); _err != nil {
 		return
 	}
+	defer C.free(unsafe.Pointer(_cret))
 	return C.GoString(_cret), nil
 }
 

@@ -85,6 +85,26 @@ _ERRNO_RESET = "\tC.meos_errno_reset()"
 _ERRNO_GUARD = "\tif _err = meosError(); _err != nil {\n\t\treturn\n\t}"
 
 
+def _free_returned_string(return_c: str) -> str:
+    """The free for a C string MEOS hands to the caller, or nothing.
+
+    A ``char *`` result belongs to the caller: MEOS's own example frees it
+    (``meos/examples/03_berlinmod_assemble.c`` does ``free(trip_str)`` on the
+    result of ``temporal_as_hexwkb``).  ``C.GoString`` copies into Go memory, so
+    without this the C allocation is unreachable the moment the wrapper returns.
+
+    ``const char *`` is the opposite case and must NOT be freed: MEOS hands back
+    a name it owns (``temporal_interp``, ``temporal_subtype``,
+    ``temporal_basetype_name``).  The C declaration is the whole discriminator,
+    so nothing here is inferred from a function's name or group.
+
+    The free is deferred, so it runs after ``C.GoString`` has copied, and it sits
+    after the errno guard so a failed call -- which returns no buffer -- never
+    reaches it.
+    """
+    return "\n\tdefer C.free(unsafe.Pointer(_cret))" if return_c == "char *" else ""
+
+
 def _result_signature(all_returns: list[str]) -> str:
     """Render the Go result list, with the projected error appended.
 
@@ -574,7 +594,8 @@ def _emit_array_input_group(entry: dict, group: dict) -> EmittedFunc:
     if return_c == "void":
         tail = f"{_ERRNO_RESET}\n\t{call}\n{_ERRNO_GUARD}\n\treturn"
     else:
-        tail = (f"{_ERRNO_RESET}\n\t_cret := {call}\n{_ERRNO_GUARD}\n"
+        tail = (f"{_ERRNO_RESET}\n\t_cret := {call}\n{_ERRNO_GUARD}"
+                f"{_free_returned_string(return_c)}\n"
                 f"\treturn {ret_from_c.replace('$x', '_cret')}, nil")
     code = (
         f"// {go_name} wraps MEOS C function {c_name}.\n"
@@ -924,6 +945,9 @@ def emit_function(entry: dict) -> EmittedFunc:
         # parameter named ``res`` (e.g. h3_uncompact_cells' resolution arg).
         body_lines.append(f"\t_cret := {call}")
         body_lines.append(_ERRNO_GUARD)
+        free_cret = _free_returned_string(return_c)
+        if free_cret:
+            body_lines.append(free_cret.lstrip("\n"))
         return_expr = ret_from_c.replace("$x", "_cret")
         if extra_returns:
             tail = ", ".join(c2g for _, _, c2g in extra_returns)
